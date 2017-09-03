@@ -20,14 +20,13 @@ package com.github.paulschaaf.gargoyle.model
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.DatabaseUtils
-import android.net.Uri
 import android.provider.BaseColumns
 
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.Collections
 
-class Game private constructor(val contentValues: ContentValues): BaseColumns {
+class Story private constructor(val contentValues: ContentValues): BaseColumns {
 //  constructor(aFile: File): this() {
 //    path = aFile.absolutePath
 //    // read then set the ifId
@@ -44,12 +43,12 @@ class Game private constructor(val contentValues: ContentValues): BaseColumns {
 //  }
 
 //  enum class Cols(val getter: ContentValues.(String)->String) {
-//    Author(ContentValues::getAsString(this.name)),// {game: Game -> game.contentValues.getAsString(Cols.Author.name)}),
-//    Title ({game: Game -> game.contentValues.getAsString(Cols.Author.name)});
+//    Author(ContentValues::getAsString(this.name)),// {game: Story -> game.contentValues.getAsString(Cols.Author.name)}),
+//    Title ({game: Story -> game.contentValues.getAsString(Cols.Author.name)});
 //  }
 //
 //  val getters = hashMapOf(
-//      Cols.Author to { game: Game -> game.contentValues.getAsString(Cols.Author.name)}
+//      Cols.Author to { game: Story -> game.contentValues.getAsString(Cols.Author.name)}
 //  )
 
   sealed class Column<T> {
@@ -58,8 +57,8 @@ class Game private constructor(val contentValues: ContentValues): BaseColumns {
 
     override fun toString() = name
 
-    operator fun get(game: Game): T = get(game.contentValues)
-    operator fun set(game: Game, value: T) = set(game.contentValues, value)
+    operator fun get(story: Story): T = get(story.contentValues)
+    operator fun set(story: Story, value: T) = set(story.contentValues, value)
 
     abstract operator fun get(conValues: ContentValues): T
     abstract operator fun set(conValues: ContentValues, value: T)
@@ -110,7 +109,7 @@ class Game private constructor(val contentValues: ContentValues): BaseColumns {
   //
 
   companion object {
-    private val _all_instances = mutableMapOf<String, Game>()
+    private val _all_instances = mutableMapOf<String, Story>()
     val ALL_INSTANCES = Collections.unmodifiableMap(_all_instances)
 
     val AUTHORITY = "org.andglk.hunkypunk.HunkyPunk"
@@ -120,9 +119,9 @@ class Game private constructor(val contentValues: ContentValues): BaseColumns {
     val CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.andglk.game"
     val DEFAULT_SORT_ORDER = "lower(title) ASC"
 
-    fun valueOf(contentValues: ContentValues) = Game(contentValues)
+    fun valueOf(contentValues: ContentValues) = Story(contentValues)
 
-    fun fromCursor(cursor: Cursor): Game? {
+    fun fromCursor(cursor: Cursor): Story? {
       return if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
         val cv = ContentValues()
         DatabaseUtils.cursorRowToContentValues(cursor, cv)
