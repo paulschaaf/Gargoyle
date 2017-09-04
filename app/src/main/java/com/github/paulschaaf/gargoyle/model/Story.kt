@@ -24,7 +24,6 @@ import android.provider.BaseColumns
 
 import java.io.File
 import java.io.RandomAccessFile
-import java.util.Collections
 
 class Story private constructor(val contentValues: ContentValues): BaseColumns {
 //  constructor(aFile: File): this() {
@@ -42,15 +41,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
 //    // write to database
 //  }
 
-//  enum class Cols(val getter: ContentValues.(String)->String) {
-//    Author(ContentValues::getAsString(this.name)),// {game: Story -> game.contentValues.getAsString(Cols.Author.name)}),
-//    Title ({game: Story -> game.contentValues.getAsString(Cols.Author.name)});
-//  }
-//
-//  val getters = hashMapOf(
-//      Cols.Author to { game: Story -> game.contentValues.getAsString(Cols.Author.name)}
-//  )
-
   sealed class Column<T> {
     val name
       get() = this.javaClass.simpleName
@@ -64,7 +54,7 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     abstract operator fun set(conValues: ContentValues, value: T)
 
     abstract class String: Column<kotlin.String>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsString(name).trim()
+      override operator fun get(conValues: ContentValues) = conValues.getAsString(name)
       override operator fun set(conValues: ContentValues, value: kotlin.String) = conValues.put(name, value.trim())
     }
 
@@ -109,9 +99,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   //
 
   companion object {
-    private val _all_instances = mutableMapOf<String, Story>()
-    val ALL_INSTANCES = Collections.unmodifiableMap(_all_instances)
-
     val AUTHORITY = "org.andglk.hunkypunk.HunkyPunk"
 //    val CONTENT_URI = Uri.parse("content://$AUTHORITY/games")
 
@@ -121,14 +108,14 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
 
     fun valueOf(contentValues: ContentValues) = Story(contentValues)
 
-    fun fromCursor(cursor: Cursor): Story? {
-      return if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
-        val cv = ContentValues()
-        DatabaseUtils.cursorRowToContentValues(cursor, cv)
-        valueOf(cv)
-      }
-      else null
-    }
+//    fun fromCursor(cursor: Cursor): Story? {
+//      return if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
+//        val cv = ContentValues()
+//        DatabaseUtils.cursorRowToContentValues(cursor, cv)
+//        valueOf(cv)
+//      }
+//      else null
+//    }
   }
 
   //
@@ -150,10 +137,11 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
 //  val coverURI
 //    get() = if (cover.exists()) Uri.fromFile(cover) else null
 
-  var file: File? = null
-    private set(value) {
-      field = value
-    }
+  val exists: Boolean
+    get() = file.exists()
+
+  val file: File
+    get() = File(path)
 
   var ifId
     get() = IFID[this]

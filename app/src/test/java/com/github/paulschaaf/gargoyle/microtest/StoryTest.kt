@@ -1,4 +1,4 @@
-package com.github.paulschaaf.gargoyle
+package com.github.paulschaaf.gargoyle.microtest
 
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.model.Story
@@ -24,13 +24,13 @@ class StoryTest {
       Forgiveness to "hard",
       Genre to "Adventure",
       Collection to "Zork",
-      Headline to "Your greatest adventure lies ahead! Then left, down the stairs, and through the second door on the right.",
+      Headline to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
       _ID to 31415L,
       IFID to "ifid_zork_pi",
       Language to "EN/US",
       Link to "http://paulschaaf.com/",
       LookedUp to "9/2/2017",
-      Path to "/var/data/IntFic",
+      Path to "/var/data/IntFic.dat",
       RatingCountAvg to 17,
       RatingCountTotal to 137,
       Series to "Zork",
@@ -40,8 +40,6 @@ class StoryTest {
   )
 
   val contentValues = mock(ContentValues::class.java)
-  lateinit var story: Story
-
   init {
     properties.forEach { column, value ->
       when (value) {
@@ -50,8 +48,9 @@ class StoryTest {
         is String -> `when`(contentValues.getAsString(column.name)).thenReturn(value)
       }
     }
-    story = Story.valueOf(contentValues)
   }
+
+  var story = Story.valueOf(contentValues)
 
   @Test
   fun readProperties() {
@@ -86,5 +85,14 @@ class StoryTest {
     val newAuthor = "P.G. Schaaf, Jr., et. al."
     `when`(contentValues.getAsString(Story.Author.name)).thenReturn(newAuthor)
     assertEquals(newAuthor, story.author)
+  }
+
+  @Test
+  fun verifyFileExistsWorks() {
+    `when`(contentValues.getAsString(Story.Path.name)).thenReturn("/no-such-file")
+    assertEquals(false, story.exists)
+
+    `when`(contentValues.getAsString(Story.Path.name)).thenReturn("/dev/null")
+    assertEquals(true, story.exists)
   }
 }
