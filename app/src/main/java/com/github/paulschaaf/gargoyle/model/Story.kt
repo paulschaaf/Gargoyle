@@ -1,31 +1,44 @@
-/*
- * Copyright � 2015 Paul Schaaf <paul.schaaf@gmail.com>
- *
- * This file is part of Hunky Punk.
- *
- * Hunky Punk is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * Hunky Punk is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with Hunky Punk. If not,
- * see <http://www.gnu.org/licenses/>.
- */
-
 package com.github.paulschaaf.gargoyle.model
 
 import android.content.ContentValues
-import android.database.Cursor
-import android.database.DatabaseUtils
 import android.provider.BaseColumns
 
 import java.io.File
 import java.io.RandomAccessFile
+import java.util.*
 
 class Story private constructor(val contentValues: ContentValues): BaseColumns {
+  //
+  // COMPANION OBJECT
+  //
+
+  companion object {
+//    val AUTHORITY = "org.andglk.hunkypunk.HunkyPunk"
+//    val CONTENT_URI = Uri.parseStory("content://$AUTHORITY/games")
+
+//    val CONTENT_TYPE = "vnd.android.cursor.dir/vnd.andglk.game"
+//    val CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.andglk.game"
+//    val DEFAULT_SORT_ORDER = "lower(title) ASC"
+
+    fun valueOf(contentValues: ContentValues) = Story(contentValues)
+
+//    fun fromCursor(cursor: Cursor): Story? {
+//      return if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
+//        val cv = ContentValues()
+//        DatabaseUtils.cursorRowToContentValues(cursor, cv)
+//        valueOf(cv)
+//      }
+//      else null
+//    }
+  }
+
+  constructor(): this(ContentValues())
+
+  constructor(id: Long, link: String): this() {
+    lookedUp = Date().toString()
+    this.id = id
+    this.link = link
+  }
 //  constructor(aFile: File): this() {
 //    path = aFile.absolutePath
 //    // read then set the ifId
@@ -45,17 +58,15 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     val name
       get() = this.javaClass.simpleName
 
-    override fun toString() = name
-
     operator fun get(story: Story): T = get(story.contentValues)
     operator fun set(story: Story, value: T) = set(story.contentValues, value)
 
     abstract operator fun get(conValues: ContentValues): T
     abstract operator fun set(conValues: ContentValues, value: T)
 
-    abstract class String: Column<kotlin.String>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsString(name)
-      override operator fun set(conValues: ContentValues, value: kotlin.String) = conValues.put(name, value.trim())
+    abstract class Float: Column<kotlin.Float>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsFloat(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Float) = conValues.put(name, value)
     }
 
     abstract class Int: Column<kotlin.Int>() {
@@ -66,6 +77,11 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     abstract class Long: Column<kotlin.Long>() {
       override operator fun get(conValues: ContentValues) = conValues.getAsLong(name)
       override operator fun set(conValues: ContentValues, value: kotlin.Long) = conValues.put(name, value)
+    }
+
+    abstract class String: Column<kotlin.String>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsString(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.String) = conValues.put(name, value.trim())
     }
   }
 
@@ -91,32 +107,8 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   object SeriesNumber: Column.Int()
   object RatingCountAvg: Column.Int()
   object RatingCountTotal: Column.Int()
-  object StarRating: Column.Int()
+  object StarRating: Column.Float()
   object Title: Column.String()
-
-  //
-  // COMPANION OBJECT
-  //
-
-  companion object {
-    val AUTHORITY = "org.andglk.hunkypunk.HunkyPunk"
-//    val CONTENT_URI = Uri.parse("content://$AUTHORITY/games")
-
-    val CONTENT_TYPE = "vnd.android.cursor.dir/vnd.andglk.game"
-    val CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.andglk.game"
-    val DEFAULT_SORT_ORDER = "lower(title) ASC"
-
-    fun valueOf(contentValues: ContentValues) = Story(contentValues)
-
-//    fun fromCursor(cursor: Cursor): Story? {
-//      return if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
-//        val cv = ContentValues()
-//        DatabaseUtils.cursorRowToContentValues(cursor, cv)
-//        valueOf(cv)
-//      }
-//      else null
-//    }
-  }
 
   //
   // METHODS
@@ -171,6 +163,24 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
         versionNumber.toString()
       }
     }
+
+
+  //
+  // NON-PUBLICLY-EDITABLE PROPERTIES
+  //
+
+  var id
+    get() = _ID[this]
+    private set(value) {
+      _ID[this] = value
+    }
+
+  var lookedUp
+    get() = LookedUp[this]
+    private set(value) {
+      LookedUp[this] = value
+    }
+
 
   //
   // SIMPLE MAPPED PROPERTIES
@@ -230,12 +240,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
       Headline[this] = value
     }
 
-  var id
-    get() = _ID[this]
-    set(value) {
-      _ID[this] = value
-    }
-
   var language
     get() = Language[this]
     set(value) {
@@ -246,12 +250,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     get() = Link[this]
     set(value) {
       Link[this] = value
-    }
-
-  var lookedUp
-    get() = LookedUp[this]
-    set(value) {
-      LookedUp[this] = value
     }
 
   var path
