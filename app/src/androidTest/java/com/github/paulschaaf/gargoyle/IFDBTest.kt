@@ -1,18 +1,25 @@
-package com.github.paulschaaf.gargoyle.microtest
+package com.github.paulschaaf.gargoyle
 
+import android.content.Context
+import android.support.test.InstrumentationRegistry
+import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
+
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.runners.MockitoJUnitRunner
+
+import org.junit.Assert.*
 
 /**
  * Created by pschaaf on 9/3/17.
  */
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(AndroidJUnit4::class)
 class IFDBTest {
+  val title = "Zork I"
+
   val xmlResult = """
-<ifindex xmlns="http://babel.ifarchive.org/protocol/iFiction/" version="1.0">
+<ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
   <story>
     <colophon>
       <generator>ifdb.tads.org/viewgame</generator>
@@ -33,21 +40,18 @@ class IFDBTest {
       <language>English, Castilian (en, es)</language>
       <firstpublished>1980</firstpublished>
       <genre>Zorkian/Cave crawl</genre>
-      <description>
-        Many strange tales have been told of the fabulous treasure, exotic creatures, and diabolical puzzles in the Great Underground Empire. As an aspiring adventurer, you will undoubtedly want to locate these treasures and deposit them in your trophy case. [--blurb from The Z-Files Catalogue]
-      </description>
+      <description>Many strange tales have been told of the fabulous treasure, exotic creatures, and diabolical puzzles in the Great Underground Empire. As an aspiring adventurer, you will undoubtedly want to locate these treasures and deposit them in your trophy case.  [--blurb from The Z-Files Catalogue]</description>
       <series>Zork</series>
       <seriesnumber>1</seriesnumber>
       <forgiveness>Cruel</forgiveness>
     </bibliographic>
-    <contact/>
+    <contact>
+    </contact>
     <ifdb xmlns="http://ifdb.tads.org/api/xmlns">
       <tuid>0dbnusxunq7fw5ro</tuid>
       <link>http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro</link>
       <coverart>
-        <url>
-          http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&coverart
-        </url>
+        <url>http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&amp;coverart</url>
       </coverart>
       <averageRating>3.7547</averageRating>
       <starRating>4</starRating>
@@ -61,7 +65,9 @@ class IFDBTest {
   @Test
   fun readFrom() {
     val ifID = "0dbnusxunq7fw5ro"
-    var story = IFDBFeedReader.createStoryFrom(ifID)
+    var stream = xmlResult.byteInputStream()
+    var story = IFDBFeedReader.createStoryFrom(stream)
+    assertEquals(title, story.title)
   }
 
 }

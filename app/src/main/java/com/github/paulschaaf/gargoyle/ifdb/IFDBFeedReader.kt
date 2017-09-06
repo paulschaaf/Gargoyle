@@ -4,6 +4,7 @@ import android.util.Log
 import android.util.Xml
 import com.github.paulschaaf.gargoyle.model.Story
 import org.xmlpull.v1.XmlPullParser
+import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -31,13 +32,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
       val inputStream = conn.inputStream
       try {
         conn.connect()
-
-        val parser = Xml.newPullParser().apply {
-          setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-          setInput(inputStream, null)
-        }
-
-        return IFDBFeedReader(parser).parseStory()
+        return createStoryFrom(inputStream)
       }
       catch (ex: Exception) {
         Log.e(TAG, "Hit exception " + ex.toString())
@@ -47,12 +42,33 @@ class IFDBFeedReader(val parser: XmlPullParser) {
       }
       return null
     }
+
+    fun createStoryFrom(inputStream: InputStream): Story {
+      val parser = Xml.newPullParser().apply {
+        setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+        setInput(inputStream, null)
+      }
+      return IFDBFeedReader(parser).parseIFIndex()
+    }
   }
 
   val story = Story()
 
-  fun parseStory(): Story {
+  private fun parseIFIndex(): Story {
+    parser.next()
     parser.require(XmlPullParser.START_TAG, null, "ifindex");
+    while (parser.next() != XmlPullParser.END_TAG) {
+      if (parser.eventType != XmlPullParser.START_TAG) continue
+      when (parser.name) {
+        "story"       -> parseStory()
+        else          -> skip()
+      }
+    }
+    return story
+  }
+
+  private fun parseStory() {
+    parser.require(XmlPullParser.START_TAG, null, "story");
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
@@ -64,13 +80,13 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         else             -> skip()
       }
     }
-    return story
   }
 
   private fun readColophon() {
     parser.require(XmlPullParser.START_TAG, null, "colophon")
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
+      skip()
     }
   }
 
@@ -123,7 +139,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
   }
 
   private fun readCoverArt() {
-    parser.require(XmlPullParser.START_TAG, null, "colophon")
+    parser.require(XmlPullParser.START_TAG, null, "coverart")
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
@@ -152,8 +168,8 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     var depth = 1
     while (depth != 0) {
       when (parser.next()) {
-        XmlPullParser.END_TAG   -> depth--
         XmlPullParser.START_TAG -> depth++
+        XmlPullParser.END_TAG   -> depth--
       }
     }
   }
