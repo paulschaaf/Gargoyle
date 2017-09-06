@@ -35,7 +35,7 @@ class IFDBTest {
       <format>hugo</format>
     </identification>
     <bibliographic>
-      <title>Zork I</title>
+      <title>${title}</title>
       <author>Marc Blank and Dave Lebling</author>
       <language>English, Castilian (en, es)</language>
       <firstpublished>1980</firstpublished>
