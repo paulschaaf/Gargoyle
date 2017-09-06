@@ -129,10 +129,10 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         "tuid"           -> skip()
         "link"           -> story.link = getText()
         "coverart"       -> readCoverArt()
-        "averageRating"  -> story.averageRating = getText()
-        "starRating"     -> story.starRating = java.lang.Float.parseFloat(getText())
-        "ratingCountAvg" -> story.ratingCountAvg = Integer.valueOf(getText())
-        "ratingCountTot" -> story.ratingCountTotal = Integer.valueOf(getText())
+        "averageRating"  -> story.averageRating = getText().toDouble()
+        "starRating"     -> story.starRating = getText().toInt()
+        "ratingCountAvg" -> story.ratingCountAvg = getText().toInt()
+        "ratingCountTot" -> story.ratingCountTotal = getText().toInt()
         else             -> skip()
       }
     }
