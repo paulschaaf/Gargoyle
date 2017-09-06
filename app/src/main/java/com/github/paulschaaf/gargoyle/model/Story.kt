@@ -34,8 +34,7 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
 
   constructor(): this(ContentValues())
 
-  constructor(id: Long, link: String): this() {
-    lookedUp = Date().toString()
+  constructor(id: String, link: String): this() {
     this.id = id
     this.link = link
   }
@@ -64,29 +63,29 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     abstract operator fun get(conValues: ContentValues): T
     abstract operator fun set(conValues: ContentValues, value: T)
 
-    abstract class Double: Column<kotlin.Double>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsDouble(name) ?: 0.0
-      override operator fun set(conValues: ContentValues, value: kotlin.Double) = conValues.put(name, value)
+    abstract class Double: Column<kotlin.Double?>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsDouble(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Double?) = conValues.put(name, value)
     }
 
-    abstract class Float: Column<kotlin.Float>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsFloat(name) ?: 0f
-      override operator fun set(conValues: ContentValues, value: kotlin.Float) = conValues.put(name, value)
+    abstract class Float: Column<kotlin.Float?>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsFloat(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Float?) = conValues.put(name, value)
     }
 
-    abstract class Int: Column<kotlin.Int>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsInteger(name) ?: 0
-      override operator fun set(conValues: ContentValues, value: kotlin.Int) = conValues.put(name, value)
+    abstract class Int: Column<kotlin.Int?>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsInteger(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Int?) = conValues.put(name, value)
     }
 
-    abstract class Long: Column<kotlin.Long>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsLong(name) ?: 0
-      override operator fun set(conValues: ContentValues, value: kotlin.Long) = conValues.put(name, value)
+    abstract class Long: Column<kotlin.Long?>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsLong(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Long?) = conValues.put(name, value)
     }
 
-    abstract class String: Column<kotlin.String>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsString(name) ?: ""
-      override operator fun set(conValues: ContentValues, value: kotlin.String) = conValues.put(name, value.trim())
+    abstract class String: Column<kotlin.String?>() {
+      override operator fun get(conValues: ContentValues) = conValues.getAsString(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.String?) = conValues.put(name, value?.trim())
     }
   }
 
@@ -100,10 +99,8 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   object FirstPublished: Column.String()
   object Forgiveness: Column.String()
   object Genre: Column.String()
-  object Collection: Column.String()
-  object Headline: Column.String()
   object IFID: Column.String()
-  object _ID: Column.Long()
+  object _ID: Column.String()
   object Language: Column.String()
   object Link: Column.String()
   object LookedUp: Column.String()
@@ -174,17 +171,15 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   // NON-PUBLICLY-EDITABLE PROPERTIES
   //
 
-  var id
-    get() = _ID[this]
-    private set(value) {
-      _ID[this] = value
-    }
-
   var lookedUp
     get() = LookedUp[this]
     private set(value) {
       LookedUp[this] = value
     }
+
+  init {
+    lookedUp = Date().toString()
+  }
 
 
   //
@@ -201,12 +196,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     get() = AverageRating[this]
     set(value) {
       AverageRating[this] = value
-    }
-
-  var collection
-    get() = Collection[this]
-    set(value) {
-      Collection[this] = value
     }
 
   var description
@@ -233,16 +222,10 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
       Genre[this] = value
     }
 
-  var group
-    get() = Collection[this]
+  var id
+    get() = _ID[this]
     set(value) {
-      Collection[this] = value
-    }
-
-  var headline
-    get() = Headline[this]
-    set(value) {
-      Headline[this] = value
+      _ID[this] = value
     }
 
   var language

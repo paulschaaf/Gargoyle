@@ -1,9 +1,8 @@
 package com.github.paulschaaf.gargoyle
 
-import android.content.Context
-import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
+import com.github.paulschaaf.gargoyle.model.Story
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,28 +15,27 @@ import org.junit.Assert.*
 
 @RunWith(AndroidJUnit4::class)
 class IFDBTest {
-  val author = "Marc Blank and Dave Lebling"
-  val averageRating = 3.7547
-  val description = "Many strange tales have been told of the fabulous treasure, exotic creatures, and diabolical puzzles in the Great Underground Empire. As an aspiring adventurer, you will undoubtedly want to locate these treasures and deposit them in your trophy case.  [--blurb from The Z-Files Catalogue]"
-  val firstPublished = "1980"
-  val forgiveness = "Cruel"
-  val genre = "Zorkian/Cave crawl"
-  val collection = ""
-  val headline = ""
-  val ifId = "ZCODE-88-840726"
-  val id = 0L
-  val language = "English, Castilian (en, es)"
-  val link = "http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro"
-  val lookedUp = ""
-  val path = ""
-  val series = "Zork"
-  val seriesNumber = 1
-  val ratingCountAvg = 159
-  val ratingCountTotal = 159
-  val starRating = 4
-  val title = "Zork I"
+  inner class StoryXML(
+      var author: String = "Marc Blank and Dave Lebling",
+      var averageRating: Double? = 0.0,
+      var description: String = "Many strange tales have been told of the fabulous treasure, exotic creatures, and diabolical puzzles in the Great Underground Empire. As an aspiring adventurer, you will undoubtedly want to locate these treasures and deposit them in your trophy case.  [--blurb from The Z-Files Catalogue]",
+      var firstPublished: String = "1980",
+      var forgiveness: String = "Cruel",
+      var genre: String = "Zorkian/Cave crawl",
+      var ifId: String = "ZCODE-88-840726",
+      var id: String = "0dbnusxunq7fw5ro",
+      var language: String = "English, Castilian (en, es)",
+      var link: String = "http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro",
+      var series: String = "Zork",
+      var seriesNumber: Int? = 1,
+      var ratingCountAvg: Int? = 159,
+      var ratingCountTotal: Int? = 1789,
+      var starRating: Int? = 4,
+      var title: String = "Zork I"
+  ) {
 
-  val xmlResult = """
+    val xml: String
+      get() = """
 <ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
   <story>
     <colophon>
@@ -67,7 +65,7 @@ class IFDBTest {
     <contact>
     </contact>
     <ifdb xmlns="http://ifdb.tads.org/api/xmlns">
-      <tuid>0dbnusxunq7fw5ro</tuid>
+      <tuid>${id}</tuid>
       <link>${link}</link>
       <coverart>
         <url>http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&amp;coverart</url>
@@ -80,37 +78,43 @@ class IFDBTest {
   </story>
 </ifindex>
 """
-
-  @Test
-  fun readFrom() {
-    val ifID = "0dbnusxunq7fw5ro"
-    var stream = xmlResult.byteInputStream()
-    var story = IFDBFeedReader.createStoryFrom(stream)
-
-    assertEquals(author, story.author)
-    assertEquals(averageRating, story.averageRating, 0.0)
-    assertEquals(description, story.description)
-    assertEquals(firstPublished, story.firstPublished)
-    assertEquals(forgiveness, story.forgiveness)
-    assertEquals(genre, story.genre)
-    assertEquals(collection, story.collection)
-    assertEquals(headline, story.headline)
-    assertEquals(ifId, story.ifId)
-    assertEquals(id, story.id)
-    assertEquals(language, story.language)
-    assertEquals(link, story.link)
-    assertEquals(lookedUp, story.lookedUp)
-    assertEquals(path, story.path)
-    assertEquals(series, story.series)
-    assertEquals(seriesNumber, story.seriesNumber)
-    assertEquals(ratingCountAvg, story.ratingCountAvg)
-    assertEquals(ratingCountTotal, story.ratingCountTotal)
-    assertEquals(starRating, story.starRating)
-    assertEquals(title, story.title)
   }
 
-}
+  @Test
+  fun readZorkI() {
+    val storyXML = StoryXML()
+    assertXMLMatchesStory(storyXML)
+  }
 
+  @Test
+  fun handleNullFields() {
+    val storyXML = StoryXML(
+        author = "", averageRating = null, seriesNumber = null, starRating = null
+    )
+    assertXMLMatchesStory(storyXML)
+  }
+
+  private fun assertXMLMatchesStory(storyXML: IFDBTest.StoryXML) {
+    val story = IFDBFeedReader.createStoryFrom(storyXML.xml.byteInputStream())
+    assertEquals("checking 'author':", storyXML.author, story.author)
+    assertEquals("checking 'averageRating':", storyXML.averageRating, story.averageRating)
+    assertEquals("checking 'description':", storyXML.description, story.description)
+    assertEquals("checking 'firstPublished':", storyXML.firstPublished, story.firstPublished)
+    assertEquals("checking 'forgiveness':", storyXML.forgiveness, story.forgiveness)
+    assertEquals("checking 'genre':", storyXML.genre, story.genre)
+    assertEquals("checking 'ifId':", storyXML.ifId, story.ifId)
+    assertEquals("checking 'id':", storyXML.id, story.id)
+    assertEquals("checking 'language':", storyXML.language, story.language)
+    assertEquals("checking 'link':", storyXML.link, story.link)
+    assertNotNull("checking 'lookedUp':", story.lookedUp)
+    assertEquals("checking 'series':", storyXML.series, story.series)
+    assertEquals("checking 'seriesNumber':", storyXML.seriesNumber, story.seriesNumber)
+    assertEquals("checking 'ratingCountAvg':", storyXML.ratingCountAvg, story.ratingCountAvg)
+    assertEquals("checking 'ratingCountTotal':", storyXML.ratingCountTotal, story.ratingCountTotal)
+    assertEquals("checking 'starRating':", storyXML.starRating, story.starRating)
+    assertEquals("checking 'title':", storyXML.title, story.title)
+  }
+}
 
 // http://ifdb.tads.org/viewgame?ifiction&id=0dbnusxunq7fw5ro
 
