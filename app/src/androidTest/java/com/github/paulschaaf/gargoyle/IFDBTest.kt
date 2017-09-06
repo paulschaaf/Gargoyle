@@ -1,16 +1,23 @@
-package com.github.paulschaaf.gargoyle.microtest
+package com.github.paulschaaf.gargoyle
 
+import android.content.Context
+import android.support.test.InstrumentationRegistry
+import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
+
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.runners.MockitoJUnitRunner
+
+import org.junit.Assert.*
 
 /**
  * Created by pschaaf on 9/3/17.
  */
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(AndroidJUnit4::class)
 class IFDBTest {
+  val title = "Zork I"
+
   val xmlResult = """
 <ifindex xmlns="http://babel.ifarchive.org/protocol/iFiction/" version="1.0">
   <story>
@@ -28,7 +35,7 @@ class IFDBTest {
       <format>hugo</format>
     </identification>
     <bibliographic>
-      <title>Zork I</title>
+      <title>${title}</title>
       <author>Marc Blank and Dave Lebling</author>
       <language>English, Castilian (en, es)</language>
       <firstpublished>1980</firstpublished>
@@ -61,7 +68,9 @@ class IFDBTest {
   @Test
   fun readFrom() {
     val ifID = "0dbnusxunq7fw5ro"
-    var story = IFDBFeedReader.createStoryFrom(ifID)
+    var stream = xmlResult.byteInputStream()
+    var story = IFDBFeedReader.createStoryFrom(stream)
+    assertEquals(title, story.title)
   }
 
 }
