@@ -60,8 +60,8 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
-        "story"       -> parseStory()
-        else          -> skip()
+        "story" -> parseStory()
+        else    -> skip()
       }
     }
     return story
@@ -75,8 +75,8 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         "colophon"       -> readColophon()
         "identification" -> readIdentification()
         "bibliographic"  -> readBibliographic()
-        "contact"        -> skip()
         "ifdb"           -> readIFDB()
+        "contact"        -> skip()
         else             -> skip()
       }
     }
@@ -114,7 +114,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         "genre"          -> story.genre = getText()
         "description"    -> story.description = getText()
         "series"         -> story.series = getText()
-        "seriesnumber"   -> story.seriesNumber = Integer.valueOf(getText())
+        "seriesnumber"   -> story.seriesNumber = getText().toIntOrNull()
         "forgiveness"    -> story.forgiveness = getText()
         else             -> skip()
       }
@@ -126,13 +126,13 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
-        "tuid"           -> skip()
+        "tuid"           -> story.id = getText()
         "link"           -> story.link = getText()
         "coverart"       -> readCoverArt()
-        "averageRating"  -> story.averageRating = getText().toDouble()
-        "starRating"     -> story.starRating = getText().toInt()
-        "ratingCountAvg" -> story.ratingCountAvg = getText().toInt()
-        "ratingCountTot" -> story.ratingCountTotal = getText().toInt()
+        "averageRating"  -> story.averageRating = getText().toDoubleOrNull()
+        "starRating"     -> story.starRating = getText().toIntOrNull()
+        "ratingCountAvg" -> story.ratingCountAvg = getText().toIntOrNull()
+        "ratingCountTot" -> story.ratingCountTotal = getText().toIntOrNull()
         else             -> skip()
       }
     }
@@ -149,10 +149,10 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     }
   }
 
-  private fun getText(): String {
+  private fun getText(default: String = ""): String {
     val elementName = parser.name
     parser.require(XmlPullParser.START_TAG, null, elementName)
-    var result = ""
+    var result = default
     if (parser.next() == XmlPullParser.TEXT) {
       result = parser.text
       parser.nextTag()
@@ -162,16 +162,18 @@ class IFDBFeedReader(val parser: XmlPullParser) {
   }
 
   private fun skip() {
-    if (parser.eventType != XmlPullParser.START_TAG) {
-      throw IllegalStateException()
-    }
-    var depth = 1
-    while (depth != 0) {
-      when (parser.next()) {
-        XmlPullParser.START_TAG -> depth++
-        XmlPullParser.END_TAG   -> depth--
+    if (parser.eventType == XmlPullParser.END_TAG) parser.next()
+    else {
+      if (parser.eventType != XmlPullParser.START_TAG) {
+        throw IllegalStateException()
+      }
+      var depth = 1
+      while (depth != 0) {
+        when (parser.next()) {
+          XmlPullParser.START_TAG -> depth++
+          XmlPullParser.END_TAG   -> depth--
+        }
       }
     }
   }
-
 }

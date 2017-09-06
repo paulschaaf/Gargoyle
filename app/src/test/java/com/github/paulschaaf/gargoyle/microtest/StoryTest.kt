@@ -19,12 +19,10 @@ class StoryTest {
       Author to "P.G. Schaaf",
       AverageRating to "4.5",
       AverageRating to "4.5",
-      Description to "The somewhat-long-awaited midquel",
+      Description to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
       FirstPublished to "5/6/2017",
       Forgiveness to "hard",
       Genre to "Adventure",
-      Collection to "Zork",
-      Headline to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
       _ID to 31415L,
       IFID to "ifid_zork_pi",
       Language to "EN/US",
@@ -61,8 +59,6 @@ class StoryTest {
       assertEquals(properties[FirstPublished], firstPublished)
       assertEquals(properties[Forgiveness], forgiveness)
       assertEquals(properties[Genre], genre)
-      assertEquals(properties[Collection], collection)
-      assertEquals(properties[Headline], headline)
       assertEquals(properties[IFID], ifId)
       assertEquals(properties[_ID], id)
       assertEquals(properties[Language], language)
