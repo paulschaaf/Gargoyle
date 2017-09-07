@@ -1,4 +1,4 @@
-package com.github.paulschaaf.gargoyle
+package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
 import android.text.Html
@@ -15,7 +15,7 @@ import org.junit.Assert.*
 
 @RunWith(AndroidJUnit4::class)
 class IFDBTest {
-  // http://ifdb.tads.org/viewgame?ifiction&id=0dbnusxunq7fw5ro
+  // http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&ifiction
   val baseURL = "http://ifdb.tads.org"
 
   inner class StoryXML(
@@ -99,7 +99,7 @@ class IFDBTest {
   fun handleSpecialCharacterFields() {
     val storyXML = StoryXML(
         author = "©2017, Rosencrantz & Guildenstern",
-        description = "This's as \"complicated\" as it gets<!>"
+        description = "This's as \"complicated\" <br> as <p/> <span></span>it gets<!>"
     )
     assertXMLMatchesStory(storyXML)
   }
@@ -112,7 +112,7 @@ class IFDBTest {
     assertXMLMatchesStory(storyXML)
   }
 
-  private fun assertXMLMatchesStory(storyXML: IFDBTest.StoryXML) {
+  private fun assertXMLMatchesStory(storyXML: StoryXML) {
     val story = IFDBFeedReader.createStoryFrom(storyXML.xml.byteInputStream())
     assertEquals("checking 'author':", storyXML.author, story.author)
     assertEquals("checking 'averageRating':", storyXML.averageRating, story.averageRating)
