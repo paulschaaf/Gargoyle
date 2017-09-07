@@ -68,23 +68,23 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
       override operator fun set(conValues: ContentValues, value: kotlin.Double?) = conValues.put(name, value)
     }
 
-    abstract class Float: Column<kotlin.Float?>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsFloat(name)
-      override operator fun set(conValues: ContentValues, value: kotlin.Float?) = conValues.put(name, value)
-    }
+//    abstract class Float: Column<kotlin.Float?>() {
+//      override operator fun get(conValues: ContentValues) = conValues.getAsFloat(name)
+//      override operator fun set(conValues: ContentValues, value: kotlin.Float?) = conValues.put(name, value)
+//    }
 
     abstract class Int: Column<kotlin.Int?>() {
       override operator fun get(conValues: ContentValues) = conValues.getAsInteger(name)
       override operator fun set(conValues: ContentValues, value: kotlin.Int?) = conValues.put(name, value)
     }
 
-    abstract class Long: Column<kotlin.Long?>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsLong(name)
-      override operator fun set(conValues: ContentValues, value: kotlin.Long?) = conValues.put(name, value)
-    }
+//    abstract class Long: Column<kotlin.Long?>() {
+//      override operator fun get(conValues: ContentValues) = conValues.getAsLong(name)
+//      override operator fun set(conValues: ContentValues, value: kotlin.Long?) = conValues.put(name, value)
+//    }
 
     abstract class String: Column<kotlin.String?>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsString(name)
+      override operator fun get(conValues: ContentValues) = conValues.get(name)?.toString()
       override operator fun set(conValues: ContentValues, value: kotlin.String?) = conValues.put(name, value?.trim())
     }
   }
@@ -95,6 +95,7 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
 
   object Author: Column.String()
   object AverageRating: Column.Double()
+  object CoverArtURL: Column.String()
   object Description: Column.String()
   object FirstPublished: Column.String()
   object Forgiveness: Column.String()
@@ -196,6 +197,12 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     get() = AverageRating[this]
     set(value) {
       AverageRating[this] = value
+    }
+
+  var coverArtURL
+    get() = CoverArtURL[this]
+    set(value) {
+      CoverArtURL[this] = value
     }
 
   var description

@@ -114,7 +114,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         "genre"          -> story.genre = getText()
         "description"    -> story.description = getText()
         "series"         -> story.series = getText()
-        "seriesnumber"   -> story.seriesNumber = getText().toIntOrNull()
+        "seriesnumber"   -> story.seriesNumber = getText()?.toIntOrNull()
         "forgiveness"    -> story.forgiveness = getText()
         else             -> skip()
       }
@@ -129,10 +129,10 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         "tuid"           -> story.id = getText()
         "link"           -> story.link = getText()
         "coverart"       -> readCoverArt()
-        "averageRating"  -> story.averageRating = getText().toDoubleOrNull()
-        "starRating"     -> story.starRating = getText().toIntOrNull()
-        "ratingCountAvg" -> story.ratingCountAvg = getText().toIntOrNull()
-        "ratingCountTot" -> story.ratingCountTotal = getText().toIntOrNull()
+        "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
+        "starRating"     -> story.starRating = getText()?.toIntOrNull()
+        "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
+        "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
         else             -> skip()
       }
     }
@@ -143,18 +143,20 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
-        "url" -> skip() // // todo pschaaf 09/247/17 22:09: download cover art
+        "url" -> story.coverArtURL = getText()
         else  -> skip()
       }
     }
   }
 
-  private fun getText(default: String = ""): String {
+  private fun getText(): String? {
     val elementName = parser.name
     parser.require(XmlPullParser.START_TAG, null, elementName)
-    var result = default
+    var result: String? = null
     if (parser.next() == XmlPullParser.TEXT) {
       result = parser.text
+      // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns the string "null".
+      if (result == "null") result = null
       parser.nextTag()
     }
     parser.require(XmlPullParser.END_TAG, null, elementName)
