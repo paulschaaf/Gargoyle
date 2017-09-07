@@ -1,59 +1,3 @@
-package com.github.paulschaaf.gargoyle.ifdb
-
-import android.util.Log
-import android.util.Xml
-import com.github.paulschaaf.gargoyle.model.Story
-import org.xmlpull.v1.XmlPullParser
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
-
-/**
- * Created by pschaaf on 9/3/17.
- */
-class IFDBFeedReader(val parser: XmlPullParser) {
-  companion object {
-    val CONNECT_TIMEOUT = 15000
-    val QUERY_URL = "http://ifdb.tads.org/viewgame?ifiction&id="
-    val READ_TIMEOUT = 10000
-    val TAG = "IFDBFeedReader"
-
-    //    @Throws(IOException::class, XmlPullParserException::class)
-    fun createStoryFrom(ifID: String): Story? {
-      val urlString = QUERY_URL + ifID
-      val conn = URL(urlString).openConnection() as HttpURLConnection
-      conn.apply {
-        readTimeout = READ_TIMEOUT
-        connectTimeout = CONNECT_TIMEOUT
-        requestMethod = "GET"
-        doInput = true
-      }
-
-      val inputStream = conn.inputStream
-      try {
-        conn.connect()
-        return createStoryFrom(inputStream)
-      }
-      catch (ex: Exception) {
-        Log.e(TAG, "Hit exception " + ex.toString())
-      }
-      finally {
-        inputStream.close()
-      }
-      return null
-    }
-
-    fun createStoryFrom(inputStream: InputStream): Story {
-      val parser = Xml.newPullParser().apply {
-        setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-        setInput(inputStream, null)
-      }
-      return IFDBFeedReader(parser).parseIFIndex()
-    }
-  }
-
-  val story = Story()
-
   private fun parseIFIndex(): Story {
     parser.next()
     parser.require(XmlPullParser.START_TAG, null, "ifindex");
@@ -68,7 +12,6 @@ class IFDBFeedReader(val parser: XmlPullParser) {
   }
 
   private fun parseStory() {
-    parser.require(XmlPullParser.START_TAG, null, "story");
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
@@ -83,31 +26,6 @@ class IFDBFeedReader(val parser: XmlPullParser) {
   }
 
   private fun readColophon() {
-    parser.require(XmlPullParser.START_TAG, null, "colophon")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      skip()
-    }
-  }
-
-  private fun readIdentification() {
-    parser.require(XmlPullParser.START_TAG, null, "identification")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "ifid"   -> story.ifId = getText()
-        "format" -> skip()
-        else     -> skip()
-      }
-    }
-  }
-
-  private fun readBibliographic() {
-    parser.require(XmlPullParser.START_TAG, null, "bibliographic")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "title"          -> story.title = getText()
         "author"         -> story.author = getText()
         "language"       -> story.language = getText()
         "firstpublished" -> story.firstPublished = getText()
