@@ -23,7 +23,7 @@ class StoryTest {
       FirstPublished to "5/6/2017",
       Forgiveness to "hard",
       Genre to "Adventure",
-      _ID to "31415",
+      _ID to 31415,
       IFID to "ifid_zork_pi",
       Language to "EN/US",
       Link to "http://paulschaaf.com/",

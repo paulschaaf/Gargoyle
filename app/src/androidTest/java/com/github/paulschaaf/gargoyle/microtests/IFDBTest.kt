@@ -26,7 +26,6 @@ class IFDBTest {
       var forgiveness: String? = "Cruel",
       var genre: String? = "Zorkian/Cave crawl",
       var ifId: String? = "ZCODE-88-840726",
-      var id: String? = "0dbnusxunq7fw5ro",
       var language: String? = "English, Castilian (en, es)",
       var series: String? = "Zork",
       var seriesNumber: Int? = 1,
@@ -34,9 +33,10 @@ class IFDBTest {
       var ratingCountTotal: Int? = 1789,
       var starRating: Int? = 4,
       var title: String? = "Zork I",
+      var tuid: String? = "0dbnusxunq7fw5ro",
 
       // derived properties
-      var link: String = "${baseURL}/viewgame?id=${id}",
+      var link: String = "${baseURL}/viewgame?id=${tuid}",
       var coverArtURL: String = link + "&coverart"
   ) {
 
@@ -73,7 +73,7 @@ class IFDBTest {
           </bibliographic>
           <contact/>
           <ifdb xmlns="${baseURL.toHtml()}/api/xmlns">
-            <tuid>${id}</tuid>
+            <tuid>${tuid}</tuid>
             <link>${link.toHtml()}</link>
             <coverart>
               <url>${coverArtURL.toHtml()}</url>
@@ -122,16 +122,16 @@ class IFDBTest {
     assertEquals("checking 'forgiveness':", storyXML.forgiveness, story.forgiveness)
     assertEquals("checking 'genre':", storyXML.genre, story.genre)
     assertEquals("checking 'ifId':", storyXML.ifId, story.ifId)
-    assertEquals("checking 'id':", storyXML.id, story.id)
     assertEquals("checking 'language':", storyXML.language, story.language)
     assertEquals("checking 'link':", storyXML.link, story.link)
     assertNotNull("checking 'lookedUp':", story.lookedUp)
-    assertEquals("checking 'series':", storyXML.series, story.series)
-    assertEquals("checking 'seriesNumber':", storyXML.seriesNumber, story.seriesNumber)
     assertEquals("checking 'ratingCountAvg':", storyXML.ratingCountAvg, story.ratingCountAvg)
     assertEquals("checking 'ratingCountTotal':", storyXML.ratingCountTotal, story.ratingCountTotal)
+    assertEquals("checking 'series':", storyXML.series, story.series)
+    assertEquals("checking 'seriesNumber':", storyXML.seriesNumber, story.seriesNumber)
     assertEquals("checking 'starRating':", storyXML.starRating, story.starRating)
     assertEquals("checking 'title':", storyXML.title, story.title)
+    assertEquals("checking 'tuid':", storyXML.tuid, story.tuid)
   }
 }
 

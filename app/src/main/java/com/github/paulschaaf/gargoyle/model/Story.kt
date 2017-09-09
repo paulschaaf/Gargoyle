@@ -11,51 +11,22 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   //
   // COMPANION OBJECT
   //
-
   companion object {
-//    val AUTHORITY = "org.andglk.hunkypunk.HunkyPunk"
-//    val CONTENT_URI = Uri.parseStory("content://$AUTHORITY/games")
-
-//    val CONTENT_TYPE = "vnd.android.cursor.dir/vnd.andglk.game"
-//    val CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.andglk.game"
-//    val DEFAULT_SORT_ORDER = "lower(title) ASC"
-
     fun valueOf(contentValues: ContentValues) = Story(contentValues)
-
-//    fun fromCursor(cursor: Cursor): Story? {
-//      return if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
-//        val cv = ContentValues()
-//        DatabaseUtils.cursorRowToContentValues(cursor, cv)
-//        valueOf(cv)
-//      }
-//      else null
-//    }
   }
 
-  constructor(): this(ContentValues())
-
-  constructor(id: String, link: String): this() {
-    this.id = id
-    this.link = link
+  constructor(): this(ContentValues()) {
+    lookedUp = Date().toString()
   }
-//  constructor(aFile: File): this() {
-//    path = aFile.absolutePath
-//    // read then set the ifId
-////    with(aFile) { ifId = Babel.examine(file) }
-//
-//    file = aFile
-//
-//    // connect to IFDB
-//
-//    // populate from IFDB
-//    contentValues = ContentValues()
-//
-//    // write to database
-//  }
 
   sealed class Column<T> {
-    val name
-      get() = this.javaClass.simpleName
+    override fun toString() = this.javaClass.simpleName
+    val name: kotlin.String
+      get() = toString()
+
+    operator fun plus(other: Any?) = name + other?.toString()
+
+    abstract val createSQL: kotlin.String
 
     operator fun get(story: Story): T = get(story.contentValues)
     operator fun set(story: Story, value: T) = set(story.contentValues, value)
@@ -66,32 +37,40 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     abstract class Double: Column<kotlin.Double?>() {
       override operator fun get(conValues: ContentValues) = conValues.getAsDouble(name)
       override operator fun set(conValues: ContentValues, value: kotlin.Double?) = conValues.put(name, value)
+      override val createSQL: kotlin.String
+        get() = "${name} DOUBLE"
     }
-
-//    abstract class Float: Column<kotlin.Float?>() {
-//      override operator fun get(conValues: ContentValues) = conValues.getAsFloat(name)
-//      override operator fun set(conValues: ContentValues, value: kotlin.Float?) = conValues.put(name, value)
-//    }
 
     abstract class Int: Column<kotlin.Int?>() {
       override operator fun get(conValues: ContentValues) = conValues.getAsInteger(name)
       override operator fun set(conValues: ContentValues, value: kotlin.Int?) = conValues.put(name, value)
+      override val createSQL: kotlin.String
+        get() = "${name} INTEGER"
     }
-
-//    abstract class Long: Column<kotlin.Long?>() {
-//      override operator fun get(conValues: ContentValues) = conValues.getAsLong(name)
-//      override operator fun set(conValues: ContentValues, value: kotlin.Long?) = conValues.put(name, value)
-//    }
 
     abstract class String: Column<kotlin.String?>() {
       override operator fun get(conValues: ContentValues) = conValues.get(name)?.toString()
       override operator fun set(conValues: ContentValues, value: kotlin.String?) = conValues.put(name, value?.trim())
+      override val createSQL: kotlin.String
+        get() = "${name} TEXT"
     }
   }
 
   //
   // COLUMN DEFINITIONS
   //
+
+  object _ID: Column.Int() {
+    override fun set(conValues: ContentValues, value: kotlin.Int?) = super.set(conValues, value!!)
+    override val createSQL: kotlin.String
+      get() = super.createSQL + " PRIMARY KEY"
+  }
+
+  object IFID: Column.String() {
+    override fun set(conValues: ContentValues, value: kotlin.String?) = super.set(conValues, value!!)
+    override val createSQL: kotlin.String
+      get() = super.createSQL + " UNIQUE NOT NULL"
+  }
 
   object Author: Column.String()
   object AverageRating: Column.Double()
@@ -100,8 +79,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   object FirstPublished: Column.String()
   object Forgiveness: Column.String()
   object Genre: Column.String()
-  object IFID: Column.String()
-  object _ID: Column.String()
   object Language: Column.String()
   object Link: Column.String()
   object LookedUp: Column.String()
@@ -112,6 +89,42 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   object RatingCountTotal: Column.Int()
   object StarRating: Column.Int()
   object Title: Column.String()
+  object TUID: Column.String()
+
+  object Table {
+    val name = "Story"
+    val columns = listOf(
+        _ID,
+        IFID,
+        Author,
+        AverageRating,
+        CoverArtURL,
+        Description,
+        FirstPublished,
+        Forgiveness,
+        Genre,
+        Language,
+        Link,
+        LookedUp,
+        Path,
+        Series,
+        SeriesNumber,
+        RatingCountAvg,
+        RatingCountTotal,
+        StarRating,
+        Title,
+        TUID
+    )
+
+    val createSQL: String
+      get() = columns
+          .map { it.createSQL }
+          .joinToString(
+              prefix = "CREATE TABLE ${name} (",
+              separator = ", ",
+              postfix = ");"
+          )
+  }
 
   //
   // METHODS
@@ -123,32 +136,11 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   // DERIVED PROPERTIES
   //
 
-//  val cover
-//    get() = File(Paths.COVERS.directory(), ifId)
-//
-//  val coverDrawable
-//    get() = if (cover.exists()) Drawable.createFromPath(cover.path) else null
-//
-//  val coverURI
-//    get() = if (cover.exists()) Uri.fromFile(cover) else null
-
   val exists: Boolean
     get() = file.exists()
 
   val file: File
     get() = File(path)
-
-  var ifId
-    get() = IFID[this]
-    set(value) {
-      IFID[this] = value
-//      val last = uri.lastPathSegment
-//      if (last == null) return
-//      id = java.lang.Long.parseLong(last)
-    }
-
-//  val uri
-//    get() = Uri.withAppendedPath(CONTENT_URI, ifId)
 
   var versionNumber = 0
     get() {
@@ -166,22 +158,6 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
         versionNumber.toString()
       }
     }
-
-
-  //
-  // NON-PUBLICLY-EDITABLE PROPERTIES
-  //
-
-  var lookedUp
-    get() = LookedUp[this]
-    private set(value) {
-      LookedUp[this] = value
-    }
-
-  init {
-    lookedUp = Date().toString()
-  }
-
 
   //
   // SIMPLE MAPPED PROPERTIES
@@ -235,6 +211,12 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
       _ID[this] = value
     }
 
+  var ifId
+    get() = IFID[this]
+    set(value) {
+      IFID[this] = value
+    }
+
   var language
     get() = Language[this]
     set(value) {
@@ -245,6 +227,12 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     get() = Link[this]
     set(value) {
       Link[this] = value
+    }
+
+  var lookedUp
+    get() = LookedUp[this]
+    set(value) {
+      LookedUp[this] = value
     }
 
   var path
@@ -288,5 +276,12 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     set(value) {
       Title[this] = value
     }
+
+  var tuid
+    get() = TUID[this]
+    set(value) {
+      TUID[this] = value
+    }
+
 }
 
