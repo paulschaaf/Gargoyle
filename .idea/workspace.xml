@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0424aead-c444-4201-b844-273dc7124934" name="Default" comment="Added DatabaseHelper and microtest">
+    <list default="true" id="0424aead-c444-4201-b844-273dc7124934" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/model/Story.kt" afterPath="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/model/Story.kt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt" afterPath="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt" />
     </list>
     <ignored path="gargoyle.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -63,8 +63,8 @@
           <file leaf-file-name="Story.kt" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/model/Story.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1516">
-                  <caret line="164" column="0" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+                <state relative-caret-position="742">
+                  <caret line="57" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
                   <folding>
                     <marker date="1504941379995" expanded="false" signature="4385:6321" ph="..." />
                   </folding>
@@ -103,10 +103,22 @@
           <file leaf-file-name="DatabaseHelper.kt" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="980">
-                  <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+                <state relative-caret-position="755">
+                  <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
                   <folding>
-                    <element signature="e#81#310#0" expanded="true" />
+                    <element signature="e#81#347#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Enum.kt" pinned="false" current-in-tab="false">
+            <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.1.4-3/3f64b358bd71a3b615c8cb90f35c3152492d4b27/kotlin-stdlib-1.1.4-3-sources.jar!/kotlin/Enum.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="126">
+                  <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
+                  <folding>
+                    <element signature="e#0#600#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -2073,9 +2085,9 @@
         <option value="$PROJECT_DIR$/app/src/androidTest/java/com/github/paulschaaf/gargoyle/microtests/DatabaseHelperTest.kt" />
         <option value="$PROJECT_DIR$/app/src/androidTest/java/com/github/paulschaaf/gargoyle/microtests/IFDBTest.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/ifdb/IFDBFeedReader.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt" />
         <option value="$PROJECT_DIR$/app/src/test/java/com/github/paulschaaf/gargoyle/microtests/DatabaseHelperTest.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/model/Story.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt" />
       </list>
     </option>
   </component>
@@ -2934,7 +2946,14 @@
       <option name="project" value="LOCAL" />
       <updated>1504941146480</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Added DatabaseHelper and microtest">
+      <created>1504941402581</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1504941402581</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2981,7 +3000,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32933533" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16441779" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16441779" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -3061,14 +3080,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/com/github/paulschaaf/gargoyle/microtests/IFDBTest.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1245">
-          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/com/github/paulschaaf/gargoyle/ExampleInstrumentedTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -3224,16 +3235,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="980">
-          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding>
-            <element signature="e#81#310#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/test/java/com/github/paulschaaf/gargoyle/microtests/DatabaseHelperTest.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
@@ -3256,10 +3257,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/model/Story.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1516">
-          <caret line="164" column="0" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+        <state relative-caret-position="742">
+          <caret line="57" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
           <folding>
             <marker date="1504941379995" expanded="false" signature="4385:6321" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.1.4-3/3f64b358bd71a3b615c8cb90f35c3152492d4b27/kotlin-stdlib-1.1.4-3-sources.jar!/kotlin/Enum.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#600#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/github/paulschaaf/gargoyle/DatabaseHelper.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="755">
+          <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+          <folding>
+            <element signature="e#81#347#0" expanded="true" />
           </folding>
         </state>
       </provider>
