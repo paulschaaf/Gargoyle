@@ -3,6 +3,7 @@ package com.github.paulschaaf.gargoyle
 /**
  * Created by pschaaf on 9/8/17.
  */
+import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -60,11 +61,61 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
     }
 
   companion object {
-    //    val Story = 1
+//    val Story = 1
 //    val GAME_ID = 2
 //    val GAME_IFID = 3
     val TAG = "DatabaseHelper"
     val DATABASE_NAME = "gargoyle.db"
     val DATABASE_VERSION = 2
+  }
+
+  /***
+   * Experimental
+   */
+
+  interface Column<T> {
+    val name: kotlin.String
+      get() = this.javaClass.simpleName
+
+    operator fun plus(other: Any?) = name + other?.toString()
+
+    val createSQL: kotlin.String
+
+    operator fun get(story: Story): T = get(story.contentValues)
+    operator fun set(story: Story, value: T) = set(story.contentValues, value)
+
+    operator fun get(conValues: ContentValues): T
+    operator fun set(conValues: ContentValues, value: T)
+
+    interface Double: Column<kotlin.Double?> {
+      override operator fun get(conValues: ContentValues) = conValues.getAsDouble(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Double?) = conValues.put(name, value)
+      override val createSQL: kotlin.String
+        get() = "${name} DOUBLE"
+    }
+
+    interface Int: Column<kotlin.Int?> {
+      override operator fun get(conValues: ContentValues) = conValues.getAsInteger(name)
+      override operator fun set(conValues: ContentValues, value: kotlin.Int?) = conValues.put(name, value)
+      override val createSQL: kotlin.String
+        get() = "${name} INTEGER"
+    }
+
+    interface String: Column<kotlin.String?> {
+      override operator fun get(conValues: ContentValues) = conValues.get(name)?.toString()
+      override operator fun set(conValues: ContentValues, value: kotlin.String?) = conValues.put(name, value?.trim())
+      override val createSQL: kotlin.String
+        get() = "${name} TEXT"
+    }
+  }
+  enum class StoryColumn() : Column {
+    Author {
+      override fun <T, U: Column.String> accessor(): U {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+      }
+    },
+    AverageRating;
+
+    abstract fun <T, U: Column<*>> accessor(): U
   }
 }
