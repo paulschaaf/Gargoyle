@@ -29,7 +29,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
     db.close()
   }
 
-//  fun deleteStory(story: Story): Int {
+//  fun deleteStory(story: Story): IntColumn {
 //    var success = true
 //    val storyFile = story.file
 //    if (storyFile != null && storyFile!!.exists()) success = success and storyFile!!.delete()
@@ -45,7 +45,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
   fun updateStory(story: Story) = writableDatabase.update(
       Story.Table.name,
       story.contentValues,
-      Story._ID + " = " + story.id,
+      "${Story.IntColumn._ID} = ${story.id}",
       null
   )
 
@@ -54,7 +54,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
   val newCursor: Cursor
     get() {
       val cursor = readableDatabase.query(Story.Table.name, null, null, null, null, null,
-                                          Story.Title + " COLLATE NOCASE")
+                                          Story.StringColumn.Title.columnName + " COLLATE NOCASE")
       cursor.moveToFirst()
       return cursor
     }

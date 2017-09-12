@@ -2,10 +2,15 @@ package com.github.paulschaaf.gargoyle.model
 
 import android.content.ContentValues
 import android.provider.BaseColumns
+import com.github.paulschaaf.gargoyle.database.Column
 
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.*
+import com.github.paulschaaf.gargoyle.model.Story.IntColumn.*
+import com.github.paulschaaf.gargoyle.model.Story.DoubleColumn.*
+import com.github.paulschaaf.gargoyle.model.Story.StringColumn.*
+
 
 class Story private constructor(val contentValues: ContentValues): BaseColumns {
   //
@@ -19,111 +24,67 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     lookedUp = Date().toString()
   }
 
-  sealed class Column<T> {
-    override fun toString() = this.javaClass.simpleName
-    val name: kotlin.String
-      get() = toString()
-
-    operator fun plus(other: Any?) = name + other?.toString()
-
-    abstract val createSQL: kotlin.String
-
-    operator fun get(story: Story): T = get(story.contentValues)
-    operator fun set(story: Story, value: T) = set(story.contentValues, value)
-
-    abstract operator fun get(conValues: ContentValues): T
-    abstract operator fun set(conValues: ContentValues, value: T)
-
-    abstract class Double: Column<kotlin.Double?>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsDouble(name)
-      override operator fun set(conValues: ContentValues, value: kotlin.Double?) = conValues.put(name, value)
-      override val createSQL: kotlin.String
-        get() = "${name} DOUBLE"
-    }
-
-    abstract class Int: Column<kotlin.Int?>() {
-      override operator fun get(conValues: ContentValues) = conValues.getAsInteger(name)
-      override operator fun set(conValues: ContentValues, value: kotlin.Int?) = conValues.put(name, value)
-      override val createSQL: kotlin.String
-        get() = "${name} INTEGER"
-    }
-
-    abstract class String: Column<kotlin.String?>() {
-      override operator fun get(conValues: ContentValues) = conValues.get(name)?.toString()
-      override operator fun set(conValues: ContentValues, value: kotlin.String?) = conValues.put(name, value?.trim())
-      override val createSQL: kotlin.String
-        get() = "${name} TEXT"
-    }
-  }
-
   //
   // COLUMN DEFINITIONS
   //
 
-  object _ID: Column.Int() {
-    override fun set(conValues: ContentValues, value: kotlin.Int?) = super.set(conValues, value!!)
-    override val createSQL: kotlin.String
-      get() = super.createSQL + " PRIMARY KEY"
+  enum class DoubleColumn(override var sqlNewColumnProperties: String = ""):
+      com.github.paulschaaf.gargoyle.database.DoubleColumn {
+    AverageRating;
+
+    override val columnName = name
   }
 
-  object IFID: Column.String() {
-    override fun set(conValues: ContentValues, value: kotlin.String?) = super.set(conValues, value!!)
-    override val createSQL: kotlin.String
-      get() = super.createSQL + " UNIQUE NOT NULL"
+
+  enum class IntColumn(override var sqlNewColumnProperties: String = ""):
+      com.github.paulschaaf.gargoyle.database.IntColumn {
+    _ID("PRIMARY KEY") {
+      override val columnName = "_id"
+    },
+    RatingCountAvg,
+    RatingCountTotal,
+    SeriesNumber,
+    StarRating;
+
+    override val columnName = name
   }
 
-  object Author: Column.String()
-  object AverageRating: Column.Double()
-  object CoverArtURL: Column.String()
-  object Description: Column.String()
-  object FirstPublished: Column.String()
-  object Forgiveness: Column.String()
-  object Genre: Column.String()
-  object Language: Column.String()
-  object Link: Column.String()
-  object LookedUp: Column.String()
-  object Path: Column.String()
-  object Series: Column.String()
-  object SeriesNumber: Column.Int()
-  object RatingCountAvg: Column.Int()
-  object RatingCountTotal: Column.Int()
-  object StarRating: Column.Int()
-  object Title: Column.String()
-  object TUID: Column.String()
+  enum class StringColumn(override var sqlNewColumnProperties: String = ""):
+      com.github.paulschaaf.gargoyle.database.StringColumn {
+    Author,
+    CoverArtURL,
+    Description,
+    FirstPublished,
+    Forgiveness,
+    Genre,
+    IFID("UNIQUE NOT NULL"),
+    Language,
+    Link,
+    LookedUp,
+    Path,
+    Series,
+    TUID,
+    Title;
+
+    override val columnName = name
+  }
 
   object Table {
     val name = "Story"
-    val columns = listOf(
-        _ID,
-        IFID,
-        Author,
-        AverageRating,
-        CoverArtURL,
-        Description,
-        FirstPublished,
-        Forgiveness,
-        Genre,
-        Language,
-        Link,
-        LookedUp,
-        Path,
-        Series,
-        SeriesNumber,
-        RatingCountAvg,
-        RatingCountTotal,
-        StarRating,
-        Title,
-        TUID
+
+    val columns: List<Column<*>> = listOf(
+        *IntColumn.values(),
+        *DoubleColumn.values(),
+        *StringColumn.values()
     )
 
-    val createSQL: String
-      get() = columns
-          .map { it.createSQL }
-          .joinToString(
-              prefix = "CREATE TABLE ${name} (",
-              separator = ", ",
-              postfix = ");"
-          )
+    val createSQL = columns
+      .map { it.createSQL }
+      .joinToString(
+          prefix = "CREATE TABLE $name (",
+          separator = ", ",
+          postfix = ");"
+      )
   }
 
   //
@@ -159,6 +120,7 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
       }
     }
 
+
   //
   // SIMPLE MAPPED PROPERTIES
   //
@@ -166,7 +128,7 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   var author
     get() = Author[this]
     set(value) {
-      Author[this] = value
+      Author[contentValues] = value
     }
 
   var averageRating
@@ -282,6 +244,5 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     set(value) {
       TUID[this] = value
     }
-
 }
 
