@@ -1,10 +1,10 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import com.github.paulschaaf.gargoyle.model.Story
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
-import org.junit.Assert.*
 
 /**
  * Created by pschaaf on 9/8/17.

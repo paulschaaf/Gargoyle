@@ -55,7 +55,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
 
   private fun parseIFIndex(): Story {
     parser.next()
-    parser.require(XmlPullParser.START_TAG, null, "ifindex");
+    parser.require(XmlPullParser.START_TAG, null, "ifindex")
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
@@ -67,7 +67,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
   }
 
   private fun parseStory() {
-    parser.require(XmlPullParser.START_TAG, null, "story");
+    parser.require(XmlPullParser.START_TAG, null, "story")
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {

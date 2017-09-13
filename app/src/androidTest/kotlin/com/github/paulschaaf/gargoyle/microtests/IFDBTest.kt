@@ -3,11 +3,10 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.support.test.runner.AndroidJUnit4
 import android.text.Html
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
-
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
 
 /**
  * Created by pschaaf on 9/3/17.

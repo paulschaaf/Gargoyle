@@ -2,10 +2,9 @@ package com.github.paulschaaf.gargoyle.model
 
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.StoryTable
-
 import java.io.File
 import java.io.RandomAccessFile
-import java.util.Date
+import java.util.*
 
 
 class Story private constructor(val contentValues: ContentValues) {

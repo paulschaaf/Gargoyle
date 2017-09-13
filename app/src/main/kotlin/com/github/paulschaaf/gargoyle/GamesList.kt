@@ -1,11 +1,9 @@
 package com.github.paulschaaf.gargoyle
 
 import android.annotation.SuppressLint
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.view.MotionEvent
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 
 /**
@@ -105,7 +103,7 @@ class GamesList: AppCompatActivity() {
   }
 
   /**
-   * Schedules a call to hide() in [delay] milliseconds, canceling any
+   * Schedules a call to hide() in the specified number of milliseconds, canceling any
    * previously scheduled calls.
    */
   private fun delayedHide(delayMillis: Int) {

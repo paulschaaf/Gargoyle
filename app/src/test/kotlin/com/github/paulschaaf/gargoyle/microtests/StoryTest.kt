@@ -3,11 +3,11 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.StoryTable
 import com.github.paulschaaf.gargoyle.model.Story
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import org.mockito.runners.MockitoJUnitRunner
 import java.io.InvalidObjectException
 
@@ -49,7 +49,7 @@ class StoryTest {
         is Long   -> `when`(contentValues.getAsLong(column.name)).thenReturn(value)
         is String -> `when`(contentValues.getAsString(column.name)).thenReturn(value.toString())
         else      -> {
-          throw InvalidObjectException("Test setup does not handle columns of ype " + value.javaClass.name + ".")
+          InvalidObjectException("Test setup does not handle columns of ype " + value.javaClass.name + ".")
         }
       }
     }
