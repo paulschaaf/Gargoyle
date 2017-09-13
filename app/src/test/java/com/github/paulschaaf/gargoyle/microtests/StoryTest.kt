@@ -94,13 +94,4 @@ class StoryTest {
     `when`(contentValues.getAsString(Author.name)).thenReturn(newAuthor)
     assertEquals(newAuthor, story.author)
   }
-
-  @Test
-  fun verifyFileExistsWorks() {
-    `when`(contentValues.get(Story.StringColumn.Path.columnName)).thenReturn("/no-such-file")
-    assertEquals(false, story.exists)
-
-    `when`(contentValues.get(Story.StringColumn.Path.columnName)).thenReturn("/dev/null")
-    assertEquals(true, story.exists)
-  }
 }

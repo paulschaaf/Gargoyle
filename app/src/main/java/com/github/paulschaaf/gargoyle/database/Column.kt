@@ -10,7 +10,7 @@ interface Column<T> {
     get() = ""
 
   val createSQL: String
-    get() = "$columnName $sqlDataType $sqlNewColumnProperties"
+    get() = "$columnName $sqlDataType $sqlNewColumnProperties".trim()
 
   operator fun get(story: Story): T? = get(story.contentValues)
   operator fun set(story: Story, value: T?) = set(story.contentValues, value)

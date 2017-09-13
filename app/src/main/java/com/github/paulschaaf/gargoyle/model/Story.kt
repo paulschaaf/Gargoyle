@@ -1,18 +1,14 @@
 package com.github.paulschaaf.gargoyle.model
 
 import android.content.ContentValues
-import android.provider.BaseColumns
 import com.github.paulschaaf.gargoyle.database.Column
 
 import java.io.File
 import java.io.RandomAccessFile
-import java.util.*
-import com.github.paulschaaf.gargoyle.model.Story.IntColumn.*
-import com.github.paulschaaf.gargoyle.model.Story.DoubleColumn.*
-import com.github.paulschaaf.gargoyle.model.Story.StringColumn.*
+import java.util.Date
 
 
-class Story private constructor(val contentValues: ContentValues): BaseColumns {
+class Story private constructor(val contentValues: ContentValues) {
   //
   // COMPANION OBJECT
   //
@@ -69,22 +65,13 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
     override val columnName = name
   }
 
-  object Table {
-    val name = "Story"
-
-    val columns: List<Column<*>> = listOf(
+  object Table: com.github.paulschaaf.gargoyle.database.Table {
+    override val name = "Story"
+    override val columns: List<Column<*>> = listOf(
         *IntColumn.values(),
         *DoubleColumn.values(),
         *StringColumn.values()
     )
-
-    val createSQL = columns
-      .map { it.createSQL }
-      .joinToString(
-          prefix = "CREATE TABLE $name (",
-          separator = ", ",
-          postfix = ");"
-      )
   }
 
   //
@@ -126,123 +113,123 @@ class Story private constructor(val contentValues: ContentValues): BaseColumns {
   //
 
   var author
-    get() = Author[this]
+    get() = StringColumn.Author[this]
     set(value) {
-      Author[contentValues] = value
+      StringColumn.Author[contentValues] = value
     }
 
   var averageRating
-    get() = AverageRating[this]
+    get() = DoubleColumn.AverageRating[this]
     set(value) {
-      AverageRating[this] = value
+      DoubleColumn.AverageRating[this] = value
     }
 
   var coverArtURL
-    get() = CoverArtURL[this]
+    get() = StringColumn.CoverArtURL[this]
     set(value) {
-      CoverArtURL[this] = value
+      StringColumn.CoverArtURL[this] = value
     }
 
   var description
-    get() = Description[this]
+    get() = StringColumn.Description[this]
     set(value) {
-      Description[this] = value
+      StringColumn.Description[this] = value
     }
 
   var firstPublished
-    get() = FirstPublished[this]
+    get() = StringColumn.FirstPublished[this]
     set(value) {
-      FirstPublished[this] = value
+      StringColumn.FirstPublished[this] = value
     }
 
   var forgiveness
-    get() = Forgiveness[this]
+    get() = StringColumn.Forgiveness[this]
     set(value) {
-      Forgiveness[this] = value
+      StringColumn.Forgiveness[this] = value
     }
 
   var genre
-    get() = Genre[this]
+    get() = StringColumn.Genre[this]
     set(value) {
-      Genre[this] = value
+      StringColumn.Genre[this] = value
     }
 
   var id
-    get() = _ID[this]
+    get() = IntColumn._ID[this]
     set(value) {
-      _ID[this] = value
+      IntColumn._ID[this] = value
     }
 
   var ifId
-    get() = IFID[this]
+    get() = StringColumn.IFID[this]
     set(value) {
-      IFID[this] = value
+      StringColumn.IFID[this] = value
     }
 
   var language
-    get() = Language[this]
+    get() = StringColumn.Language[this]
     set(value) {
-      Language[this] = value
+      StringColumn.Language[this] = value
     }
 
   var link
-    get() = Link[this]
+    get() = StringColumn.Link[this]
     set(value) {
-      Link[this] = value
+      StringColumn.Link[this] = value
     }
 
   var lookedUp
-    get() = LookedUp[this]
+    get() = StringColumn.LookedUp[this]
     set(value) {
-      LookedUp[this] = value
+      StringColumn.LookedUp[this] = value
     }
 
   var path
-    get() = Path[this]
+    get() = StringColumn.Path[this]
     protected set(value) {
-      Path[this] = value
+      StringColumn.Path[this] = value
     }
 
   var ratingCountAvg
-    get() = RatingCountAvg[this]
+    get() = IntColumn.RatingCountAvg[this]
     set(value) {
-      RatingCountAvg[this] = value
+      IntColumn.RatingCountAvg[this] = value
     }
 
   var ratingCountTotal
-    get() = RatingCountTotal[this]
+    get() = IntColumn.RatingCountTotal[this]
     set(value) {
-      RatingCountTotal[this] = value
+      IntColumn.RatingCountTotal[this] = value
     }
 
   var series
-    get() = Series[this]
+    get() = StringColumn.Series[this]
     set(value) {
-      Series[this] = value
+      StringColumn.Series[this] = value
     }
 
   var seriesNumber
-    get() = SeriesNumber[this]
+    get() = IntColumn.SeriesNumber[this]
     set(value) {
-      SeriesNumber[this] = value
+      IntColumn.SeriesNumber[this] = value
     }
 
   var starRating
-    get() = StarRating[this]
+    get() = IntColumn.StarRating[this]
     set(value) {
-      StarRating[this] = value
+      IntColumn.StarRating[this] = value
     }
 
   var title
-    get() = Title[this]
+    get() = StringColumn.Title[this]
     set(value) {
-      Title[this] = value
+      StringColumn.Title[this] = value
     }
 
   var tuid
-    get() = TUID[this]
+    get() = StringColumn.TUID[this]
     set(value) {
-      TUID[this] = value
+      StringColumn.TUID[this] = value
     }
-}
 
+}
