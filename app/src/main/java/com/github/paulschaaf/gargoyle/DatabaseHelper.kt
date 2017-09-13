@@ -30,7 +30,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
     db.close()
   }
 
-//  fun deleteStory(story: Story): IntColumn {
+//  fun deleteStory(story: Story): IntSqlColumn {
 //    var success = true
 //    val storyFile = story.file
 //    if (storyFile != null && storyFile!!.exists()) success = success and storyFile!!.delete()

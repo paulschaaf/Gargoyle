@@ -1,7 +1,7 @@
 package com.github.paulschaaf.gargoyle.database
 
-interface Table {
-  val columns: List<Column<*>>
+interface SqlTable {
+  val columns: List<SqlColumn<*>>
   val name: String
 
   val createSQL: String

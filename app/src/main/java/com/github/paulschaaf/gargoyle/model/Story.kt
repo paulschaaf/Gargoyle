@@ -1,7 +1,7 @@
 package com.github.paulschaaf.gargoyle.model
 
 import android.content.ContentValues
-import com.github.paulschaaf.gargoyle.database.Column
+import com.github.paulschaaf.gargoyle.database.SqlColumn
 
 import java.io.File
 import java.io.RandomAccessFile
@@ -25,7 +25,7 @@ class Story private constructor(val contentValues: ContentValues) {
   //
 
   enum class DoubleColumn(override var sqlNewColumnProperties: String = ""):
-      com.github.paulschaaf.gargoyle.database.DoubleColumn {
+      com.github.paulschaaf.gargoyle.database.DoubleSqlColumn {
     AverageRating;
 
     override val columnName = name
@@ -33,7 +33,7 @@ class Story private constructor(val contentValues: ContentValues) {
 
 
   enum class IntColumn(override var sqlNewColumnProperties: String = ""):
-      com.github.paulschaaf.gargoyle.database.IntColumn {
+      com.github.paulschaaf.gargoyle.database.IntSqlColumn {
     _ID("PRIMARY KEY") {
       override val columnName = "_id"
     },
@@ -46,7 +46,7 @@ class Story private constructor(val contentValues: ContentValues) {
   }
 
   enum class StringColumn(override var sqlNewColumnProperties: String = ""):
-      com.github.paulschaaf.gargoyle.database.StringColumn {
+      com.github.paulschaaf.gargoyle.database.StringSqlColumn {
     Author,
     CoverArtURL,
     Description,
@@ -65,9 +65,9 @@ class Story private constructor(val contentValues: ContentValues) {
     override val columnName = name
   }
 
-  object Table: com.github.paulschaaf.gargoyle.database.Table {
+  object Table: com.github.paulschaaf.gargoyle.database.SqlTable {
     override val name = "Story"
-    override val columns: List<Column<*>> = listOf(
+    override val columns: List<SqlColumn<*>> = listOf(
         *IntColumn.values(),
         *DoubleColumn.values(),
         *StringColumn.values()

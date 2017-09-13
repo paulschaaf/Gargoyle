@@ -3,7 +3,7 @@ package com.github.paulschaaf.gargoyle.database
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.model.Story
 
-interface Column<T> {
+interface SqlColumn<T> {
   val columnName: String
   val sqlDataType: String
   val sqlNewColumnProperties: String
@@ -22,7 +22,7 @@ interface Column<T> {
   operator fun set(map: MutableMap<String, T?>, value: T?) = map.put(columnName, value)
 }
 
-interface DoubleColumn: Column<Double> {
+interface DoubleSqlColumn: SqlColumn<Double> {
   override val sqlDataType
     get() = "DOUBLE"
 
@@ -30,7 +30,7 @@ interface DoubleColumn: Column<Double> {
   override fun set(conValues: ContentValues, value: Double?) = conValues.put(columnName, value)
 }
 
-interface IntColumn: Column<Int> {
+interface IntSqlColumn: SqlColumn<Int> {
   override val sqlDataType
     get() = "INTEGER"
 
@@ -38,7 +38,7 @@ interface IntColumn: Column<Int> {
   override fun set(conValues: ContentValues, value: Int?) = conValues.put(columnName, value)
 }
 
-interface StringColumn: Column<String> {
+interface StringSqlColumn: SqlColumn<String> {
   override val sqlDataType
     get() = "TEXT"
 
