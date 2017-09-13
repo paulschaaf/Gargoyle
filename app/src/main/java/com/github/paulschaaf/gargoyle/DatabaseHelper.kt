@@ -3,7 +3,6 @@ package com.github.paulschaaf.gargoyle
 /**
  * Created by pschaaf on 9/8/17.
  */
-import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -12,25 +11,25 @@ import android.util.Log
 import com.github.paulschaaf.gargoyle.model.Story
 
 class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-  override fun onCreate(db: SQLiteDatabase) = db.execSQL(Story.Table.createSQL)
+  override fun onCreate(db: SQLiteDatabase) = db.execSQL(Story.table.createSQL)
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
   fun insertStory(story: Story): Long {
     val writableDatabase = writableDatabase
-    val rowID = writableDatabase.insert(Story.Table.name, null, story.contentValues)
+    val rowID = writableDatabase.insert(Story.table.name, null, story.contentValues)
     if (rowID == -1L) Log.e(TAG, "The insert failed!")
     return rowID
   }
 
   fun rebuildDatabase() {
     val db = writableDatabase
-    db.execSQL("DROP TABLE " + Story.Table.name);
+    db.execSQL("DROP TABLE " + Story.table.name)
 //    db.delete(Story.TableName, null, null)
     db.close()
   }
 
-//  fun deleteStory(story: Story): IntSqlColumn {
+//  fun deleteStory(story: Story): IIntColumn {
 //    var success = true
 //    val storyFile = story.file
 //    if (storyFile != null && storyFile!!.exists()) success = success and storyFile!!.delete()
@@ -44,9 +43,9 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 //  }
 
   fun updateStory(story: Story) = writableDatabase.update(
-      Story.Table.name,
+      Story.table.name,
       story.contentValues,
-      "${Story.IntColumn._ID} = ${story.id}",
+      "${Story.table._ID} = ${story.id}",
       null
   )
 
@@ -54,8 +53,8 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 
   val newCursor: Cursor
     get() {
-      val cursor = readableDatabase.query(Story.Table.name, null, null, null, null, null,
-                                          Story.StringColumn.Title.columnName + " COLLATE NOCASE")
+      val cursor = readableDatabase.query(Story.table.name, null, null, null, null, null,
+                                          Story.table.Title.name + " COLLATE NOCASE")
       cursor.moveToFirst()
       return cursor
     }

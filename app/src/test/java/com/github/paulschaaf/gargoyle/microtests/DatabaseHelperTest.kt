@@ -14,12 +14,12 @@ import org.junit.Assert.*
 class DatabaseHelperTest {
   @Test
   fun createSQLContainsAllFields() {
-    val tableDef = Story.Table.createSQL
+    val tableDef = Story.table.createSQL
       .split(",", "(", ")")
       .map { str -> str.trim() }
       .toSet()
 
-    Story.Table.columns
+    Story.table.columns
       .map { col -> col.createSQL }
       .forEach { colDef -> assertTrue("Could not find the column definition '$colDef' in this createSQL: $tableDef", tableDef.contains(colDef)) }
   }
