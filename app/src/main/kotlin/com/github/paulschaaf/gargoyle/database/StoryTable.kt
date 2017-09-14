@@ -20,28 +20,28 @@ package com.github.paulschaaf.gargoyle.database
 object StoryTable: SqlTable {
   override val name = "Story"
 
-  val AverageRating = DoubleColumn("AverageRating")
+  val AverageRating = DoubleColumn("averageRating")
 
-  val Author = StringColumn("Author")
+  val Author = StringColumn("author")
   val CoverArtURL = StringColumn("coverArtURL")
   val Description = StringColumn("description")
-  val FirstPublished = StringColumn("FirstPublished")
-  val Forgiveness = StringColumn("Forgiveness")
-  val Genre = StringColumn("Genre")
+  val FirstPublished = StringColumn("firstPublished")
+  val Forgiveness = StringColumn("forgiveness")
+  val Genre = StringColumn("genre")
   val IFID = StringColumn.nonNull("IFID", "UNIQUE NOT NULL")
-  val Language = StringColumn("Language")
-  val Link = StringColumn("Link")
-  val LookedUp = StringColumn("LookedUp")
-  val Path = StringColumn("Path")
-  val Series = StringColumn("Series")
-  val TUID = StringColumn("TUID")
-  val Title = StringColumn("Title")
+  val Language = StringColumn("language")
+  val Link = StringColumn("link")
+  val LookedUp = StringColumn("lookedUp")
+  val Path = StringColumn("path")
+  val Series = StringColumn("series")
+  val TUID = StringColumn("tUID")
+  val Title = StringColumn("title")
 
   val _ID = IntColumn.nonNull("_id", "PRIMARY KEY")
-  val RatingCountAvg = IntColumn("RatingCountAvg")
-  val RatingCountTotal = IntColumn("RatingCountTotal")
-  val SeriesNumber = IntColumn("SeriesNumber")
-  val StarRating = IntColumn("StarRating")
+  val RatingCountAvg = IntColumn("ratingCountAvg")
+  val RatingCountTotal = IntColumn("ratingCountTotal")
+  val SeriesNumber = IntColumn("seriesNumber")
+  val StarRating = DoubleColumn("starRating")
 
   override val columns: List<IColumn<*>> = listOf(
       _ID,

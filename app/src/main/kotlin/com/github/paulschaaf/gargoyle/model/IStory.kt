@@ -39,5 +39,5 @@ interface IStory {
   val ratingCountAvg: Int?
   val ratingCountTotal: Int?
   val seriesNumber: Int?
-  val starRating: Int?
+  val starRating: Double?
 }

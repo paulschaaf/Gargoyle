@@ -51,7 +51,7 @@ class StoryTest {
         RatingCountTotal to 137,
         Series to "Zork",
         SeriesNumber to 5,
-        StarRating to 5,
+        StarRating to 5.0,
         Title to "Zork 3.14"
     )
   }

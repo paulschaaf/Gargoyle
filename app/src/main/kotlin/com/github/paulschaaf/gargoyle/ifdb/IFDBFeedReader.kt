@@ -35,7 +35,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     val READ_TIMEOUT = 10000
     val TAG = "IFDBFeedReader"
 
-    fun createStoryFrom(ifID: String): Story? {
+    fun createStoryFrom(ifID: String): Story {
       val urlString = QUERY_URL + ifID
       val conn = URL(urlString).openConnection() as HttpURLConnection
       conn.apply {
@@ -56,7 +56,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
       finally {
         inputStream.close()
       }
-      return null
+      return Story()
     }
 
     fun createStoryFrom(inputStream: InputStream): Story {
@@ -146,7 +146,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         "link"           -> story.link = getText()
         "coverart"       -> readCoverArt()
         "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
-        "starRating"     -> story.starRating = getText()?.toIntOrNull()
+        "starRating"     -> story.starRating = getText()?.toDoubleOrNull()
         "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
         "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
         else             -> skip()
