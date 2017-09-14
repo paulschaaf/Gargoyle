@@ -111,7 +111,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       when (parser.name) {
-        "ifid"   -> story.ifId = getText()
+        "ifid"   -> story.ifId = getText() ?: "-error-"
         "format" -> skip()
         else     -> skip()
       }

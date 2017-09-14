@@ -106,6 +106,11 @@ class IFDBTest {
   }
 
   @Test
+  fun checkZorkAuthor() {
+    assertEquals("Marc Blank and Dave Lebling", SampleGameXML.ZorkI.author)
+  }
+
+  @Test
   fun readZorkI() {
     val storyXML = StoryXML()
     assertXMLMatchesStory(storyXML)

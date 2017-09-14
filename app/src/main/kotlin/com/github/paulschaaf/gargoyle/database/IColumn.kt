@@ -28,46 +28,60 @@ interface IColumn<T> {
   val createSQL: String
     get() = "$name $sqlDataType $createProperties".trim()
 
-  operator fun get(story: Story): T? = get(story.contentValues)
-  operator fun set(story: Story, value: T?) = set(story.contentValues, value)
+  operator fun get(story: Story): T = get(story.contentValues)
+  operator fun set(story: Story, value: T) = set(story.contentValues, value)
 
-  operator fun get(conValues: ContentValues): T?
-  operator fun set(conValues: ContentValues, value: T?)
+  operator fun get(conValues: ContentValues): T
+  operator fun set(conValues: ContentValues, value: T)
 
-  operator fun get(map: Map<String, T?>): T? = map[name]
-  operator fun set(map: MutableMap<String, T?>, value: T?) = map.put(name, value)
+  operator fun get(map: Map<String, T>): T? = map[name]
+  operator fun set(map: MutableMap<String, T>, value: T) = map.put(name, value)
 }
 
-interface IDoubleColumn: IColumn<Double> {
+interface IDoubleColumn<T: Double?>: IColumn<T> {
   override val sqlDataType
     get() = "DOUBLE"
 
-  override fun get(conValues: ContentValues): Double? = conValues.getAsDouble(name)
-  override fun set(conValues: ContentValues, value: Double?) = conValues.put(name, value)
+  @Suppress("UNCHECKED_CAST")
+  override fun get(conValues: ContentValues): T = conValues.getAsDouble(name) as T
+
+  override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
 }
 
-interface IIntColumn: IColumn<Int> {
+interface IIntColumn<T: Int?>: IColumn<T> {
   override val sqlDataType
     get() = "INTEGER"
 
-  override fun get(conValues: ContentValues): Int? = conValues.getAsInteger(name)
-  override fun set(conValues: ContentValues, value: Int?) = conValues.put(name, value)
+  @Suppress("UNCHECKED_CAST")
+  override fun get(conValues: ContentValues): T = conValues.getAsInteger(name) as T
+
+  override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
 }
 
-interface IStringColumn: IColumn<String> {
+interface IStringColumn<T: String?>: IColumn<T> {
   override val sqlDataType
     get() = "TEXT"
 
-  override fun get(conValues: ContentValues): String? = conValues.getAsString(name)
-  override fun set(conValues: ContentValues, value: String?) = conValues.put(name, value)
+  @Suppress("UNCHECKED_CAST")
+  override fun get(conValues: ContentValues): T = conValues.getAsString(name) as T
+
+  override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
 }
 
 class DoubleColumn(override val name: String, override val createProperties: String = ""):
-    IDoubleColumn
+    IDoubleColumn<Double?> {
+  class nonNull(override val name: String, override val createProperties: String = ""):
+      IDoubleColumn<Double>
+}
 
 class IntColumn(override val name: String, override val createProperties: String = ""):
-    IIntColumn
+    IIntColumn<Int?> {
+  class nonNull(override val name: String, override val createProperties: String = ""):
+      IIntColumn<Int>
+}
 
 class StringColumn(override val name: String, override val createProperties: String = ""):
-    IStringColumn
-
+    IStringColumn<String?> {
+  class nonNull(override val name: String, override val createProperties: String = ""):
+      IStringColumn<String>
+}

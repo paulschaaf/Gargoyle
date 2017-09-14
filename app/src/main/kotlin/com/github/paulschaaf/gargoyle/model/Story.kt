@@ -24,7 +24,7 @@ import java.io.RandomAccessFile
 import java.util.*
 
 
-class Story private constructor(val contentValues: ContentValues) {
+class Story private constructor(val contentValues: ContentValues): IStory {
   //
   // COMPANION OBJECT
   //
@@ -78,121 +78,121 @@ class Story private constructor(val contentValues: ContentValues) {
   // SIMPLE MAPPED PROPERTIES
   //
 
-  var author
+  override var author
     get() = table.Author[this]
     set(value) {
       table.Author[contentValues] = value
     }
 
-  var averageRating
+  override var averageRating
     get() = table.AverageRating[this]
     set(value) {
       table.AverageRating[this] = value
     }
 
-  var coverArtURL
+  override var coverArtURL
     get() = table.CoverArtURL[this]
     set(value) {
       table.CoverArtURL[this] = value
     }
 
-  var description
+  override var description
     get() = table.Description[this]
     set(value) {
       table.Description[this] = value
     }
 
-  var firstPublished
+  override var firstPublished
     get() = table.FirstPublished[this]
     set(value) {
       table.FirstPublished[this] = value
     }
 
-  var forgiveness
+  override var forgiveness
     get() = table.Forgiveness[this]
     set(value) {
       table.Forgiveness[this] = value
     }
 
-  var genre
+  override var genre
     get() = table.Genre[this]
     set(value) {
       table.Genre[this] = value
     }
 
-  var id
+  override var id
     get() = table._ID[this]
     set(value) {
       table._ID[this] = value
     }
 
-  var ifId
+  override var ifId
     get() = table.IFID[this]
     set(value) {
       table.IFID[this] = value
     }
 
-  var language
+  override var language
     get() = table.Language[this]
     set(value) {
       table.Language[this] = value
     }
 
-  var link
+  override var link
     get() = table.Link[this]
     set(value) {
       table.Link[this] = value
     }
 
-  var lookedUp
+  override var lookedUp
     get() = table.LookedUp[this]
     set(value) {
       table.LookedUp[this] = value
     }
 
-  var path
+  override var path
     get() = table.Path[this]
     protected set(value) {
       table.Path[this] = value
     }
 
-  var ratingCountAvg
+  override var ratingCountAvg
     get() = table.RatingCountAvg[this]
     set(value) {
       table.RatingCountAvg[this] = value
     }
 
-  var ratingCountTotal
+  override var ratingCountTotal
     get() = table.RatingCountTotal[this]
     set(value) {
       table.RatingCountTotal[this] = value
     }
 
-  var series
+  override var series
     get() = table.Series[this]
     set(value) {
       table.Series[this] = value
     }
 
-  var seriesNumber
+  override var seriesNumber
     get() = table.SeriesNumber[this]
     set(value) {
       table.SeriesNumber[this] = value
     }
 
-  var starRating
+  override var starRating
     get() = table.StarRating[this]
     set(value) {
       table.StarRating[this] = value
     }
 
-  var title
+  override var title
     get() = table.Title[this]
     set(value) {
       table.Title[this] = value
     }
 
-  var tuid
+  override var tuid
     get() = table.TUID[this]
     set(value) {
       table.TUID[this] = value
