@@ -1,20 +1,3 @@
-/*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
- * This file is part of Gargoyle.
- * Gargoyle is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -23,7 +6,7 @@ android {
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "com.github.paulschaaf.gargoyle"
-        minSdkVersion 24
+        minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -43,10 +26,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:support-v4:26.+'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    compile 'com.android.support:design:26.+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    testCompile 'org.mockito:mockito-core:1.10.19'
 }
 repositories {
     mavenCentral()
