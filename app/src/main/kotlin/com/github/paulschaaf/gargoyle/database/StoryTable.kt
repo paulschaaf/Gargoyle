@@ -17,51 +17,52 @@
 
 package com.github.paulschaaf.gargoyle.database
 
+
 object StoryTable: SqlTable {
   override val name = "Story"
 
-  val AverageRating = DoubleColumn("averageRating")
+  val id = IntColumn.nonNull("_id", "PRIMARY KEY")
+  val ifid = StringColumn.nonNull("ifid", "UNIQUE NOT NULL")
 
-  val Author = StringColumn("author")
-  val CoverArtURL = StringColumn("coverArtURL")
-  val Description = StringColumn("description")
-  val FirstPublished = StringColumn("firstPublished")
-  val Forgiveness = StringColumn("forgiveness")
-  val Genre = StringColumn("genre")
-  val IFID = StringColumn.nonNull("IFID", "UNIQUE NOT NULL")
-  val Language = StringColumn("language")
-  val Link = StringColumn("link")
-  val LookedUp = StringColumn("lookedUp")
-  val Path = StringColumn("path")
-  val Series = StringColumn("series")
-  val TUID = StringColumn("tUID")
-  val Title = StringColumn("title")
+  val averageRating = DoubleColumn("averageRating")
+  val author = StringColumn("author")
+  val coverArtURL = StringColumn("coverArtURL")
+  val description = StringColumn("description")
+  val firstPublished = StringColumn("firstPublished")
+  val forgiveness = StringColumn("forgiveness")
+  val genre = StringColumn("genre")
+  val language = StringColumn("language")
+  val link = StringColumn("link")
+  val lookedUp = StringColumn("lookedUp")
+  val path = StringColumn("path")
+  val series = StringColumn("series")
+  val tuid = StringColumn("tuid")
 
-  val _ID = IntColumn.nonNull("_id", "PRIMARY KEY")
-  val RatingCountAvg = IntColumn("ratingCountAvg")
-  val RatingCountTotal = IntColumn("ratingCountTotal")
-  val SeriesNumber = IntColumn("seriesNumber")
-  val StarRating = DoubleColumn("starRating")
+  val title = StringColumn("title")
+  val ratingCountAvg = IntColumn("ratingCountAvg")
+  val ratingCountTotal = IntColumn("ratingCountTotal")
+  val seriesNumber = IntColumn("seriesNumber")
+  val starRating = DoubleColumn("starRating")
 
   override val columns: List<IColumn<*>> = listOf(
-      _ID,
-      Author,
-      AverageRating,
-      CoverArtURL,
-      Description,
-      FirstPublished,
-      Forgiveness,
-      Genre,
-      IFID,
-      Language,
-      Link,
-      LookedUp,
-      Path,
-      RatingCountAvg,
-      RatingCountTotal,
-      Series,
-      SeriesNumber,
-      TUID,
-      Title
+      id,
+      author,
+      averageRating,
+      coverArtURL,
+      description,
+      firstPublished,
+      forgiveness,
+      genre,
+      ifid,
+      language,
+      link,
+      lookedUp,
+      path,
+      ratingCountAvg,
+      ratingCountTotal,
+      series,
+      seriesNumber,
+      tuid,
+      title
   )
 }

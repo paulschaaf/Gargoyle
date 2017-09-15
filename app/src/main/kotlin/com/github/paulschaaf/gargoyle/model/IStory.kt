@@ -18,7 +18,11 @@
 package com.github.paulschaaf.gargoyle.model
 
 interface IStory {
+  val id: Int
+  val ifId: String
+
   val averageRating: Double?
+  val starRating: Double?
 
   val author: String?
   val coverArtURL: String?
@@ -26,7 +30,6 @@ interface IStory {
   val firstPublished: String?
   val forgiveness: String?
   val genre: String?
-  val ifId: String
   val language: String?
   val link: String?
   val lookedUp: String?
@@ -35,9 +38,7 @@ interface IStory {
   val tuid: String?
   val title: String?
 
-  val id: Int
   val ratingCountAvg: Int?
   val ratingCountTotal: Int?
   val seriesNumber: Int?
-  val starRating: Double?
 }

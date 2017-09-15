@@ -18,16 +18,22 @@
 package com.github.paulschaaf.gargoyle.model
 
 import android.content.ContentValues
+import com.github.paulschaaf.gargoyle.database.IColumn
 import com.github.paulschaaf.gargoyle.database.StoryTable
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.*
-
+import kotlin.reflect.KProperty
 
 class Story private constructor(val contentValues: ContentValues): IStory {
-  //
-  // COMPANION OBJECT
-  //
+  // Allow me to delegate property access to an IColumn wrapping my contentValues
+  operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
+      = get(story.contentValues)
+
+  operator fun <T> IColumn<T>.setValue(story: Story, property: KProperty<*>, value: T)
+      = set(story.contentValues, value)
+
+
   companion object {
     fun valueOf(contentValues: ContentValues) = Story(contentValues)
 
@@ -37,11 +43,6 @@ class Story private constructor(val contentValues: ContentValues): IStory {
   constructor(): this(ContentValues()) {
     lookedUp = Date().toString()
   }
-
-
-  //
-  // METHODS
-  //
 
   override fun toString() = title + " #" + ifId
 
@@ -78,123 +79,24 @@ class Story private constructor(val contentValues: ContentValues): IStory {
   // SIMPLE MAPPED PROPERTIES
   //
 
-  override var author
-    get() = table.Author[this]
-    set(value) {
-      table.Author[contentValues] = value
-    }
-
-  override var averageRating
-    get() = table.AverageRating[this]
-    set(value) {
-      table.AverageRating[this] = value
-    }
-
-  override var coverArtURL
-    get() = table.CoverArtURL[this]
-    set(value) {
-      table.CoverArtURL[this] = value
-    }
-
-  override var description
-    get() = table.Description[this]
-    set(value) {
-      table.Description[this] = value
-    }
-
-  override var firstPublished
-    get() = table.FirstPublished[this]
-    set(value) {
-      table.FirstPublished[this] = value
-    }
-
-  override var forgiveness
-    get() = table.Forgiveness[this]
-    set(value) {
-      table.Forgiveness[this] = value
-    }
-
-  override var genre
-    get() = table.Genre[this]
-    set(value) {
-      table.Genre[this] = value
-    }
-
-  override var id
-    get() = table._ID[this]
-    set(value) {
-      table._ID[this] = value
-    }
-
-  override var ifId
-    get() = table.IFID[this]
-    set(value) {
-      table.IFID[this] = value
-    }
-
-  override var language
-    get() = table.Language[this]
-    set(value) {
-      table.Language[this] = value
-    }
-
-  override var link
-    get() = table.Link[this]
-    set(value) {
-      table.Link[this] = value
-    }
-
-  override var lookedUp
-    get() = table.LookedUp[this]
-    set(value) {
-      table.LookedUp[this] = value
-    }
-
-  override var path
-    get() = table.Path[this]
-    protected set(value) {
-      table.Path[this] = value
-    }
-
-  override var ratingCountAvg
-    get() = table.RatingCountAvg[this]
-    set(value) {
-      table.RatingCountAvg[this] = value
-    }
-
-  override var ratingCountTotal
-    get() = table.RatingCountTotal[this]
-    set(value) {
-      table.RatingCountTotal[this] = value
-    }
-
-  override var series
-    get() = table.Series[this]
-    set(value) {
-      table.Series[this] = value
-    }
-
-  override var seriesNumber
-    get() = table.SeriesNumber[this]
-    set(value) {
-      table.SeriesNumber[this] = value
-    }
-
-  override var starRating
-    get() = table.StarRating[this]
-    set(value) {
-      table.StarRating[this] = value
-    }
-
-  override var title
-    get() = table.Title[this]
-    set(value) {
-      table.Title[this] = value
-    }
-
-  override var tuid
-    get() = table.TUID[this]
-    set(value) {
-      table.TUID[this] = value
-    }
+  override var author by table.author
+  override var averageRating by table.averageRating
+  override var coverArtURL by table.coverArtURL
+  override var description by table.description
+  override var firstPublished by table.firstPublished
+  override var forgiveness by table.forgiveness
+  override var genre by table.genre
+  override var id by table.id
+  override var ifId by table.ifid
+  override var language by table.language
+  override var link by table.link
+  override var lookedUp by table.lookedUp
+  override var path by table.path
+  override var ratingCountAvg by table.ratingCountAvg
+  override var ratingCountTotal by table.ratingCountTotal
+  override var series by table.series
+  override var seriesNumber by table.seriesNumber
+  override var starRating by table.starRating
+  override var title by table.title
+  override var tuid by table.tuid
 }

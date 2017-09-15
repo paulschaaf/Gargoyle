@@ -18,7 +18,7 @@
 package com.github.paulschaaf.gargoyle.database
 
 import android.content.ContentValues
-import com.github.paulschaaf.gargoyle.model.Story
+import kotlin.reflect.KProperty
 
 interface IColumn<T> {
   val name: String
@@ -28,14 +28,14 @@ interface IColumn<T> {
   val createSQL: String
     get() = "$name $sqlDataType $createProperties".trim()
 
-  operator fun get(story: Story): T = get(story.contentValues)
-  operator fun set(story: Story, value: T) = set(story.contentValues, value)
+  operator fun getValue(conValues: ContentValues, property: KProperty<*>): T
+      = get(conValues)
+
+  operator fun setValue(conValues: ContentValues, property: KProperty<*>, value: T)
+      = set(conValues, value)
 
   operator fun get(conValues: ContentValues): T
   operator fun set(conValues: ContentValues, value: T)
-
-  operator fun get(map: Map<String, T>): T? = map[name]
-  operator fun set(map: MutableMap<String, T>, value: T) = map.put(name, value)
 }
 
 interface IDoubleColumn<T: Double?>: IColumn<T> {
@@ -46,6 +46,8 @@ interface IDoubleColumn<T: Double?>: IColumn<T> {
   override fun get(conValues: ContentValues): T = conValues.getAsDouble(name) as T
 
   override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
+
+  interface nonNull: IDoubleColumn<Double>
 }
 
 interface IIntColumn<T: Int?>: IColumn<T> {
@@ -56,6 +58,8 @@ interface IIntColumn<T: Int?>: IColumn<T> {
   override fun get(conValues: ContentValues): T = conValues.getAsInteger(name) as T
 
   override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
+
+  interface nonNull: IIntColumn<Int>
 }
 
 interface IStringColumn<T: String?>: IColumn<T> {
@@ -66,22 +70,28 @@ interface IStringColumn<T: String?>: IColumn<T> {
   override fun get(conValues: ContentValues): T = conValues.getAsString(name) as T
 
   override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
+
+  interface nonNull: IStringColumn<String>
 }
 
-class DoubleColumn(override val name: String, override val createProperties: String = ""):
+
+open class DoubleColumn(override val name: String, override val createProperties: String = ""):
     IDoubleColumn<Double?> {
-  class nonNull(override val name: String, override val createProperties: String = ""):
-      IDoubleColumn<Double>
+  open class nonNull(override val name: String, override val createProperties: String = ""):
+      IDoubleColumn.nonNull
 }
 
-class IntColumn(override val name: String, override val createProperties: String = ""):
+open class IntColumn(override val name: String, override val createProperties: String = ""):
     IIntColumn<Int?> {
-  class nonNull(override val name: String, override val createProperties: String = ""):
-      IIntColumn<Int>
+  open class nonNull(override val name: String, override val createProperties: String = ""):
+      IIntColumn.nonNull
 }
 
-class StringColumn(override val name: String, override val createProperties: String = ""):
+class PrimaryKeyColumn(override val name: String, override val createProperties: String = ""):
+    IntColumn.nonNull(name, createProperties)
+
+open class StringColumn(override val name: String, override val createProperties: String = ""):
     IStringColumn<String?> {
-  class nonNull(override val name: String, override val createProperties: String = ""):
-      IStringColumn<String>
+  open class nonNull(override val name: String, override val createProperties: String = ""):
+      IStringColumn.nonNull
 }

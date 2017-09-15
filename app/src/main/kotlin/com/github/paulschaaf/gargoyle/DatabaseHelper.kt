@@ -56,13 +56,13 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 //
 //    val db = writableDatabase
 //    val storyId = story.id
-//    return db.delete(Story.TableName, Story._ID + "=?", arrayOf(storyId))
+//    return db.delete(Story.TableName, Story.id + "=?", arrayOf(storyId))
 //  }
 
   fun updateStory(story: Story) = writableDatabase.update(
       Story.table.name,
       story.contentValues,
-      "${Story.table._ID} = ${story.id}",
+      "${Story.table.id} = ${story.id}",
       null
   )
 
@@ -71,7 +71,8 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
   val newCursor: Cursor
     get() {
       val cursor = readableDatabase.query(Story.table.name, null, null, null, null, null,
-                                          Story.table.Title.name + " COLLATE NOCASE")
+                                          Story.table.title.name + " COLLATE NOCASE"
+      )
       cursor.moveToFirst()
       return cursor
     }

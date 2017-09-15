@@ -129,11 +129,11 @@ class IFDBTest {
 
   @Test
   fun handleSpecialCharacterFields() {
-    val storyXML = StoryXML(
-        author = "©2017, Rosencrantz & Guildenstern",
-        description = "This's as \"complicated\" <br> as <p/> <span></span>it gets<!>"
+    val alteredGame = (SampleGameXML.ZorkI
+      .set("author", "©2017, Rosencrantz & Guildenstern")
+      .set("description", "This's as \"complicated\" <br> as <p/> <span></span>it gets<!>")
     )
-//    assertXMLMatchesStory(storyXML)
+    assertXMLMatchesStory(alteredGame)
   }
 
   @Test

@@ -49,6 +49,11 @@ open class SampleGameXML(val xml: String): IStory {
     return match?.groups?.get(1)?.value
   }
 
+  operator fun set(tag: String, value: Any?): SampleGameXML {
+    val newXML = xml.replace("<$tag>[^<]+</$tag>", "<$tag>$value</$tag>")
+    return SampleGameXML(newXML)
+  }
+
   object Bronze:
       SampleGameXML("""<?xml version="1.0" encoding="UTF-8"?><ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/"><story><colophon><generator>ifdb.tads.org/viewgame</generator><generatorversion>1</generatorversion><originated>2016-10-23</originated></colophon><identification><ifid>1810847C-0DC7-44D5-94EF-313A3E7AF257</ifid><bafn>2893</bafn><format>zcode</format></identification><bibliographic><title>Bronze</title><author>Emily Short</author><language>en</language><firstpublished>2006</firstpublished><genre>Fantasy</genre><description>When the seventh day comes and it is time for you to return to the castle in the forest, your sisters cling to your sleeves.</description><series>fractured fairy tales</series></bibliographic><contact><url>http://inform7.com/learn/eg/bronze/index.html</url></contact><ifdb xmlns="http://ifdb.tads.org/api/xmlns"><tuid>9p8kh3im2j9h2881</tuid><link>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881</link><coverart><url>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881&amp;coverart</url></coverart><averageRating>4.2917</averageRating><starRating>4.5</starRating><ratingCountAvg>192</ratingCountAvg><ratingCountTot>192</ratingCountTot></ifdb></story></ifindex>""")
 
