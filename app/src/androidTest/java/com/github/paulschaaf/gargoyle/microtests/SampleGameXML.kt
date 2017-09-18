@@ -17,17 +17,12 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import android.os.Build
-import android.text.Html
 import com.github.paulschaaf.gargoyle.model.IStory
 
 open class SampleGameXML(val xml: String): IStory {
   override val author = this["author"]
   override val averageRating = this["averageRating"]?.toDoubleOrNull()
-  override val coverArtURL = this["coverart"]
-      ?.removePrefix("<url>")
-      ?.removeSuffix("</url>")
-      ?.replace("&amp;", "&")
+  override var coverArtURL = this["coverart"]
   override val description = this["description"]
   override val firstPublished = this["firstpublished"]
   override val forgiveness = this["forgiveness"]
@@ -46,25 +41,48 @@ open class SampleGameXML(val xml: String): IStory {
   override val seriesNumber = this["seriesnumber"]?.toIntOrNull()
   override val starRating = this["starRating"]?.toDoubleOrNull()
 
-  fun unescapeHtml(htmlString: String?): String? {
-    return (if (Build.VERSION.SDK_INT >= 24) Html.fromHtml(htmlString, Html.FROM_HTML_MODE_LEGACY)
-    else Html.fromHtml(htmlString)).toString()
+  companion object {
+    val toHtml = mapOf(
+        "&" to "&amp;",
+        "\"" to "&quot;",
+        "'" to "&apos;",
+        "&lt;" to "<",
+        "&gt;" to ">"
+    )
   }
 
+  fun escape(str: String) = toHtml.entries.fold(str) { acc, (k, v)-> acc.replace(k, v) }
+
+  fun unescape(str: String) = toHtml.entries.fold(str) { acc, (k, v)-> acc.replace(v, k) }
+
   operator fun get(tag: String): String? {
-    val match = Regex("^.*<$tag>(.*)</$tag>.*\$").matchEntire(xml)
-    var value = match?.groups?.get(1)?.value
-    if (value != null) value = unescapeHtml(value)
-    return value
+    var prefix = ""
+    var suffix = ""
+    if (tag == "coverart") {
+      prefix = "<url>"
+      suffix = "</url>"
+    }
+    val match = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$").matchEntire(xml)
+    val value = match?.groups?.get(1)?.value
+    return if (value.isNullOrEmpty()) null else unescape(value!!)
   }
 
   operator fun set(tag: String, value: String): SampleGameXML {
-    val newXML = xml.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>${Html.escapeHtml(value)}</$tag>")
+    var prefix = ""
+    var suffix = ""
+    if (tag == "coverart") {
+      prefix = "<url>"
+      suffix = "</url>"
+    }
+    val newXML = xml.replace(Regex("<$tag>$prefix[^<]+$suffix</$tag>"),
+                             "<$tag>${escape(value)}</$tag>"
+    )
     return SampleGameXML(newXML)
   }
 
   operator fun set(tag: String, value: Any?): SampleGameXML {
-    val newXML = xml.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>$value</$tag>")
+    val replaceValue = if (value == null) "" else value  // prevent null from being turned into the string "null"
+    val newXML = xml.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>$replaceValue</$tag>")
     return SampleGameXML(newXML)
   }
 

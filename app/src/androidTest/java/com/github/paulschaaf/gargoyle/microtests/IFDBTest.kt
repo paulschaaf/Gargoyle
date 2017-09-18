@@ -18,10 +18,10 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
-import android.text.Html
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -43,48 +43,61 @@ class IFDBTest {
   @Test
   fun handleSpecialCharacterFields() {
     val author = "©2017, Rosencrantz & Guildenstern"
-    val description = "This&apos;s as &quot;complicated&quot; &lt;br&gt; as &lt;p/&gt; &lt;span&gt;&lt;/span&gt;it gets&lt;!&gt;"
+    val description = "This's as \"complicated\" as it gets!"
     val alteredGame = (SampleGameXML.ZorkI
-        .set("author", author)
-        .set("description", description)
-//      .set("averageRating", 1.0)
+      .set("author", author)
+      .set("description", description)
+      .set("averageRating", 1.0)
         )
-    assertEquals("Did not successfully change the author. ", Html.escapeHtml(author), alteredGame.author)
+    assertEquals("Did not successfully change the author. ", author, alteredGame.author)
     assertXMLMatchesStory(alteredGame)
   }
 
   @Test
   fun handleNullFields() {
     val alteredGame = (SampleGameXML.ZorkI
-        .set("averageRating", null)
-        .set("description", null)
-        .set("seriesNumber", null)
-        .set("starRating", null)
+      .set("description", null)
+      .set("seriesNumber", null)
+      .set("starRating", null)
         )
     assertXMLMatchesStory(alteredGame)
   }
 
+  fun <T> assertFieldEquals(fieldName: String, expected: T, actual: T) {
+    when {
+      expected == null   -> assertNull("checking '$fieldName':", actual)
+      expected is Double -> assertEquals("checking '$fieldName':",
+                                         expected,
+                                         actual as Double, // explicit cast to keep the compiler happy
+                                         0.0
+      )
+      else               -> assertEquals("checking '$fieldName':",
+                                         expected,
+                                         actual
+      )
+    }
+  }
+
   private fun assertXMLMatchesStory(gameXML: SampleGameXML) {
     val story = IFDBFeedReader.createStoryFrom(gameXML.xml.byteInputStream())
-    assertEquals("checking 'ifId':", gameXML.ifId, story.ifId)
-
-    assertEquals("checking 'author':", gameXML.author!!, story.author!!)
-//    assertEquals("checking 'averageRating':", gameXML.averageRating, story.averageRating, 0.0)
-    assertEquals("checking 'coverArtURL':", gameXML.coverArtURL!!, story.coverArtURL!!)
-    assertEquals("checking 'description':", gameXML.description!!, story.description!!)
-    assertEquals("checking 'firstPublished':", gameXML.firstPublished!!, story.firstPublished!!)
-    assertEquals("checking 'forgiveness':", gameXML.forgiveness!!, story.forgiveness!!)
-    assertEquals("checking 'genre':", gameXML.genre!!, story.genre!!)
-    assertEquals("checking 'language':", gameXML.language!!, story.language!!)
-    assertEquals("checking 'link':", gameXML.link!!, story.link!!)
-    assertNotNull("checking 'lookedUp':", story.lookedUp!!)
-    assertEquals("checking 'ratingCountAvg':", gameXML.ratingCountAvg!!, story.ratingCountAvg!!)
-    assertEquals("checking 'ratingCountTotal':", gameXML.ratingCountTotal!!, story.ratingCountTotal!!)
-    assertEquals("checking 'series':", gameXML.series!!, story.series!!)
-    assertEquals("checking 'seriesNumber':", gameXML.seriesNumber!!, story.seriesNumber!!)
-    assertEquals("checking 'starRating':", gameXML.starRating!!, story.starRating!!, 0.0)
-    assertEquals("checking 'title':", gameXML.title!!, story.title!!)
-    assertEquals("checking 'tuid':", gameXML.tuid!!, story.tuid!!)
+    assertFieldEquals("ifId", gameXML.ifId, story.ifId)
+    assertFieldEquals("author", gameXML.author, story.author)
+    assertFieldEquals("averageRating", gameXML.averageRating, story.averageRating)
+    assertFieldEquals("coverArtURL", gameXML.coverArtURL, story.coverArtURL)
+    assertFieldEquals("description", gameXML.description, story.description)
+    assertFieldEquals("firstPublished", gameXML.firstPublished, story.firstPublished)
+    assertFieldEquals("forgiveness", gameXML.forgiveness, story.forgiveness)
+    assertFieldEquals("genre", gameXML.genre, story.genre)
+    assertFieldEquals("language", gameXML.language, story.language)
+    assertFieldEquals("link", gameXML.link, story.link)
+    assertNotNull("lookedUp", story.lookedUp)
+    assertFieldEquals("ratingCountAvg", gameXML.ratingCountAvg, story.ratingCountAvg)
+    assertFieldEquals("ratingCountTotal", gameXML.ratingCountTotal, story.ratingCountTotal)
+    assertFieldEquals("series", gameXML.series, story.series)
+    assertFieldEquals("seriesNumber", gameXML.seriesNumber, story.seriesNumber)
+    assertFieldEquals("starRating", gameXML.starRating, story.starRating)
+    assertFieldEquals("title", gameXML.title, story.title)
+    assertFieldEquals("tuid", gameXML.tuid, story.tuid)
   }
 }
 
