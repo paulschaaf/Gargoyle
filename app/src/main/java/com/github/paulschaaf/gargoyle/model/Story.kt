@@ -26,7 +26,7 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 class Story private constructor(val contentValues: ContentValues): IStory {
-  // Allow me to delegate property access to an IColumn wrapping my contentValues
+  // Allows an IColumn wrapping my contentValues to be a delegate for my IStory properties
   operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
       = get(story.contentValues)
 

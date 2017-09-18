@@ -17,15 +17,17 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
+import android.os.Build
+import android.text.Html
 import com.github.paulschaaf.gargoyle.model.IStory
 
 open class SampleGameXML(val xml: String): IStory {
   override val author = this["author"]
-  override val averageRating = this["averageRating"]?.toDouble()
-  override val coverArtURL = this["coverart"]?.removePrefix("<url>")?.removeSuffix("</url>")?.replace(
-      "&amp;",
-      "&"
-  )
+  override val averageRating = this["averageRating"]?.toDoubleOrNull()
+  override val coverArtURL = this["coverart"]
+      ?.removePrefix("<url>")
+      ?.removeSuffix("</url>")
+      ?.replace("&amp;", "&")
   override val description = this["description"]
   override val firstPublished = this["firstpublished"]
   override val forgiveness = this["forgiveness"]
@@ -39,18 +41,30 @@ open class SampleGameXML(val xml: String): IStory {
   override val tuid = this["tuid"]
   override val title = this["title"]
   override val id = this["id"]?.toInt() ?: 0
-  override val ratingCountAvg = this["ratingCountAvg"]?.toInt()
-  override val ratingCountTotal = this["ratingCountTot"]?.toInt()
-  override val seriesNumber = this["seriesnumber"]?.toInt()
-  override val starRating = this["starRating"]?.toDouble()
+  override val ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
+  override val ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
+  override val seriesNumber = this["seriesnumber"]?.toIntOrNull()
+  override val starRating = this["starRating"]?.toDoubleOrNull()
 
-  operator fun get(startTag: String): String? {
-    val match = Regex("^.*<$startTag>(.*)</$startTag>.*\$").matchEntire(xml)
-    return match?.groups?.get(1)?.value
+  fun unescapeHtml(htmlString: String?): String? {
+    return (if (Build.VERSION.SDK_INT >= 24) Html.fromHtml(htmlString, Html.FROM_HTML_MODE_LEGACY)
+    else Html.fromHtml(htmlString)).toString()
+  }
+
+  operator fun get(tag: String): String? {
+    val match = Regex("^.*<$tag>(.*)</$tag>.*\$").matchEntire(xml)
+    var value = match?.groups?.get(1)?.value
+    if (value != null) value = unescapeHtml(value)
+    return value
+  }
+
+  operator fun set(tag: String, value: String): SampleGameXML {
+    val newXML = xml.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>${Html.escapeHtml(value)}</$tag>")
+    return SampleGameXML(newXML)
   }
 
   operator fun set(tag: String, value: Any?): SampleGameXML {
-    val newXML = xml.replace("<$tag>[^<]+</$tag>", "<$tag>$value</$tag>")
+    val newXML = xml.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>$value</$tag>")
     return SampleGameXML(newXML)
   }
 

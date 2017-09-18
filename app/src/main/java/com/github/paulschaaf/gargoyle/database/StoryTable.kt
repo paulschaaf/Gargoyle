@@ -24,7 +24,6 @@ object StoryTable: SqlTable {
   val id = IntColumn.nonNull("_id", "PRIMARY KEY")
   val ifid = StringColumn.nonNull("ifid", "UNIQUE NOT NULL")
 
-  val averageRating = DoubleColumn("averageRating")
   val author = StringColumn("author")
   val coverArtURL = StringColumn("coverArtURL")
   val description = StringColumn("description")
@@ -37,8 +36,9 @@ object StoryTable: SqlTable {
   val path = StringColumn("path")
   val series = StringColumn("series")
   val tuid = StringColumn("tuid")
-
   val title = StringColumn("title")
+
+  val averageRating = DoubleColumn("averageRating")
   val ratingCountAvg = IntColumn("ratingCountAvg")
   val ratingCountTotal = IntColumn("ratingCountTotal")
   val seriesNumber = IntColumn("seriesNumber")
