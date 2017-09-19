@@ -59,7 +59,7 @@ class StoryTest {
   val contentValues = mock(ContentValues::class.java)
 
   init {
-    properties.forEach { column, value->
+    properties.entries.forEach { (column, value) ->
       when (value) {
         is Double -> `when`(contentValues.getAsDouble(column.name)).thenReturn(value)
         is Int    -> `when`(contentValues.getAsInteger(column.name)).thenReturn(value)
