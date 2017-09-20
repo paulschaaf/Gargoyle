@@ -44,22 +44,22 @@ class IFDBTest {
   fun handleSpecialCharacterFields() {
     val author = "©2017, Rosencrantz & Guildenstern"
     val description = "This's as \"complicated\" as it gets!"
-    val alteredGame = (SampleGameXML.ZorkI
+    val alteredGame = SampleGameXML.ZorkI
       .set("author", author)
       .set("description", description)
       .set("averageRating", 1.0)
-        )
+
     assertEquals("Did not successfully change the author. ", author, alteredGame.author)
     assertXMLMatchesStory(alteredGame)
   }
 
   @Test
   fun handleNullFields() {
-    val alteredGame = (SampleGameXML.ZorkI
+    val alteredGame = SampleGameXML.ZorkI
       .set("description", null)
       .set("seriesNumber", null)
       .set("starRating", null)
-        )
+
     assertXMLMatchesStory(alteredGame)
   }
 
@@ -79,7 +79,7 @@ class IFDBTest {
   }
 
   private fun assertXMLMatchesStory(gameXML: SampleGameXML) {
-    val story = IFDBFeedReader.createStoryFrom(gameXML.xml.byteInputStream())
+    val story = IFDBFeedReader.createStoryFrom(gameXML.xmlString.byteInputStream())
     assertFieldEquals("ifId", gameXML.ifId, story.ifId)
     assertFieldEquals("author", gameXML.author, story.author)
     assertFieldEquals("averageRating", gameXML.averageRating, story.averageRating)

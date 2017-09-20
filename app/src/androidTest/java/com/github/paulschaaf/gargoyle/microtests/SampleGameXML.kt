@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import com.github.paulschaaf.gargoyle.model.IStory
 
-open class SampleGameXML(val xml: String): IStory {
+open class SampleGameXML(val xmlString: String): IStory {
   override val author = this["author"]
   override val averageRating = this["averageRating"]?.toDoubleOrNull()
   override var coverArtURL = this["coverart"]
@@ -49,11 +49,11 @@ open class SampleGameXML(val xml: String): IStory {
         "&lt;" to "<",
         "&gt;" to ">"
     )
+
+    fun escape(str: String) = toHtml.entries.fold(str) { acc, (k, v)-> acc.replace(k, v) }
+
+    fun unescape(str: String) = toHtml.entries.fold(str) { acc, (k, v)-> acc.replace(v, k) }
   }
-
-  fun escape(str: String) = toHtml.entries.fold(str) { acc, (k, v)-> acc.replace(k, v) }
-
-  fun unescape(str: String) = toHtml.entries.fold(str) { acc, (k, v)-> acc.replace(v, k) }
 
   operator fun get(tag: String): String? {
     var prefix = ""
@@ -62,27 +62,27 @@ open class SampleGameXML(val xml: String): IStory {
       prefix = "<url>"
       suffix = "</url>"
     }
-    val match = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$").matchEntire(xml)
+    val match = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$").matchEntire(xmlString)
     val value = match?.groups?.get(1)?.value
     return if (value.isNullOrEmpty()) null else unescape(value!!)
   }
 
-  operator fun set(tag: String, value: String): SampleGameXML {
+  fun set(tag: String, value: String): SampleGameXML {
     var prefix = ""
     var suffix = ""
     if (tag == "coverart") {
       prefix = "<url>"
       suffix = "</url>"
     }
-    val newXML = xml.replace(Regex("<$tag>$prefix[^<]+$suffix</$tag>"),
-                             "<$tag>${escape(value)}</$tag>"
+    val newXML = xmlString.replace(Regex("<$tag>$prefix[^<]+$suffix</$tag>"),
+                                   "<$tag>${escape(value)}</$tag>"
     )
     return SampleGameXML(newXML)
   }
 
-  operator fun set(tag: String, value: Any?): SampleGameXML {
+  fun set(tag: String, value: Any?): SampleGameXML {
     val replaceValue = if (value == null) "" else value  // prevent null from being turned into the string "null"
-    val newXML = xml.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>$replaceValue</$tag>")
+    val newXML = xmlString.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>$replaceValue</$tag>")
     return SampleGameXML(newXML)
   }
 
