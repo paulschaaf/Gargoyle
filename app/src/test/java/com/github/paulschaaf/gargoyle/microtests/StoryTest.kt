@@ -19,13 +19,14 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.StoryTable
+import com.github.paulschaaf.gargoyle.model.IStory
 import com.github.paulschaaf.gargoyle.model.Story
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.InvalidObjectException
 
 /**
@@ -33,6 +34,29 @@ import java.io.InvalidObjectException
  */
 @RunWith(MockitoJUnitRunner::class)
 class StoryTest {
+  val props2 = object: IStory {
+    override val author = "P.G. Schaaf"
+    override val averageRating = 4.5
+    override val coverArtURL = "/opt/media"
+    override val description = "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)"
+    override val firstPublished = "5/6/2017"
+    override val forgiveness = "hard"
+    override val genre = "Adventure"
+    override val id = 31415
+    override val ifId = "ifid_zork_pi"
+    override val language = "EN/US"
+    override val link = "http://paulschaaf.com/"
+    override val lookedUp = "9/2/2017"
+    override val path = "/var/data/IntFic.dat"
+    override val ratingCountAvg = 17
+    override val ratingCountTotal = 137
+    override val series = "Zork"
+    override val seriesNumber = 5
+    override val starRating = 5.0
+    override val title = "Zork 3.14"
+    override val tuid = "Zork 3.14"
+  }
+
   val properties = with(StoryTable) {
     mapOf(
         author to "P.G. Schaaf",
