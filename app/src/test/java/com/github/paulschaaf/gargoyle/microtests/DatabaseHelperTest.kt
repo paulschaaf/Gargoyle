@@ -21,7 +21,7 @@ import com.github.paulschaaf.gargoyle.model.Story
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 
 /**
  * Created by pschaaf on 9/8/17.

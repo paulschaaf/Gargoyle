@@ -75,23 +75,50 @@ interface IStringColumn<T: String?>: IColumn<T> {
 }
 
 
-open class DoubleColumn(override val name: String, override val createProperties: String = ""):
-    IDoubleColumn<Double?> {
-  open class nonNull(override val name: String, override val createProperties: String = ""):
-      IDoubleColumn.nonNull
+/**
+ * IMPLEMENTATIONS
+ */
+
+abstract class Column<T>: IColumn<T> {
+//  override fun hashCode(): Int = sqlDataType.hashCode() * 63 + name.hashCode() * 31 + createProperties.hashCode()
+//  override fun equals(other: Any?): Boolean = when(other) {
+//    null -> false
+//    sqlDataType == this.sqlDataType
+//        && name == this.name
+//        && createProperties == this.createProperties -> true
+//    else -> false
+//  }
 }
 
-open class IntColumn(override val name: String, override val createProperties: String = ""):
+class DoubleColumn(override val name: String, override val createProperties: String = ""):
+    Column<Double?>(), IDoubleColumn<Double?> {
+  open class nonNull(override val name: String, override val createProperties: String = ""):
+      IDoubleColumn.nonNull
+
+  companion object {
+    operator fun getValue(table: SqlTable, property: KProperty<*>) = DoubleColumn(property.name)
+  }
+}
+
+class IntColumn(override val name: String, override val createProperties: String = ""):
     IIntColumn<Int?> {
   open class nonNull(override val name: String, override val createProperties: String = ""):
       IIntColumn.nonNull
+
+  companion object {
+    operator fun getValue(table: SqlTable, property: KProperty<*>) = IntColumn(property.name)
+  }
 }
 
-class PrimaryKeyColumn(override val name: String, override val createProperties: String = ""):
-    IntColumn.nonNull(name, createProperties)
+class PrimaryKeyColumn(override val name: String): IntColumn.nonNull(name)
 
-open class StringColumn(override val name: String, override val createProperties: String = ""):
+class StringColumn(override val name: String, override val createProperties: String = ""):
+    Column<String?>(),
     IStringColumn<String?> {
   open class nonNull(override val name: String, override val createProperties: String = ""):
       IStringColumn.nonNull
+
+  companion object {
+    operator fun getValue(table: SqlTable, property: KProperty<*>) = StringColumn(property.name)
+  }
 }

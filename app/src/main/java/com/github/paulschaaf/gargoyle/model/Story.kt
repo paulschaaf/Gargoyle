@@ -80,6 +80,8 @@ class Story private constructor(val contentValues: ContentValues): IStory {
   //
 
   override var author by table.author
+//  var author2: String? = table.author.getValue(contentValues, Story::author) // todo pschaaf 09/263/17 15:09: Remove this debugging code
+
   override var averageRating by table.averageRating
   override var coverArtURL by table.coverArtURL
   override var description by table.description

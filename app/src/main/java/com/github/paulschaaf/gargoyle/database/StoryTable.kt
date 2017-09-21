@@ -21,28 +21,47 @@ package com.github.paulschaaf.gargoyle.database
 object StoryTable: SqlTable {
   override val name = "Story"
 
-  val id = IntColumn.nonNull("_id", "PRIMARY KEY")
+  val id = PrimaryKeyColumn("_id")
   val ifid = StringColumn.nonNull("ifid", "UNIQUE NOT NULL")
 
-  val author = StringColumn("author")
-  val coverArtURL = StringColumn("coverArtURL")
-  val description = StringColumn("description")
-  val firstPublished = StringColumn("firstPublished")
-  val forgiveness = StringColumn("forgiveness")
-  val genre = StringColumn("genre")
-  val language = StringColumn("language")
-  val link = StringColumn("link")
-  val lookedUp = StringColumn("lookedUp")
-  val path = StringColumn("path")
-  val series = StringColumn("series")
-  val tuid = StringColumn("tuid")
-  val title = StringColumn("title")
+  val author by StringColumn
+  val coverArtURL by StringColumn
+  val description by StringColumn
+  val firstPublished by StringColumn
+  val forgiveness by StringColumn
+  val genre by StringColumn
+  val language by StringColumn
+  val link by StringColumn
+  val lookedUp by StringColumn
+  val path by StringColumn
+  val series by StringColumn
+  val tuid by StringColumn
+  val title by StringColumn
+  val averageRating by DoubleColumn
+  val ratingCountAvg by IntColumn
+  val ratingCountTotal by IntColumn
+  val seriesNumber by IntColumn
+  val starRating by DoubleColumn
 
-  val averageRating = DoubleColumn("averageRating")
-  val ratingCountAvg = IntColumn("ratingCountAvg")
-  val ratingCountTotal = IntColumn("ratingCountTotal")
-  val seriesNumber = IntColumn("seriesNumber")
-  val starRating = DoubleColumn("starRating")
+//  val author = StringColumn("author")
+//  val coverArtURL = StringColumn("coverArtURL")
+//  val description = StringColumn("description")
+//  val firstPublished = StringColumn("firstPublished")
+//  val forgiveness = StringColumn("forgiveness")
+//  val genre = StringColumn("genre")
+//  val language = StringColumn("language")
+//  val link = StringColumn("link")
+//  val lookedUp = StringColumn("lookedUp")
+//  val path = StringColumn("path")
+//  val series = StringColumn("series")
+//  val tuid = StringColumn("tuid")
+//  val title = StringColumn("title")
+//
+//  val averageRating = DoubleColumn("averageRating")
+//  val ratingCountAvg = IntColumn("ratingCountAvg")
+//  val ratingCountTotal = IntColumn("ratingCountTotal")
+//  val seriesNumber = IntColumn("seriesNumber")
+//  val starRating = DoubleColumn("starRating")
 
   override val columns: List<IColumn<*>> = listOf(
       id,
