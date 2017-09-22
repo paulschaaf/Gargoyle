@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// todo pschaaf 09/264/17 18:09: This hierarchy is too complicated!
+
 package com.github.paulschaaf.gargoyle.database
 
 import android.content.ContentValues
@@ -23,7 +25,8 @@ import kotlin.reflect.KProperty
 interface IColumn<T> {
   val name: String
   val sqlDataType: String
-  val createProperties: String
+  val createProperties
+    get() = ""
 
   val createSQL: String
     get() = "$name $sqlDataType $createProperties".trim()
@@ -46,8 +49,6 @@ interface IDoubleColumn<T: Double?>: IColumn<T> {
   override fun get(conValues: ContentValues): T = conValues.getAsDouble(name) as T
 
   override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
-
-  interface nonNull: IDoubleColumn<Double>
 }
 
 interface IIntColumn<T: Int?>: IColumn<T> {
@@ -59,7 +60,10 @@ interface IIntColumn<T: Int?>: IColumn<T> {
 
   override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
 
-  interface nonNull: IIntColumn<Int>
+  interface nonNull: IIntColumn<Int> {
+    override val createProperties: String
+      get() = "NOT NULL"
+  }
 }
 
 interface IStringColumn<T: String?>: IColumn<T> {
@@ -71,7 +75,15 @@ interface IStringColumn<T: String?>: IColumn<T> {
 
   override fun set(conValues: ContentValues, value: T) = conValues.put(name, value)
 
-  interface nonNull: IStringColumn<String>
+  interface nonNull: IStringColumn<String> {
+    override val createProperties: String
+      get() = "NOT NULL"
+
+    interface unique: IStringColumn<String> {
+      override val createProperties: String
+        get() = "UNIQUE " + super.createProperties
+    }
+  }
 }
 
 
@@ -79,46 +91,46 @@ interface IStringColumn<T: String?>: IColumn<T> {
  * IMPLEMENTATIONS
  */
 
-abstract class Column<T>: IColumn<T> {
-//  override fun hashCode(): Int = sqlDataType.hashCode() * 63 + name.hashCode() * 31 + createProperties.hashCode()
-//  override fun equals(other: Any?): Boolean = when(other) {
-//    null -> false
-//    sqlDataType == this.sqlDataType
-//        && name == this.name
-//        && createProperties == this.createProperties -> true
-//    else -> false
-//  }
+abstract class Column<T>(override val name: String): IColumn<T> {
+  abstract class nonNull<T: Any>(override val name: String): Column<T>(name) {
+    override val createProperties = "NOT NULL"
+  }
 }
 
-class DoubleColumn(override val name: String, override val createProperties: String = ""):
-    Column<Double?>(), IDoubleColumn<Double?> {
-  open class nonNull(override val name: String, override val createProperties: String = ""):
-      IDoubleColumn.nonNull
-
+class DoubleColumn(override val name: String): IDoubleColumn<Double?> {
   companion object {
     operator fun getValue(table: SqlTable, property: KProperty<*>) = DoubleColumn(property.name)
   }
 }
 
-class IntColumn(override val name: String, override val createProperties: String = ""):
-    IIntColumn<Int?> {
-  open class nonNull(override val name: String, override val createProperties: String = ""):
-      IIntColumn.nonNull
-
+class IntColumn(override val name: String): IIntColumn<Int?> {
   companion object {
     operator fun getValue(table: SqlTable, property: KProperty<*>) = IntColumn(property.name)
   }
+
+  open class nonNull(override val name: String): IIntColumn.nonNull
 }
 
-class PrimaryKeyColumn(override val name: String): IntColumn.nonNull(name)
+class PrimaryKeyColumn(override val name: String): IntColumn.nonNull("") {
+  companion object {
+    operator fun getValue(table: SqlTable, property: KProperty<*>) = PrimaryKeyColumn(property.name)
+  }
+}
 
-class StringColumn(override val name: String, override val createProperties: String = ""):
-    Column<String?>(),
-    IStringColumn<String?> {
-  open class nonNull(override val name: String, override val createProperties: String = ""):
-      IStringColumn.nonNull
-
+class StringColumn(override val name: String): IStringColumn<String?> {
   companion object {
     operator fun getValue(table: SqlTable, property: KProperty<*>) = StringColumn(property.name)
+  }
+
+  open class nonNull(override val name: String): IStringColumn.nonNull {
+    companion object {
+      operator fun getValue(table: SqlTable, property: KProperty<*>) = nonNull(property.name)
+    }
+
+    open class unique(override val name: String): IStringColumn.nonNull.unique {
+      companion object {
+        operator fun getValue(table: SqlTable, property: KProperty<*>) = unique(property.name)
+      }
+    }
   }
 }

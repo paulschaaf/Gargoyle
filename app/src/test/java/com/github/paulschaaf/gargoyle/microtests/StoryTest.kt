@@ -65,7 +65,7 @@ class StoryTest {
         "firstPublished" to "5/6/2017",
         "forgiveness" to "hard",
         "genre" to "Adventure",
-        "_id" to 31415,
+        "id" to 31415,
         "ifid" to "ifid_zork_pi",
         "language" to "EN/US",
         "link" to "http://paulschaaf.com/",
@@ -118,7 +118,7 @@ class StoryTest {
       assertEquals(properties["forgiveness"], story.forgiveness)
       assertEquals(properties["genre"], story.genre)
       assertEquals(properties["ifid"], story.ifId)
-      assertEquals(properties["_id"], story.id)
+      assertEquals(properties["id"], story.id)
       assertEquals(properties["language"], story.language)
       assertEquals(properties["link"], story.link)
       assertEquals(properties["lookedUp"], story.lookedUp)

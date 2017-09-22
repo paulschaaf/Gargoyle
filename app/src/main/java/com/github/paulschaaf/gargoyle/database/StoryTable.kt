@@ -21,8 +21,8 @@ package com.github.paulschaaf.gargoyle.database
 object StoryTable: SqlTable {
   override val name = "Story"
 
-  val id = PrimaryKeyColumn("_id")
-  val ifid = StringColumn.nonNull("ifid", "UNIQUE NOT NULL")
+  val id by PrimaryKeyColumn
+  val ifid by StringColumn.nonNull.unique
 
   val author by StringColumn
   val coverArtURL by StringColumn
@@ -43,27 +43,7 @@ object StoryTable: SqlTable {
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
 
-//  val author = StringColumn("author")
-//  val coverArtURL = StringColumn("coverArtURL")
-//  val description = StringColumn("description")
-//  val firstPublished = StringColumn("firstPublished")
-//  val forgiveness = StringColumn("forgiveness")
-//  val genre = StringColumn("genre")
-//  val language = StringColumn("language")
-//  val link = StringColumn("link")
-//  val lookedUp = StringColumn("lookedUp")
-//  val path = StringColumn("path")
-//  val series = StringColumn("series")
-//  val tuid = StringColumn("tuid")
-//  val title = StringColumn("title")
-//
-//  val averageRating = DoubleColumn("averageRating")
-//  val ratingCountAvg = IntColumn("ratingCountAvg")
-//  val ratingCountTotal = IntColumn("ratingCountTotal")
-//  val seriesNumber = IntColumn("seriesNumber")
-//  val starRating = DoubleColumn("starRating")
-
-  override val columns: List<IColumn<*>> = listOf(
+  override val columns = listOf(
       id,
       author,
       averageRating,
