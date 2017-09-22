@@ -17,7 +17,6 @@
 
 package com.github.paulschaaf.gargoyle.database
 
-
 object StoryTable: SqlTable {
   override val name = "Story"
 

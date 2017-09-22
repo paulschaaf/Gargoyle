@@ -25,18 +25,9 @@ import java.io.RandomAccessFile
 import java.util.*
 import kotlin.reflect.KProperty
 
-class Story private constructor(val contentValues: ContentValues): IStory {
-  // Allows an IColumn wrapping my contentValues to be a delegate for my IStory properties
-  operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
-      = get(story.contentValues)
-
-  operator fun <T> IColumn<T>.setValue(story: Story, property: KProperty<*>, value: T)
-      = set(story.contentValues, value)
-
+class Story constructor(val contentValues: ContentValues): IStory {
 
   companion object {
-    fun valueOf(contentValues: ContentValues) = Story(contentValues)
-
     val table = StoryTable
   }
 
@@ -69,9 +60,7 @@ class Story private constructor(val contentValues: ContentValues): IStory {
     get() = when (versionNumber) {
       0    -> "0 (unknown)"
       70   -> "unknown (blorbed)"
-      else -> {
-        versionNumber.toString()
-      }
+      else -> versionNumber.toString()
     }
 
 
@@ -80,8 +69,6 @@ class Story private constructor(val contentValues: ContentValues): IStory {
   //
 
   override var author by table.author
-//  var author2: String? = table.author.getValue(contentValues, Story::author) // todo pschaaf 09/263/17 15:09: Remove this debugging code
-
   override var averageRating by table.averageRating
   override var coverArtURL by table.coverArtURL
   override var description by table.description
@@ -102,3 +89,10 @@ class Story private constructor(val contentValues: ContentValues): IStory {
   override var title by table.title
   override var tuid by table.tuid
 }
+
+// Allows an IColumn wrapping my contentValues to be a delegate for my IStory properties
+operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
+    = get(story.contentValues)
+
+operator fun <T> IColumn<T>.setValue(story: Story, property: KProperty<*>, value: T)
+    = set(story.contentValues, value)
