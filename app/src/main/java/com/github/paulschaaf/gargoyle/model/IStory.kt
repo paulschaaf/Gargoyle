@@ -17,6 +17,9 @@
 
 package com.github.paulschaaf.gargoyle.model
 
+import java.io.File
+import java.io.RandomAccessFile
+
 interface IStory {
   val id: Int
   val ifId: String
@@ -41,4 +44,22 @@ interface IStory {
   val ratingCountAvg: Int?
   val ratingCountTotal: Int?
   val seriesNumber: Int?
+
+  val exists: Boolean
+    get() = file.exists()
+
+  val file: File
+    get() = File(path)
+
+  val versionNumber: Int
+    get() = RandomAccessFile(path, "r").use { it.readInt() }
+
+  val zCodeVersion
+    get() = when (versionNumber) {
+      0    -> "0 (unknown)"
+      70   -> "unknown (blorbed)"
+      else -> versionNumber.toString()
+    }
+
+
 }

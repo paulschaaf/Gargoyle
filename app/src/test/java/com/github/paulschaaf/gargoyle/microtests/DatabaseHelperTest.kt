@@ -37,7 +37,7 @@ class DatabaseHelperTest {
       .toSet()
 
     StoryTable.columns
-      .map { col -> col.createSQL }
+      .map { (_, col)-> col.createSQL }
       .forEach { colDef -> assertTrue("Could not find the column definition '$colDef' in this createSQL: $tableDef", tableDef.contains(colDef)) }
   }
 }

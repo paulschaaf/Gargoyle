@@ -18,12 +18,12 @@
 package com.github.paulschaaf.gargoyle.database
 
 interface SqlTable {
-  val columns: List<IColumn<*>>
+  val columns: Map<String, IColumn<*>>
   val name: String
 
   val createSQL: String
-    get() = columns
-      .map { it.createSQL }
+    get() = columns.entries
+      .map { (_, column)-> column.createSQL }
       .joinToString(
           prefix = "CREATE TABLE $name (",
           separator = ", ",

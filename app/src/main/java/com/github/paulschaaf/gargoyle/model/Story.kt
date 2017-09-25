@@ -20,8 +20,6 @@ package com.github.paulschaaf.gargoyle.model
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.IColumn
 import com.github.paulschaaf.gargoyle.database.StoryTable
-import java.io.File
-import java.io.RandomAccessFile
 import java.util.*
 import kotlin.reflect.KProperty
 
@@ -31,32 +29,6 @@ class Story constructor(val contentValues: ContentValues): IStory {
   }
 
   override fun toString() = title + " #" + ifId
-
-
-  //
-  // DERIVED PROPERTIES
-  //
-
-  val exists: Boolean
-    get() = file.exists()
-
-  val file: File
-    get() = File(path)
-
-  var versionNumber = 0
-    get() {
-      if (field == 0) {
-        field = RandomAccessFile(path, "r").use { it.readInt() }
-      }
-      return field
-    }
-
-  val zCodeVersion
-    get() = when (versionNumber) {
-      0    -> "0 (unknown)"
-      70   -> "unknown (blorbed)"
-      else -> versionNumber.toString()
-    }
 
 
   //

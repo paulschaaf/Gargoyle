@@ -42,25 +42,25 @@ object StoryTable: SqlTable {
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
 
-  override val columns = listOf(
-      id,
-      author,
-      averageRating,
-      coverArtURL,
-      description,
-      firstPublished,
-      forgiveness,
-      genre,
-      ifid,
-      language,
-      link,
-      lookedUp,
-      path,
-      ratingCountAvg,
-      ratingCountTotal,
-      series,
-      seriesNumber,
-      tuid,
-      title
+  override val columns = mapOf(
+      "id" to id,
+      "author" to author,
+      "averageRating" to averageRating,
+      "coverArtURL" to coverArtURL,
+      "description" to description,
+      "firstPublished" to firstPublished,
+      "forgiveness" to forgiveness,
+      "genre" to genre,
+      "ifid" to ifid,
+      "language" to language,
+      "link" to link,
+      "lookedUp" to lookedUp,
+      "path" to path,
+      "ratingCountAvg" to ratingCountAvg,
+      "ratingCountTotal" to ratingCountTotal,
+      "series" to series,
+      "seriesNumber" to seriesNumber,
+      "tuid" to tuid,
+      "title" to title
   )
 }
