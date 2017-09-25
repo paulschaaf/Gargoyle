@@ -20,7 +20,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId "com.github.paulschaaf.gargoyle"
         minSdkVersion 19
@@ -46,7 +46,7 @@ dependencies {
     implementation 'junit:junit-dep:4.11'
     implementation 'com.android.support.test:runner:1.0.1'
     testCompile 'org.mockito:mockito-core:2.10.0'
-    testCompile 'org.jetbrains.kotlin:kotlin-reflect:1.1.4-3'
+    compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.1.4-3'
 }
 repositories {
     mavenCentral()

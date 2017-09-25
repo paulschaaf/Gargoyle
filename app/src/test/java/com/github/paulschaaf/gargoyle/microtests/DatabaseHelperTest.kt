@@ -17,7 +17,7 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import com.github.paulschaaf.gargoyle.model.Story
+import com.github.paulschaaf.gargoyle.database.StoryTable
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,12 +31,12 @@ import org.mockito.junit.MockitoJUnitRunner
 class DatabaseHelperTest {
   @Test
   fun createSQLContainsAllFields() {
-    val tableDef = Story.table.createSQL
+    val tableDef = StoryTable.createSQL
       .split(",", "(", ")")
       .map { str -> str.trim() }
       .toSet()
 
-    Story.table.columns
+    StoryTable.columns
       .map { col -> col.createSQL }
       .forEach { colDef -> assertTrue("Could not find the column definition '$colDef' in this createSQL: $tableDef", tableDef.contains(colDef)) }
   }

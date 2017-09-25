@@ -25,23 +25,24 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.github.paulschaaf.gargoyle.database.StoryTable
 import com.github.paulschaaf.gargoyle.model.Story
 
 class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-  override fun onCreate(db: SQLiteDatabase) = db.execSQL(Story.table.createSQL)
+  override fun onCreate(db: SQLiteDatabase) = db.execSQL(StoryTable.createSQL)
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
   fun insertStory(story: Story): Long {
     val writableDatabase = writableDatabase
-    val rowID = writableDatabase.insert(Story.table.name, null, story.contentValues)
+    val rowID = writableDatabase.insert(StoryTable.name, null, story.contentValues)
     if (rowID == -1L) Log.e(TAG, "The insert failed!")
     return rowID
   }
 
   fun rebuildDatabase() {
     val db = writableDatabase
-    db.execSQL("DROP TABLE " + Story.table.name)
+    db.execSQL("DROP TABLE " + StoryTable.name)
 //    db.delete(Story.TableName, null, null)
     db.close()
   }
@@ -60,9 +61,9 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 //  }
 
   fun updateStory(story: Story) = writableDatabase.update(
-      Story.table.name,
+      StoryTable.name,
       story.contentValues,
-      "${Story.table.id} = ${story.id}",
+      "${StoryTable.id} = ${story.id}",
       null
   )
 
@@ -70,8 +71,9 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 
   val newCursor: Cursor
     get() {
-      val cursor = readableDatabase.query(Story.table.name, null, null, null, null, null,
-                                          Story.table.title.name + " COLLATE NOCASE"
+      val cursor = readableDatabase.query(
+          StoryTable.name, null, null, null, null, null,
+          StoryTable.title.name + " COLLATE NOCASE"
       )
       cursor.moveToFirst()
       return cursor

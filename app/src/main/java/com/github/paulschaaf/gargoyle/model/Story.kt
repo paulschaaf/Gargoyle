@@ -26,11 +26,6 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 class Story constructor(val contentValues: ContentValues): IStory {
-
-  companion object {
-    val table = StoryTable
-  }
-
   constructor(): this(ContentValues()) {
     lookedUp = Date().toString()
   }
@@ -68,26 +63,26 @@ class Story constructor(val contentValues: ContentValues): IStory {
   // SIMPLE MAPPED PROPERTIES
   //
 
-  override var author by table.author
-  override var averageRating by table.averageRating
-  override var coverArtURL by table.coverArtURL
-  override var description by table.description
-  override var firstPublished by table.firstPublished
-  override var forgiveness by table.forgiveness
-  override var genre by table.genre
-  override var id by table.id
-  override var ifId by table.ifid
-  override var language by table.language
-  override var link by table.link
-  override var lookedUp by table.lookedUp
-  override var path by table.path
-  override var ratingCountAvg by table.ratingCountAvg
-  override var ratingCountTotal by table.ratingCountTotal
-  override var series by table.series
-  override var seriesNumber by table.seriesNumber
-  override var starRating by table.starRating
-  override var title by table.title
-  override var tuid by table.tuid
+  override var author by StoryTable.author
+  override var averageRating by StoryTable.averageRating
+  override var coverArtURL by StoryTable.coverArtURL
+  override var description by StoryTable.description
+  override var firstPublished by StoryTable.firstPublished
+  override var forgiveness by StoryTable.forgiveness
+  override var genre by StoryTable.genre
+  override var id by StoryTable.id
+  override var ifId by StoryTable.ifid
+  override var language by StoryTable.language
+  override var link by StoryTable.link
+  override var lookedUp by StoryTable.lookedUp
+  override var path by StoryTable.path
+  override var ratingCountAvg by StoryTable.ratingCountAvg
+  override var ratingCountTotal by StoryTable.ratingCountTotal
+  override var series by StoryTable.series
+  override var seriesNumber by StoryTable.seriesNumber
+  override var starRating by StoryTable.starRating
+  override var title by StoryTable.title
+  override var tuid by StoryTable.tuid
 }
 
 // Allows an IColumn wrapping my contentValues to be a delegate for my IStory properties

@@ -106,7 +106,7 @@ class StoryTest {
 //    }
   }
 
-  var story = Story.valueOf(contentValues)
+  var story = Story(contentValues)
 
   @Test
   fun readPropertiesFromStory() {
