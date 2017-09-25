@@ -30,11 +30,6 @@ class Story constructor(val contentValues: ContentValues): IStory {
 
   override fun toString() = title + " #" + ifId
 
-
-  //
-  // SIMPLE MAPPED PROPERTIES
-  //
-
   override var author by StoryTable.author
   override var averageRating by StoryTable.averageRating
   override var coverArtURL by StoryTable.coverArtURL

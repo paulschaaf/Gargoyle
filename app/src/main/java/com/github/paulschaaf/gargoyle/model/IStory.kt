@@ -60,6 +60,4 @@ interface IStory {
       70   -> "unknown (blorbed)"
       else -> versionNumber.toString()
     }
-
-
 }
