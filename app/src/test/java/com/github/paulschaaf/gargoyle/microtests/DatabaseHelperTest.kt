@@ -17,27 +17,42 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
+import com.github.paulschaaf.gargoyle.database.IColumn
 import com.github.paulschaaf.gargoyle.database.StoryTable
+import com.github.paulschaaf.gargoyle.model.IStory
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
-/**
- * Created by pschaaf on 9/8/17.
- */
-
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseHelperTest {
+  val fieldsByName = IStory::class.java.methods.associateBy {
+    val name = it.name.removePrefix("get")
+    name[0].toLowerCase() + name.substring(1)
+  }.minus(arrayOf("exists", "file", "versionNumber", "zCodeVersion"))
+
+  val tableDef = StoryTable.createSQL
+    .split(",", "(", ")")
+    .map { str-> str.trim() }
+    .toSet()
+
   @Test
   fun createSQLContainsAllFields() {
-    val tableDef = StoryTable.createSQL
-      .split(",", "(", ")")
-      .map { str -> str.trim() }
-      .toSet()
+    val fieldNames = fieldsByName.keys.toMutableSet()
 
-    StoryTable.columns
-      .map { (_, col)-> col.createSQL }
-      .forEach { colDef -> assertTrue("Could not find the column definition '$colDef' in this createSQL: $tableDef", tableDef.contains(colDef)) }
+    StoryTable.columns.forEach { (name: String, column: IColumn<*>)->
+      val sql = column.createSQL
+      assertTrue("Could not find the column definition '$sql' in this createSQL: $tableDef",
+                 tableDef.any { it.matches(sql.toRegex()) }
+      )
+      assertTrue("The column '$name' does not map to the field(s): $fieldNames",
+                 fieldNames.remove(name)
+      )
+    }
+
+    assertTrue("The createSQL is missing definitions for the field(s): $fieldNames",
+               fieldNames.isEmpty()
+    )
   }
 }

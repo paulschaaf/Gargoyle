@@ -24,18 +24,16 @@ interface IColumn<T> {
   val name: String
 
   val sqlDataType: String
-    get() = "TEXT"
 
   val createProperties: String
-    get() = ""
 
   val createSQL: String
     get() = "$name $sqlDataType $createProperties".trim()
 
   @Suppress("UNCHECKED_CAST")
-  operator fun get(conValues: ContentValues): T = conValues.get(name) as T
+  operator fun get(conValues: ContentValues): T
 
-  fun set(conValues: ContentValues, value: T) = conValues.put(name, value as String)
+  fun set(conValues: ContentValues, value: T)
 }
 
 open class Column<T>(override val name: String, val klass: Class<T>): IColumn<T> {
@@ -43,6 +41,8 @@ open class Column<T>(override val name: String, val klass: Class<T>): IColumn<T>
     // save and extract the generic type parameter
     inline operator fun <reified T> invoke(name: String) = Column(name, T::class.java)
   }
+
+  override val createProperties = ""
 
   override val sqlDataType = when (klass) {
     java.lang.Double::class.java -> "DOUBLE"
@@ -62,7 +62,7 @@ open class Column<T>(override val name: String, val klass: Class<T>): IColumn<T>
     Long::class.java             -> conValues.getAsLong(name) as T
     Short::class.java            -> conValues.getAsShort(name) as T
     String::class.java           -> conValues.getAsString(name) as T
-    else                         -> super.get(conValues)
+    else                         -> conValues.get(name) as T
   }
 
   override fun set(conValues: ContentValues, value: T) = when (value) {
@@ -74,8 +74,7 @@ open class Column<T>(override val name: String, val klass: Class<T>): IColumn<T>
     is Int?       -> conValues.put(name, value)
     is Long?      -> conValues.put(name, value)
     is Short?     -> conValues.put(name, value)
-    is String?    -> conValues.put(name, value)
-    else          -> super.set(conValues, value)
+    else          -> conValues.put(name, value as String)
   }
 }
 

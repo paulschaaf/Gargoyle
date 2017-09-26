@@ -38,7 +38,7 @@ class Story constructor(val contentValues: ContentValues): IStory {
   override var forgiveness by StoryTable.forgiveness
   override var genre by StoryTable.genre
   override var id by StoryTable.id
-  override var ifId by StoryTable.ifid
+  override var ifId by StoryTable.ifId
   override var language by StoryTable.language
   override var link by StoryTable.link
   override var lookedUp by StoryTable.lookedUp

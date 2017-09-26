@@ -28,65 +28,40 @@ import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.InvalidObjectException
 
-/**
- * Created by pschaaf on 9/1/17.
- */
+// todo pschaaf 09/268/17 17:09: I'm not sure that this test proves anything useful
+
 @RunWith(MockitoJUnitRunner::class)
 class StoryTest {
-//  val zorkPi = object: IStory {
-//    override val author = "P.G. Schaaf"
-//    override val averageRating = 4.5
-//    override val coverArtURL = "/opt/media"
-//    override val description = "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)"
-//    override val firstPublished = "5/6/2017"
-//    override val forgiveness = "hard"
-//    override val genre = "Adventure"
-//    override val id = 31415
-//    override val ifId = "ifid_zork_pi"
-//    override val language = "EN/US"
-//    override val link = "http://paulschaaf.com/"
-//    override val lookedUp = "9/2/2017"
-//    override val path = "/var/data/IntFic.dat"
-//    override val ratingCountAvg = 17
-//    override val ratingCountTotal = 137
-//    override val series = "Zork"
-//    override val seriesNumber = 5
-//    override val starRating = 5.0
-//    override val title = "Zork 3.14"
-//    override val tuid = "Zork 3.14"
-//  }
-
-  val properties = with(StoryTable) {
-    mapOf(
-        "author" to "P.G. Schaaf",
-        "averageRating" to 4.5,
-        "description" to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
-        "firstPublished" to "5/6/2017",
-        "forgiveness" to "hard",
-        "genre" to "Adventure",
-        "id" to 31415,
-        "ifid" to "ifid_zork_pi",
-        "language" to "EN/US",
-        "link" to "http://paulschaaf.com/",
-        "lookedUp" to "9/2/2017",
-        "path" to "/var/data/IntFic.dat",
-        "ratingCountAvg" to 17,
-        "ratingCountTotal" to 137,
-        "series" to "Zork",
-        "seriesNumber" to 5,
-        "starRating" to 5.0,
-        "title" to "Zork 3.14"
-    )
-  }
+  val properties = mutableMapOf(
+      "author" to "P.G. Schaaf",
+      "averageRating" to 4.5,
+      "description" to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
+      "firstPublished" to "5/6/2017",
+      "forgiveness" to "hard",
+      "genre" to "Adventure",
+      "id" to 31415,
+      "ifId" to "ifid_zork_pi",
+      "language" to "EN/US",
+      "link" to "http://paulschaaf.com/",
+      "lookedUp" to "9/2/2017",
+      "path" to "/var/data/IntFic.dat",
+      "ratingCountAvg" to 17,
+      "ratingCountTotal" to 137,
+      "series" to "Zork",
+      "seriesNumber" to 5,
+      "starRating" to 5.0,
+      "title" to "Zork 3.14"
+  )
 
   val contentValues = mock(ContentValues::class.java)
+
   init {
-    properties.entries.forEach { (column, value)->
+    properties.entries.forEach { (columnName, value)->
       when (value) {
-        is Double -> `when`(contentValues.getAsDouble(column)).thenReturn(value)
-        is Int    -> `when`(contentValues.getAsInteger(column)).thenReturn(value)
-        is Long   -> `when`(contentValues.getAsLong(column)).thenReturn(value)
-        is String -> `when`(contentValues.getAsString(column)).thenReturn(value.toString())
+        is Double -> `when`(contentValues.getAsDouble(columnName)).thenReturn(value)
+        is Int    -> `when`(contentValues.getAsInteger(columnName)).thenReturn(value)
+        is Long   -> `when`(contentValues.getAsLong(columnName)).thenReturn(value)
+        is String -> `when`(contentValues.getAsString(columnName)).thenReturn(value.toString())
         else      -> InvalidObjectException("Test setup does not handle columns of type " + value.javaClass.name + ".")
       }
     }
@@ -103,7 +78,7 @@ class StoryTest {
       assertEquals(properties["firstPublished"], story.firstPublished)
       assertEquals(properties["forgiveness"], story.forgiveness)
       assertEquals(properties["genre"], story.genre)
-      assertEquals(properties["ifid"], story.ifId)
+      assertEquals(properties["ifId"], story.ifId)
       assertEquals(properties["id"], story.id)
       assertEquals(properties["language"], story.language)
       assertEquals(properties["link"], story.link)

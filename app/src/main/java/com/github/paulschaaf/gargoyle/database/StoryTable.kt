@@ -21,7 +21,7 @@ object StoryTable: SqlTable {
   override val name = "Story"
 
   val id by PrimaryKeyColumn
-  val ifid by StringColumn.nonNull.unique
+  val ifId by StringColumn.nonNull.unique
 
   val author by StringColumn
   val coverArtURL by StringColumn
@@ -42,25 +42,28 @@ object StoryTable: SqlTable {
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
 
-  override val columns = mapOf(
-      "id" to id,
-      "author" to author,
-      "averageRating" to averageRating,
-      "coverArtURL" to coverArtURL,
-      "description" to description,
-      "firstPublished" to firstPublished,
-      "forgiveness" to forgiveness,
-      "genre" to genre,
-      "ifid" to ifid,
-      "language" to language,
-      "link" to link,
-      "lookedUp" to lookedUp,
-      "path" to path,
-      "ratingCountAvg" to ratingCountAvg,
-      "ratingCountTotal" to ratingCountTotal,
-      "series" to series,
-      "seriesNumber" to seriesNumber,
-      "tuid" to tuid,
-      "title" to title
+
+  override val columns =
+      mapOf(
+          "id" to id,
+          "author" to author,
+          "averageRating" to averageRating,
+          "coverArtURL" to coverArtURL,
+          "description" to description,
+          "firstPublished" to firstPublished,
+          "forgiveness" to forgiveness,
+          "genre" to genre,
+          "ifId" to ifId,
+          "language" to language,
+          "link" to link,
+          "lookedUp" to lookedUp,
+          "path" to path,
+          "ratingCountAvg" to ratingCountAvg,
+          "ratingCountTotal" to ratingCountTotal,
+          "series" to series,
+          "seriesNumber" to seriesNumber,
+          "starRating" to starRating,
+          "tuid" to tuid,
+          "title" to title
   )
 }
