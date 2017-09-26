@@ -19,15 +19,9 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-
-/**
- * Created by pschaaf on 9/3/17.
- */
 
 @RunWith(AndroidJUnit4::class)
 class IFDBTest {
