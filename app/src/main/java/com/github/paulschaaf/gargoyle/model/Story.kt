@@ -20,6 +20,8 @@ package com.github.paulschaaf.gargoyle.model
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.IColumn
 import com.github.paulschaaf.gargoyle.database.StoryTable
+import java.io.File
+import java.io.RandomAccessFile
 import java.util.*
 import kotlin.reflect.KProperty
 
@@ -30,6 +32,25 @@ class Story constructor(val contentValues: ContentValues): IStory {
 
   override fun toString() = title + " #" + ifId
 
+  var id by StoryTable.id
+  var lookedUp by StoryTable.lookedUp
+
+  val exists: Boolean
+    get() = file?.exists() == true
+
+  val file: File?
+    get() = if (path == null) null else File(path)
+
+  val versionNumber: Int
+    get() = RandomAccessFile(path, "r").use { it.readInt() }
+
+  val zCodeVersion
+    get() = when (versionNumber) {
+      0    -> "0 (unknown)"
+      70   -> "unknown (blorbed)"
+      else -> versionNumber.toString()
+    }
+
   override var author by StoryTable.author
   override var averageRating by StoryTable.averageRating
   override var coverArtURL by StoryTable.coverArtURL
@@ -37,11 +58,9 @@ class Story constructor(val contentValues: ContentValues): IStory {
   override var firstPublished by StoryTable.firstPublished
   override var forgiveness by StoryTable.forgiveness
   override var genre by StoryTable.genre
-  override var id by StoryTable.id
   override var ifId by StoryTable.ifId
   override var language by StoryTable.language
   override var link by StoryTable.link
-  override var lookedUp by StoryTable.lookedUp
   override var path by StoryTable.path
   override var ratingCountAvg by StoryTable.ratingCountAvg
   override var ratingCountTotal by StoryTable.ratingCountTotal

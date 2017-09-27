@@ -30,7 +30,7 @@ class DatabaseHelperTest {
   val fieldsByName = IStory::class.java.methods.associateBy {
     val name = it.name.removePrefix("get")
     name[0].toLowerCase() + name.substring(1)
-  }.minus(arrayOf("exists", "file", "versionNumber", "zCodeVersion"))
+  }
 
   val tableDef = StoryTable.createSQL
     .split(",", "(", ")")

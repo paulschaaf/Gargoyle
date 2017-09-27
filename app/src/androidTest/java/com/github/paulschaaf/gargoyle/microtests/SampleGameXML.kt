@@ -30,12 +30,10 @@ open class SampleGameXML(val xmlString: String): IStory {
   override val ifId = this["ifid"] ?: "-error-"
   override val language = this["language"]
   override val link = this["link"]?.replace("&amp;", "&")
-  override val lookedUp = this["lookedUp"]
   override val path = this["path"]
   override val series = this["series"]
   override val tuid = this["tuid"]
   override val title = this["title"]
-  override val id = this["id"]?.toInt() ?: 0
   override val ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
   override val ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
   override val seriesNumber = this["seriesnumber"]?.toIntOrNull()

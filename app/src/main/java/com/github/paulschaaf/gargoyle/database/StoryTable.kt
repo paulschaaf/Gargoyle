@@ -44,7 +44,6 @@ object StoryTable: SqlTable {
 
 
   override val columns = mapOf(
-      "id" to id,
       "author" to author,
       "averageRating" to averageRating,
       "coverArtURL" to coverArtURL,
@@ -55,7 +54,6 @@ object StoryTable: SqlTable {
       "ifId" to ifId,
       "language" to language,
       "link" to link,
-      "lookedUp" to lookedUp,
       "path" to path,
       "ratingCountAvg" to ratingCountAvg,
       "ratingCountTotal" to ratingCountTotal,

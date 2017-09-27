@@ -46,9 +46,9 @@ class IFDBTest {
     val author = "©2017, Rosencrantz & Guildenstern"
     val description = "This's as \"complicated\" as it gets!"
     val alteredGame = SampleGameXML.ZorkI
-      .set("author", author)
-      .set("description", description)
-      .set("averageRating", 1.0)
+        .set("author", author)
+        .set("description", description)
+        .set("averageRating", 1.0)
 
     assertEquals("Did not successfully change the author. ", author, alteredGame.author)
     assertXMLMatchesStory(alteredGame)
@@ -57,55 +57,30 @@ class IFDBTest {
   @Test
   fun handleNullFields() {
     val alteredGame = SampleGameXML.ZorkI
-      .set("description", null)
-      .set("seriesNumber", null)
-      .set("starRating", null)
+        .set("description", null)
+        .set("seriesNumber", null)
+        .set("starRating", null)
 
     assertXMLMatchesStory(alteredGame)
-  }
-
-  fun <T> assertFieldEquals(fieldName: String, expected: T, actual: T) {
-    when {
-      expected == null   -> assertNull("checking '$fieldName':", actual)
-      expected is Double -> assertEquals("checking '$fieldName':",
-                                         expected,
-                                         actual as Double, // explicit cast to keep the compiler happy
-                                         0.0
-      )
-      else               -> assertEquals("checking '$fieldName':",
-                                         expected,
-                                         actual
-      )
-    }
   }
 
   private fun assertXMLMatchesStory(gameXML: SampleGameXML) {
     val story = IFDBFeedReader.createStoryFrom(gameXML.xmlString.byteInputStream())
     story.assertIsDescribedBy(gameXML)
-//    assertFieldEquals("ifId", gameXML::ifId, story.ifId)
-//    assertFieldEquals("author", gameXML.author, story.author)
-//    assertFieldEquals("averageRating", gameXML.averageRating, story.averageRating)
-//    assertFieldEquals("coverArtURL", gameXML.coverArtURL, story.coverArtURL)
-//    assertFieldEquals("description", gameXML.description, story.description)
-//    assertFieldEquals("firstPublished", gameXML.firstPublished, story.firstPublished)
-//    assertFieldEquals("forgiveness", gameXML.forgiveness, story.forgiveness)
-//    assertFieldEquals("genre", gameXML.genre, story.genre)
-//    assertFieldEquals("language", gameXML.language, story.language)
-//    assertFieldEquals("link", gameXML.link, story.link)
-//    assertNotNull("lookedUp", story.lookedUp)
-//    assertFieldEquals("ratingCountAvg", gameXML.ratingCountAvg, story.ratingCountAvg)
-//    assertFieldEquals("ratingCountTotal", gameXML.ratingCountTotal, story.ratingCountTotal)
-//    assertFieldEquals("series", gameXML.series, story.series)
-//    assertFieldEquals("seriesNumber", gameXML.seriesNumber, story.seriesNumber)
-//    assertFieldEquals("starRating", gameXML.starRating, story.starRating)
-//    assertFieldEquals("title", gameXML.title, story.title)
-//    assertFieldEquals("tuid", gameXML.tuid, story.tuid)
   }
 
   fun IStory.assertIsDescribedBy(other: IStory) {
     IStory::class.memberProperties.forEach {
-      print("checking property: " + it.name)
-      assertFieldEquals(it.name, it(other), it(this))
+      val fieldName = it.name
+      print("checking property: " + fieldName)
+      val expected = it(other)
+      val actual = it(this)
+      val checkingMessage = "bad value in '$fieldName'"
+      when (expected) {
+        null      -> assertNull(checkingMessage, actual)
+        is Double -> assertEquals(checkingMessage, expected, actual as Double, 0.0)
+        else      -> assertEquals(checkingMessage, expected, actual)
+      }
     }
   }
 }
