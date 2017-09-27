@@ -19,11 +19,12 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
+import com.github.paulschaaf.gargoyle.model.IStory
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.reflect.full.memberProperties
 
 /**
  * Created by pschaaf on 9/3/17.
@@ -80,24 +81,32 @@ class IFDBTest {
 
   private fun assertXMLMatchesStory(gameXML: SampleGameXML) {
     val story = IFDBFeedReader.createStoryFrom(gameXML.xmlString.byteInputStream())
-    assertFieldEquals("ifId", gameXML.ifId, story.ifId)
-    assertFieldEquals("author", gameXML.author, story.author)
-    assertFieldEquals("averageRating", gameXML.averageRating, story.averageRating)
-    assertFieldEquals("coverArtURL", gameXML.coverArtURL, story.coverArtURL)
-    assertFieldEquals("description", gameXML.description, story.description)
-    assertFieldEquals("firstPublished", gameXML.firstPublished, story.firstPublished)
-    assertFieldEquals("forgiveness", gameXML.forgiveness, story.forgiveness)
-    assertFieldEquals("genre", gameXML.genre, story.genre)
-    assertFieldEquals("language", gameXML.language, story.language)
-    assertFieldEquals("link", gameXML.link, story.link)
-    assertNotNull("lookedUp", story.lookedUp)
-    assertFieldEquals("ratingCountAvg", gameXML.ratingCountAvg, story.ratingCountAvg)
-    assertFieldEquals("ratingCountTotal", gameXML.ratingCountTotal, story.ratingCountTotal)
-    assertFieldEquals("series", gameXML.series, story.series)
-    assertFieldEquals("seriesNumber", gameXML.seriesNumber, story.seriesNumber)
-    assertFieldEquals("starRating", gameXML.starRating, story.starRating)
-    assertFieldEquals("title", gameXML.title, story.title)
-    assertFieldEquals("tuid", gameXML.tuid, story.tuid)
+    story.assertIsDescribedBy(gameXML)
+//    assertFieldEquals("ifId", gameXML::ifId, story.ifId)
+//    assertFieldEquals("author", gameXML.author, story.author)
+//    assertFieldEquals("averageRating", gameXML.averageRating, story.averageRating)
+//    assertFieldEquals("coverArtURL", gameXML.coverArtURL, story.coverArtURL)
+//    assertFieldEquals("description", gameXML.description, story.description)
+//    assertFieldEquals("firstPublished", gameXML.firstPublished, story.firstPublished)
+//    assertFieldEquals("forgiveness", gameXML.forgiveness, story.forgiveness)
+//    assertFieldEquals("genre", gameXML.genre, story.genre)
+//    assertFieldEquals("language", gameXML.language, story.language)
+//    assertFieldEquals("link", gameXML.link, story.link)
+//    assertNotNull("lookedUp", story.lookedUp)
+//    assertFieldEquals("ratingCountAvg", gameXML.ratingCountAvg, story.ratingCountAvg)
+//    assertFieldEquals("ratingCountTotal", gameXML.ratingCountTotal, story.ratingCountTotal)
+//    assertFieldEquals("series", gameXML.series, story.series)
+//    assertFieldEquals("seriesNumber", gameXML.seriesNumber, story.seriesNumber)
+//    assertFieldEquals("starRating", gameXML.starRating, story.starRating)
+//    assertFieldEquals("title", gameXML.title, story.title)
+//    assertFieldEquals("tuid", gameXML.tuid, story.tuid)
+  }
+
+  fun IStory.assertIsDescribedBy(other: IStory) {
+    IStory::class.memberProperties.forEach {
+      print("checking property: " + it.name)
+      assertFieldEquals(it.name, it(other), it(this))
+    }
   }
 }
 
