@@ -25,9 +25,6 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-/**
- * Created by pschaaf on 9/3/17.
- */
 class IFDBFeedReader(val parser: XmlPullParser) {
   companion object {
     val CONNECT_TIMEOUT = 15000
