@@ -18,80 +18,54 @@
 package com.github.paulschaaf.gargoyle.database
 
 import android.content.ContentValues
+import read
+import set
 import kotlin.reflect.KProperty
 
 interface IColumn<T> {
   val name: String
+  val klass: Class<T>
 
   val sqlDataType: String
+    get() = when (klass) {
+      java.lang.Double::class.java -> "DOUBLE"
+      java.lang.Float::class.java  -> "FLOAT"
+      Int::class.java              -> "INTEGER"
+      else                         -> "TEXT"
+    }
 
   val createProperties: String
+    get() = ""
 
   val createSQL: String
     get() = "$name $sqlDataType $createProperties".trim()
 
-  @Suppress("UNCHECKED_CAST")
-  operator fun get(conValues: ContentValues): T
+  fun get(conValues: ContentValues): T = conValues.read(name, klass)
 
-  fun set(conValues: ContentValues, value: T)
+  fun set(conValues: ContentValues, value: T) = conValues.set(name, value)
 }
 
-open class Column<T>(override val name: String, val klass: Class<T>): IColumn<T> {
+open class Column<T>(override val name: String, override val klass: Class<T>): IColumn<T> {
   companion object {
     // save and extract the generic type parameter
     inline operator fun <reified T> invoke(name: String) = Column(name, T::class.java)
-  }
-
-  override val createProperties = ""
-
-  override val sqlDataType = when (klass) {
-    java.lang.Double::class.java -> "DOUBLE"
-    java.lang.Float::class.java  -> "FLOAT"
-    Int::class.java              -> "INTEGER"
-    else                         -> "TEXT"
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  override fun get(conValues: ContentValues): T = when (klass) {
-    Boolean::class.java          -> conValues.getAsBoolean(name) as T
-    Byte::class.java             -> conValues.getAsByte(name) as T
-    ByteArray::class.java        -> conValues.getAsByteArray(name) as T
-    java.lang.Double::class.java -> conValues.getAsDouble(name) as T
-    java.lang.Float::class.java  -> conValues.getAsFloat(name) as T
-    Integer::class.java          -> conValues.getAsInteger(name) as T
-    Long::class.java             -> conValues.getAsLong(name) as T
-    Short::class.java            -> conValues.getAsShort(name) as T
-    String::class.java           -> conValues.getAsString(name) as T
-    else                         -> conValues.get(name) as T
-  }
-
-  override fun set(conValues: ContentValues, value: T) = when (value) {
-    is Boolean?   -> conValues.put(name, value)
-    is Byte?      -> conValues.put(name, value)
-    is ByteArray? -> conValues.put(name, value)
-    is Double?    -> conValues.put(name, value)
-    is Float?     -> conValues.put(name, value)
-    is Int?       -> conValues.put(name, value)
-    is Long?      -> conValues.put(name, value)
-    is Short?     -> conValues.put(name, value)
-    else          -> conValues.put(name, value as String)
   }
 }
 
 class DoubleColumn(name: String): IColumn<Double?> by Column(name) {
   companion object {
-    operator fun getValue(table: SqlTable, property: KProperty<*>) = DoubleColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = DoubleColumn(property.name)
   }
 }
 
 class IntColumn(name: String): IColumn<Int?> by Column(name) {
   companion object {
-    operator fun getValue(table: SqlTable, property: KProperty<*>) = IntColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = IntColumn(property.name)
   }
 
   open class nonNull(name: String): IColumn<Int> by Column(name) {
     companion object {
-      operator fun getValue(table: SqlTable, property: KProperty<*>) = nonNull(property.name)
+      operator fun getValue(table: ISqlTable, property: KProperty<*>) = nonNull(property.name)
     }
 
     override val createProperties = "NOT NULL"
@@ -100,25 +74,25 @@ class IntColumn(name: String): IColumn<Int?> by Column(name) {
 
 class PrimaryKeyColumn(name: String): IntColumn.nonNull(name) {
   companion object {
-    operator fun getValue(table: SqlTable, property: KProperty<*>) = PrimaryKeyColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = PrimaryKeyColumn(property.name)
   }
 }
 
 class StringColumn(name: String): IColumn<String?> by Column(name) {
   companion object {
-    operator fun getValue(table: SqlTable, property: KProperty<*>) = StringColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = StringColumn(property.name)
   }
 
   open class nonNull(name: String): IColumn<String> by Column(name) {
     companion object {
-      operator fun getValue(table: SqlTable, property: KProperty<*>) = nonNull(property.name)
+      operator fun getValue(table: ISqlTable, property: KProperty<*>) = nonNull(property.name)
     }
 
     override val createProperties = "NOT NULL"
 
     open class unique(name: String): nonNull(name) {
       companion object {
-        operator fun getValue(table: SqlTable, property: KProperty<*>) = unique(property.name)
+        operator fun getValue(table: ISqlTable, property: KProperty<*>) = unique(property.name)
       }
 
       override val createProperties = "UNIQUE NOT NULL"

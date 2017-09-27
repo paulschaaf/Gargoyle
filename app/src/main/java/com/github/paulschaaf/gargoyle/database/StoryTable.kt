@@ -17,10 +17,7 @@
 
 package com.github.paulschaaf.gargoyle.database
 
-object StoryTable: SqlTable {
-  override val name = "Story"
-
-  val id by PrimaryKeyColumn
+object StoryTable: com.github.paulschaaf.gargoyle.database.SqlTable("Story") {
   val ifId by StringColumn.nonNull.unique
 
   val author by StringColumn

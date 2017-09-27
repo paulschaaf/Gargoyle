@@ -35,14 +35,14 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 
   fun insertStory(story: Story): Long {
     val writableDatabase = writableDatabase
-    val rowID = writableDatabase.insert(StoryTable.name, null, story.contentValues)
+    val rowID = writableDatabase.insert(StoryTable.tableName, null, story.contentValues)
     if (rowID == -1L) Log.e(TAG, "The insert failed!")
     return rowID
   }
 
   fun rebuildDatabase() {
     val db = writableDatabase
-    db.execSQL("DROP TABLE " + StoryTable.name)
+    db.execSQL("DROP TABLE " + StoryTable.tableName)
 //    db.delete(Story.TableName, null, null)
     db.close()
   }
@@ -61,7 +61,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 //  }
 
   fun updateStory(story: Story) = writableDatabase.update(
-      StoryTable.name,
+      StoryTable.tableName,
       story.contentValues,
       "${StoryTable.id} = ${story.id}",
       null
@@ -72,7 +72,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
   val newCursor: Cursor
     get() {
       val cursor = readableDatabase.query(
-          StoryTable.name, null, null, null, null, null,
+          StoryTable.tableName, null, null, null, null, null,
           StoryTable.title.name + " COLLATE NOCASE"
       )
       cursor.moveToFirst()

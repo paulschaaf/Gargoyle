@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import android.content.ContentValues
-
 /*
  * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
@@ -34,7 +32,10 @@ import android.content.ContentValues
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline fun <reified T> ContentValues.read(name: String) = when (T::class.java) {
+import android.content.ContentValues
+
+@Suppress("UNCHECKED_CAST")
+fun <T> ContentValues.read(name: String, clazz: Class<T>): T = when (clazz) {
   Boolean::class.java          -> getAsBoolean(name)
   Byte::class.java             -> getAsByte(name)
   ByteArray::class.java        -> getAsByteArray(name)
@@ -45,3 +46,15 @@ inline fun <reified T> ContentValues.read(name: String) = when (T::class.java) {
   Short::class.java            -> getAsShort(name)
   else                         -> getAsString(name)
 } as T
+
+fun <T> ContentValues.set(name: String, value: T) = when (value) {
+  is Boolean?   -> put(name, value)
+  is Byte?      -> put(name, value)
+  is ByteArray? -> put(name, value)
+  is Double?    -> put(name, value)
+  is Float?     -> put(name, value)
+  is Int?       -> put(name, value)
+  is Long?      -> put(name, value)
+  is Short?     -> put(name, value)
+  else          -> put(name, value as String)
+}
