@@ -17,7 +17,7 @@
 
 package com.github.paulschaaf.gargoyle.database
 
-object StoryTable: com.github.paulschaaf.gargoyle.database.SqlTable("Story") {
+object StoryTable: SqlTable("Story") {
   val ifId by StringColumn.nonNull.unique
 
   val author by StringColumn
@@ -39,25 +39,24 @@ object StoryTable: com.github.paulschaaf.gargoyle.database.SqlTable("Story") {
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
 
-
-  override val columns = mapOf(
-      "author" to author,
-      "averageRating" to averageRating,
-      "coverArtURL" to coverArtURL,
-      "description" to description,
-      "firstPublished" to firstPublished,
-      "forgiveness" to forgiveness,
-      "genre" to genre,
-      "ifId" to ifId,
-      "language" to language,
-      "link" to link,
-      "path" to path,
-      "ratingCountAvg" to ratingCountAvg,
-      "ratingCountTotal" to ratingCountTotal,
-      "series" to series,
-      "seriesNumber" to seriesNumber,
-      "starRating" to starRating,
-      "tuid" to tuid,
-      "title" to title
+  override val columns = mutableListOf(
+      author,
+      averageRating,
+      coverArtURL,
+      description,
+      firstPublished,
+      forgiveness,
+      genre,
+      ifId,
+      language,
+      link,
+      path,
+      ratingCountAvg,
+      ratingCountTotal,
+      series,
+      seriesNumber,
+      starRating,
+      tuid,
+      title
   )
 }

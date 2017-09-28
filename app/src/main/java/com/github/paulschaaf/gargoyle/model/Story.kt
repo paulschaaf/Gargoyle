@@ -32,9 +32,6 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
 
   override fun toString() = title + " #" + ifId
 
-  var id by StoryTable.id
-  var lookedUp by StoryTable.lookedUp
-
   val exists: Boolean
     get() = file?.exists() == true
 
@@ -51,6 +48,7 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
       else -> versionNumber.toString()
     }
 
+  var id by StoryTable.id
   override var author by StoryTable.author
   override var averageRating by StoryTable.averageRating
   override var coverArtURL by StoryTable.coverArtURL
@@ -61,6 +59,7 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
   override var ifId by StoryTable.ifId
   override var language by StoryTable.language
   override var link by StoryTable.link
+  var lookedUp by StoryTable.lookedUp
   override var path by StoryTable.path
   override var ratingCountAvg by StoryTable.ratingCountAvg
   override var ratingCountTotal by StoryTable.ratingCountTotal
@@ -71,7 +70,7 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
   override var tuid by StoryTable.tuid
 }
 
-// Allows an IColumn wrapping my contentValues to be a delegate for my IStory properties
+// Allows an IColumn wrapping my contentValues to be a delegate for my IFDBStory properties
 operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
     = get(story.contentValues)
 

@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     implementation 'junit:junit:4.12'
     androidTestCompile 'org.mockito:mockito-android:2.10.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
@@ -46,7 +46,7 @@ dependencies {
     implementation 'junit:junit-dep:4.11'
     implementation 'com.android.support.test:runner:1.0.1'
     testCompile 'org.mockito:mockito-core:2.10.0'
-    androidTestImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.1.50'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 repositories {
     mavenCentral()

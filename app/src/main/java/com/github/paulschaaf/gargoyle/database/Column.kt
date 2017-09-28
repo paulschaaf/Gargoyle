@@ -24,6 +24,7 @@ import kotlin.reflect.KProperty
 
 interface IColumn<T> {
   val name: String
+  val table: ISqlTable
   val klass: Class<T>
 
   val sqlDataType: String
@@ -45,54 +46,77 @@ interface IColumn<T> {
   fun set(conValues: ContentValues, value: T) = conValues.set(name, value)
 }
 
-open class Column<T>(override val name: String, override val klass: Class<T>): IColumn<T> {
+open class Column<T>(final override val table: ISqlTable, override val name: String, override val klass: Class<T>):
+    IColumn<T> {
   companion object {
     // save and extract the generic type parameter
-    inline operator fun <reified T> invoke(name: String) = Column(name, T::class.java)
+    inline operator fun <reified T> invoke(table: ISqlTable, name: String) =
+        Column(table, name, T::class.java)
+
+    operator fun getValue(table: StoryTable, property: KProperty<*>) =
+        Column<Any?>(table, property.name)
+  }
+
+  init {
+    table.addColumn(this)
   }
 }
 
-class DoubleColumn(name: String): IColumn<Double?> by Column(name) {
+class DoubleColumn(table: ISqlTable, name: String): IColumn<Double?> by Column(table, name) {
   companion object {
-    operator fun getValue(table: Any?, property: KProperty<*>) = DoubleColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = DoubleColumn(table,
+                                                                                   property.name
+    )
   }
 }
 
-class IntColumn(name: String): IColumn<Int?> by Column(name) {
+class IntColumn(table: ISqlTable, name: String): IColumn<Int?> by Column(table, name) {
   companion object {
-    operator fun getValue(table: Any?, property: KProperty<*>) = IntColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = IntColumn(table,
+                                                                                property.name
+    )
   }
 
-  open class nonNull(name: String): IColumn<Int> by Column(name) {
+  open class nonNull(table: ISqlTable, name: String): IColumn<Int> by Column(table, name) {
     companion object {
-      operator fun getValue(table: Any?, property: KProperty<*>) = nonNull(property.name)
+      operator fun getValue(table: ISqlTable, property: KProperty<*>) = nonNull(table,
+                                                                                property.name
+      )
     }
 
     override val createProperties = "NOT NULL"
   }
 }
 
-class PrimaryKeyColumn(name: String): IntColumn.nonNull(name) {
+class PrimaryKeyColumn(table: ISqlTable, name: String): IntColumn.nonNull(table, name) {
   companion object {
-    operator fun getValue(table: Any?, property: KProperty<*>) = PrimaryKeyColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) = PrimaryKeyColumn(table,
+                                                                                       property.name
+    )
   }
 }
 
-class StringColumn(name: String): IColumn<String?> by Column(name) {
+class StringColumn(table: ISqlTable, name: String):
+    IColumn<String?> by Column(table, name) {
   companion object {
-    operator fun getValue(table: ISqlTable, property: KProperty<*>) = StringColumn(property.name)
+    operator fun getValue(table: ISqlTable, property: KProperty<*>)
+        = StringColumn(table, property.name)
   }
 
-  open class nonNull(name: String): IColumn<String> by Column(name) {
+  open class nonNull(table: ISqlTable, name: String): IColumn<String> by Column(table, name) {
     companion object {
-      operator fun getValue(table: Any?, property: KProperty<*>) = nonNull(property.name)
+      operator fun getValue(table: ISqlTable, property: KProperty<*>) = nonNull(table,
+                                                                                property.name
+      )
     }
 
     override val createProperties = "NOT NULL"
 
-    open class unique(name: String): nonNull(name) {
+    open class unique(table: ISqlTable, name: String): nonNull(table, name) {
       companion object {
-        operator fun getValue(table: Any?, property: KProperty<*>) = unique(property.name)
+        operator fun getValue(table: ISqlTable, property: KProperty<*>) = unique(table,
+                                                                                 property.name
+        )
       }
 
       override val createProperties = "UNIQUE NOT NULL"

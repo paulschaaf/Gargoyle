@@ -41,13 +41,13 @@ class DatabaseHelperTest {
   fun createSQLContainsAllFields() {
     val fieldNames = fieldsByName.keys.toMutableSet()
 
-    StoryTable.columns.forEach { (name: String, column: IColumn<*>)->
+    StoryTable.columns.forEach { column: IColumn<*>->
       val sql = column.createSQL
       assertTrue("Could not find the column definition '$sql' in this createSQL: $tableDef",
                  tableDef.any { it.matches(sql.toRegex()) }
       )
-      assertTrue("The column '$name' does not map to the field(s): $fieldNames",
-                 fieldNames.remove(name)
+      assertTrue("The column '$column.name' does not map to the field(s): $fieldNames",
+                 fieldNames.remove(column.name)
       )
     }
 
