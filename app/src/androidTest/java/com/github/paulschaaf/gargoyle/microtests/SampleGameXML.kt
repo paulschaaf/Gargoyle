@@ -17,9 +17,9 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import com.github.paulschaaf.gargoyle.model.IStory
+import com.github.paulschaaf.gargoyle.model.IFDBStory
 
-open class SampleGameXML(val xmlString: String): IStory {
+open class SampleGameXML(val xmlString: String): IFDBStory {
   override val author = this["author"]
   override val averageRating = this["averageRating"]?.toDoubleOrNull()
   override var coverArtURL = this["coverart"]

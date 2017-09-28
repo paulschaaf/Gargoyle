@@ -17,7 +17,7 @@
 
 package com.github.paulschaaf.gargoyle.model
 
-interface IStory {
+interface IFDBStory {
   val ifId: String
 
   val averageRating: Double?

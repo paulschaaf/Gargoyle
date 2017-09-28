@@ -54,18 +54,18 @@ open class Column<T>(override val name: String, override val klass: Class<T>): I
 
 class DoubleColumn(name: String): IColumn<Double?> by Column(name) {
   companion object {
-    operator fun getValue(table: ISqlTable, property: KProperty<*>) = DoubleColumn(property.name)
+    operator fun getValue(table: Any?, property: KProperty<*>) = DoubleColumn(property.name)
   }
 }
 
 class IntColumn(name: String): IColumn<Int?> by Column(name) {
   companion object {
-    operator fun getValue(table: ISqlTable, property: KProperty<*>) = IntColumn(property.name)
+    operator fun getValue(table: Any?, property: KProperty<*>) = IntColumn(property.name)
   }
 
   open class nonNull(name: String): IColumn<Int> by Column(name) {
     companion object {
-      operator fun getValue(table: ISqlTable, property: KProperty<*>) = nonNull(property.name)
+      operator fun getValue(table: Any?, property: KProperty<*>) = nonNull(property.name)
     }
 
     override val createProperties = "NOT NULL"
@@ -74,7 +74,7 @@ class IntColumn(name: String): IColumn<Int?> by Column(name) {
 
 class PrimaryKeyColumn(name: String): IntColumn.nonNull(name) {
   companion object {
-    operator fun getValue(table: ISqlTable, property: KProperty<*>) = PrimaryKeyColumn(property.name)
+    operator fun getValue(table: Any?, property: KProperty<*>) = PrimaryKeyColumn(property.name)
   }
 }
 
@@ -85,14 +85,14 @@ class StringColumn(name: String): IColumn<String?> by Column(name) {
 
   open class nonNull(name: String): IColumn<String> by Column(name) {
     companion object {
-      operator fun getValue(table: ISqlTable, property: KProperty<*>) = nonNull(property.name)
+      operator fun getValue(table: Any?, property: KProperty<*>) = nonNull(property.name)
     }
 
     override val createProperties = "NOT NULL"
 
     open class unique(name: String): nonNull(name) {
       companion object {
-        operator fun getValue(table: ISqlTable, property: KProperty<*>) = unique(property.name)
+        operator fun getValue(table: Any?, property: KProperty<*>) = unique(property.name)
       }
 
       override val createProperties = "UNIQUE NOT NULL"

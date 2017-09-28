@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import com.github.paulschaaf.gargoyle.database.IColumn
 import com.github.paulschaaf.gargoyle.database.StoryTable
-import com.github.paulschaaf.gargoyle.model.IStory
+import com.github.paulschaaf.gargoyle.model.IFDBStory
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseHelperTest {
-  val fieldsByName = IStory::class.java.methods.associateBy {
+  val fieldsByName = IFDBStory::class.java.methods.associateBy {
     val name = it.name.removePrefix("get")
     name[0].toLowerCase() + name.substring(1)
   }

@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
-import com.github.paulschaaf.gargoyle.model.IStory
+import com.github.paulschaaf.gargoyle.model.IFDBStory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -69,8 +69,8 @@ class IFDBTest {
     story.assertIsDescribedBy(gameXML)
   }
 
-  fun IStory.assertIsDescribedBy(other: IStory) {
-    IStory::class.memberProperties.forEach {
+  fun IFDBStory.assertIsDescribedBy(other: IFDBStory) {
+    IFDBStory::class.memberProperties.forEach {
       val fieldName = it.name
       print("checking property: " + fieldName)
       val expected = it(other)

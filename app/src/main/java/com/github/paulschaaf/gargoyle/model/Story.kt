@@ -25,7 +25,7 @@ import java.io.RandomAccessFile
 import java.util.*
 import kotlin.reflect.KProperty
 
-class Story constructor(val contentValues: ContentValues): IStory {
+class Story constructor(val contentValues: ContentValues): IFDBStory {
   constructor(): this(ContentValues()) {
     lookedUp = Date().toString()
   }
