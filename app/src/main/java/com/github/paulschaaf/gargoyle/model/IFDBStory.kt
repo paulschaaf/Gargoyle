@@ -39,5 +39,4 @@ interface IFDBStory {
   val ratingCountAvg: Int?
   val ratingCountTotal: Int?
   val seriesNumber: Int?
-
 }

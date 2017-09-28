@@ -18,7 +18,7 @@
 package com.github.paulschaaf.gargoyle.database
 
 object StoryTable: SqlTable("Story") {
-  val ifId by StringColumn.nonNull.unique
+  val ifId by StringColumn.NonNull.Unique
 
   val author by StringColumn
   val coverArtURL by StringColumn
@@ -38,25 +38,4 @@ object StoryTable: SqlTable("Story") {
   val ratingCountTotal by IntColumn
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
-
-  override val columns = mutableListOf(
-      author,
-      averageRating,
-      coverArtURL,
-      description,
-      firstPublished,
-      forgiveness,
-      genre,
-      ifId,
-      language,
-      link,
-      path,
-      ratingCountAvg,
-      ratingCountTotal,
-      series,
-      seriesNumber,
-      starRating,
-      tuid,
-      title
-  )
 }

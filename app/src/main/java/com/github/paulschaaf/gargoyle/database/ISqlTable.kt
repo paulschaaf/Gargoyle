@@ -18,11 +18,11 @@
 package com.github.paulschaaf.gargoyle.database
 
 interface ISqlTable {
-  val columns: MutableList<IColumn<*>>
+  val columns: MutableMap<String, IColumn<*>>
   val tableName: String
 
   val createSQL: String
-    get() = columns
+    get() = columns.values
       .map { column-> column.createSQL }
       .joinToString(
           prefix = "CREATE TABLE $tableName (",
@@ -30,6 +30,6 @@ interface ISqlTable {
           postfix = ");"
       )
 
-  fun addColumn(column: IColumn<*>) = columns.add(column)
+  fun addColumn(column: IColumn<*>) = columns.put(column.name, column)
 }
 

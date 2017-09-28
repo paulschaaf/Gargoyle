@@ -19,5 +19,5 @@ package com.github.paulschaaf.gargoyle.database
 
 abstract class SqlTable(override val tableName: String): ISqlTable {
   val id by PrimaryKeyColumn
-  override val columns = mutableListOf<IColumn<*>>()
+  override val columns = mutableMapOf<String, IColumn<*>>()
 }

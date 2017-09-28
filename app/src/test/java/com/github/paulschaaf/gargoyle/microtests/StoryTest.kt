@@ -17,58 +17,12 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.StoryTable
-import com.github.paulschaaf.gargoyle.model.Story
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.junit.MockitoJUnitRunner
-import java.io.InvalidObjectException
 
-// todo pschaaf 09/268/17 17:09: I'm not sure that this test proves anything useful
-
-@RunWith(MockitoJUnitRunner::class)
-class StoryTest {
-  val properties = mutableMapOf(
-      "author" to "P.G. Schaaf",
-      "averageRating" to 4.5,
-      "description" to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
-      "firstPublished" to "5/6/2017",
-      "forgiveness" to "hard",
-      "genre" to "Adventure",
-      "id" to 31415,
-      "ifId" to "ifid_zork_pi",
-      "language" to "EN/US",
-      "link" to "http://paulschaaf.com/",
-      "lookedUp" to "9/2/2017",
-      "path" to "/var/data/IntFic.dat",
-      "ratingCountAvg" to 17,
-      "ratingCountTotal" to 137,
-      "series" to "Zork",
-      "seriesNumber" to 5,
-      "starRating" to 5.0,
-      "title" to "Zork 3.14"
-  )
-
-  val contentValues = mock(ContentValues::class.java)
-
-  init {
-    properties.entries.forEach { (columnName, value)->
-      when (value) {
-        is Double -> `when`(contentValues.getAsDouble(columnName)).thenReturn(value)
-        is Int    -> `when`(contentValues.getAsInteger(columnName)).thenReturn(value)
-        is Long   -> `when`(contentValues.getAsLong(columnName)).thenReturn(value)
-        is String -> `when`(contentValues.getAsString(columnName)).thenReturn(value.toString())
-        else      -> InvalidObjectException("Test setup does not handle columns of type " + value.javaClass.name + ".")
-      }
-    }
-  }
-
-  var story = Story(contentValues)
-
+class StoryTest: MockContentValuesTestBase() {
   @Test
   fun readPropertiesFromStory() {
     with(StoryTable) {
