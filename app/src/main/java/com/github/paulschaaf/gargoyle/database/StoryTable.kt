@@ -21,7 +21,6 @@ object StoryTable: SqlTable("Story") {
   val ifId by StringColumn.NonNull.Unique
 
   val author by StringColumn
-  //  val author2 by Column<String>
   val coverArtURL by StringColumn
   val description by StringColumn
   val firstPublished by StringColumn

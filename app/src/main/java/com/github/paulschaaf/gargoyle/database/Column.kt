@@ -61,10 +61,6 @@ open class Column<T>(final override val table: ISqlTable?, override val name: St
     table?.addColumn(this)
   }
 
-//  override fun equals(other: Any?): Boolean = other is Column<*> && name == other.name
-//
-//  override fun hashCode(): Int = name.hashCode()
-
   inline operator fun <reified T> getValue(table: StoryTable, property: KProperty<*>) =
       Column<T>(table, property.name, T::class.java)
 }
