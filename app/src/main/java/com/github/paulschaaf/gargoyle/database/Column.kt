@@ -46,7 +46,7 @@ interface IColumn<T> {
   fun set(conValues: ContentValues, value: T) = conValues.set(name, value)
 }
 
-open class Column<T>(final override val table: ISqlTable, override val name: String, override val klass: Class<T>):
+open class Column<T>(final override val table: ISqlTable?, override val name: String, override val klass: Class<T>):
     IColumn<T> {
   companion object {
     // save and extract the generic type parameter
@@ -58,7 +58,7 @@ open class Column<T>(final override val table: ISqlTable, override val name: Str
   }
 
   init {
-    table.addColumn(this)
+    table?.addColumn(this)
   }
 
 //  override fun equals(other: Any?): Boolean = other is Column<*> && name == other.name
