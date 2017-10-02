@@ -95,8 +95,7 @@ class PrimaryKeyColumn(table: ISqlTable, name: String): IntColumn.NonNull(table,
   }
 }
 
-class StringColumn(table: ISqlTable, name: String):
-    IColumn<String?> by Column(table, name) {
+class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(table, name) {
   companion object {
     operator fun getValue(table: ISqlTable, property: KProperty<*>)
         = StringColumn(table, property.name)

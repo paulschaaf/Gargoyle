@@ -35,13 +35,31 @@ class IFDBTest {
   val baseURL = "http://ifdb.tads.org"
 
   @Test
-  fun readZorkI() = assertXMLMatchesStory(SampleGameXML.ZorkI)
+  fun testBronze() = assertXMLMatchesStory(StoryXML.Samples.Bronze)
+
+  @Test
+  fun testLostPig() = assertXMLMatchesStory(StoryXML.Samples.LostPig)
+
+  @Test
+  fun testSpellBreaker() = assertXMLMatchesStory(StoryXML.Samples.SpellBreaker)
+
+  @Test
+  fun testViolet() = assertXMLMatchesStory(StoryXML.Samples.Violet)
+
+  @Test
+  fun testZorkI() = assertXMLMatchesStory(StoryXML.Samples.ZorkI)
+
+//  @Test
+//  fun testAllSamples() = StoryXML.Samples.values().forEach {
+//    println("Checking XML for ${it.name}")
+//    assertXMLMatchesStory(it)
+//  }
 
   @Test
   fun handleSpecialCharacterFields() {
     val author = "©2017, Rosencrantz & Guildenstern"
     val description = "This's as \"complicated\" as it gets!"
-    val alteredGame = SampleGameXML.ZorkI
+    val alteredGame = StoryXML.Samples.ZorkI
       .with("author", author)
       .with("description", description)
       .with("averageRating", 1.0)
@@ -54,13 +72,13 @@ class IFDBTest {
 
   @Test
   fun handleNullFields() = assertXMLMatchesStory(
-      SampleGameXML.ZorkI
+      StoryXML.Samples.ZorkI
         .with("description", null)
         .with("seriesNumber", null)
         .with("starRating", null)
   )
 
-  private fun assertXMLMatchesStory(gameXML: SampleGameXML) =
+  private fun assertXMLMatchesStory(gameXML: IStoryXML) =
       IFDBFeedReader
         .createStoryFrom(gameXML.xmlString.byteInputStream())
         .assertIsDescribedBy(gameXML)
