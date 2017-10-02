@@ -20,8 +20,7 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
 import com.github.paulschaaf.gargoyle.model.IFDBStory
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.reflect.full.memberProperties
@@ -36,51 +35,43 @@ class IFDBTest {
   val baseURL = "http://ifdb.tads.org"
 
   @Test
-  fun readZorkI() {
-    val storyXML = SampleGameXML.ZorkI
-    assertXMLMatchesStory(storyXML)
-  }
+  fun readZorkI() = assertXMLMatchesStory(SampleGameXML.ZorkI)
 
   @Test
   fun handleSpecialCharacterFields() {
     val author = "©2017, Rosencrantz & Guildenstern"
     val description = "This's as \"complicated\" as it gets!"
     val alteredGame = SampleGameXML.ZorkI
-        .set("author", author)
-        .set("description", description)
-        .set("averageRating", 1.0)
+      .with("author", author)
+      .with("description", description)
+      .with("averageRating", 1.0)
 
-    assertEquals("Did not successfully change the author. ", author, alteredGame.author)
+    assertThat(alteredGame.author)
+      .describedAs("Did not successfully change the author. ")
+      .isEqualTo(author)
     assertXMLMatchesStory(alteredGame)
   }
 
   @Test
-  fun handleNullFields() {
-    val alteredGame = SampleGameXML.ZorkI
-        .set("description", null)
-        .set("seriesNumber", null)
-        .set("starRating", null)
+  fun handleNullFields() = assertXMLMatchesStory(
+      SampleGameXML.ZorkI
+        .with("description", null)
+        .with("seriesNumber", null)
+        .with("starRating", null)
+  )
 
-    assertXMLMatchesStory(alteredGame)
-  }
-
-  private fun assertXMLMatchesStory(gameXML: SampleGameXML) {
-    val story = IFDBFeedReader.createStoryFrom(gameXML.xmlString.byteInputStream())
-    story.assertIsDescribedBy(gameXML)
-  }
+  private fun assertXMLMatchesStory(gameXML: SampleGameXML) =
+      IFDBFeedReader
+        .createStoryFrom(gameXML.xmlString.byteInputStream())
+        .assertIsDescribedBy(gameXML)
 
   fun IFDBStory.assertIsDescribedBy(other: IFDBStory) {
-    IFDBStory::class.memberProperties.forEach {
-      val fieldName = it.name
-      print("checking property: " + fieldName)
-      val expected = it(other)
-      val actual = it(this)
-      val checkingMessage = "bad value in '$fieldName'"
-      when (expected) {
-        null      -> assertNull(checkingMessage, actual)
-        is Double -> assertEquals(checkingMessage, expected, actual as Double, 0.0)
-        else      -> assertEquals(checkingMessage, expected, actual)
-      }
+    IFDBStory::class.memberProperties.forEach { readProperty->
+      assertThat(readProperty(other))
+        .describedAs("bad value in '${readProperty.name}'")
+        .isEqualTo(readProperty(this))
+
+      print("verified property: " + readProperty.name)
     }
   }
 }

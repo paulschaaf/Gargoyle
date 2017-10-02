@@ -19,46 +19,48 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import com.github.paulschaaf.gargoyle.database.StoryTable
 import com.github.paulschaaf.gargoyle.model.IFDBStory
-import org.junit.Assert.assertTrue
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
+import kotlin.reflect.full.memberProperties
 
 class DatabaseHelperTest: MockContentValuesTestBase() {
-  val fieldsByName = IFDBStory::class.java.methods.associateBy {
-    val name = it.name.removePrefix("get")
-    name[0].toLowerCase() + name.substring(1)
-  }
+  private val fieldNames = IFDBStory::class.memberProperties.map { it.name }
 
   val tableDef = StoryTable.createSQL
-      .split(",", "(", ")")
-      .map { str -> str.trim() }
-      .toSet()
+    .split("[,)(]".toRegex())
+    .map { str-> str.trim() }
+    .toSet()
 
   @Test
   fun createSQLContainsAllFields() {
     val columns = StoryTable.columns
-    assertTrue("StoryTable should have at least one column!", columns.isNotEmpty())
 
-    val unmatchedFieldNames = fieldsByName.keys.toMutableSet()
+    // sanity check
+    assertThat(columns)
+      .describedAs("StoryTable should have at least one column!")
+      .isNotEmpty
+
+    val unmatchedFieldNames = fieldNames.toMutableSet()
     val unmatchedColumnNames = mutableSetOf<String>()
 
-    columns.forEach { (columnName, column) ->
-      val sql = column.createSQL
-      assertTrue(
-          "Could not find the column definition '$sql' in this createSQL: $tableDef",
-          tableDef.any { it.matches(sql.toRegex()) }
-      )
+    columns.forEach { (columnName, column)->
+      assertThat(tableDef)
+        .describedAs("CreateSQL is missing a column definition!")
+        .contains(column.createSQL)
+
       if (columnName == "id" || columnName == "lookedUp")
-      // ignore it
+      // ignore it -- these db fields aren't part of the fetched IFDB record
       else if (unmatchedFieldNames.remove(columnName))
         println("matched " + columnName)
       else unmatchedColumnNames.add(columnName)
     }
-    val unmatcheFieldsString = unmatchedFieldNames
-        .joinToString(", ", prefix = "The following fields do not have a corresponding column: ")
-    assertTrue(unmatcheFieldsString, unmatchedFieldNames.isEmpty())
 
-    val unmatchedColumnsString = unmatchedColumnNames
-        .joinToString(", ", prefix = "The following columns do not have a corresponding field: ")
-    assertTrue(unmatchedColumnsString, unmatchedColumnNames.isEmpty())
+    assertThat(unmatchedFieldNames)
+      .describedAs("Fields with no corresponding column")
+      .isEmpty()
+
+    assertThat(unmatchedColumnNames)
+      .describedAs("Columns with no corresponding field")
+      .isEmpty()
   }
 }

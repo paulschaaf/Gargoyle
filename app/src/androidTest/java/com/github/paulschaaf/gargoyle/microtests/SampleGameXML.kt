@@ -65,7 +65,7 @@ open class SampleGameXML(val xmlString: String): IFDBStory {
     return if (value.isNullOrEmpty()) null else unescape(value!!)
   }
 
-  fun set(tag: String, value: String): SampleGameXML {
+  fun with(tag: String, value: String): SampleGameXML {
     var prefix = ""
     var suffix = ""
     if (tag == "coverart") {
@@ -78,7 +78,7 @@ open class SampleGameXML(val xmlString: String): IFDBStory {
     return SampleGameXML(newXML)
   }
 
-  fun set(tag: String, value: Any?): SampleGameXML {
+  fun with(tag: String, value: Any?): SampleGameXML {
     val replaceValue = if (value == null) "" else value  // prevent null from being turned into the string "null"
     val newXML = xmlString.replace(Regex("<$tag>[^<]+</$tag>"), "<$tag>$replaceValue</$tag>")
     return SampleGameXML(newXML)
