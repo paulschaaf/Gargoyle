@@ -52,7 +52,7 @@ interface ITestStoryXml: IFDBStory {
     return if (value.isNullOrEmpty()) null else value!!.unescape()
   }
 
-  fun with(tag: String, value: String): TestStoryXml {
+  fun set(tag: String, value: String): TestStoryXml {
     val (prefix, suffix) = if (tag == "coverart")
       "<url>" to "</url"
     else
@@ -65,30 +65,30 @@ interface ITestStoryXml: IFDBStory {
     return TestStoryXml("custom", newXML)
   }
 
-  fun with(tag: String, value: Any?): TestStoryXml = with(tag, value?.toString() ?: "")
+  fun set(tag: String, value: Any?): TestStoryXml = set(tag, value?.toString() ?: "")
 }
 
 open class TestStoryXml(override val url: String, override val xmlString: String): ITestStoryXml {
-  override val author = this["author"]
-  override val averageRating = this["averageRating"]?.toDoubleOrNull()
+  override var author = this["author"]
+  override var averageRating = this["averageRating"]?.toDoubleOrNull()
   override var coverArtURL = this["coverart"]
-  override val description = this["description"]
-  override val firstPublished = this["firstpublished"]
-  override val forgiveness = this["forgiveness"]
-  override val genre = this["genre"]
-  override val ifId = this["ifid"] ?: "-error-"
-  override val language = this["language"]
-  override val link = this["link"]?.replace("&amp;", "&")
-  override val path = this["path"]
-  override val series = this["series"]
-  override val tuid = this["tuid"]
-  override val title = this["title"]
-  override val ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
-  override val ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
-  override val seriesNumber = this["seriesnumber"]?.toIntOrNull()
-  override val starRating = this["starRating"]?.toDoubleOrNull()
+  override var description = this["description"]
+  override var firstPublished = this["firstpublished"]
+  override var forgiveness = this["forgiveness"]
+  override var genre = this["genre"]
+  override var ifId = this["ifid"] ?: "-error-"
+  override var language = this["language"]
+  override var link = this["link"]?.replace("&amp;", "&")
+  override var path = this["path"]
+  override var series = this["series"]
+  override var tuid = this["tuid"]
+  override var title = this["title"]
+  override var ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
+  override var ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
+  override var seriesNumber = this["seriesnumber"]?.toIntOrNull()
+  override var starRating = this["starRating"]?.toDoubleOrNull()
 
-  enum class Samples(url: String, str: String): ITestStoryXml by TestStoryXml(url, str) {
+  enum class SampleCreators(val url: String, val xml: String) {
     Bronze("http://ifdb.tads.org/viewgame?ifiction&id=9p8kh3im2j9h2881",
            """<?xml version="1.0" encoding="UTF-8"?><ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/"><story><colophon><generator>ifdb.tads.org/viewgame</generator><generatorversion>1</generatorversion><originated>2016-10-23</originated></colophon><identification><ifid>1810847C-0DC7-44D5-94EF-313A3E7AF257</ifid><bafn>2893</bafn><format>zcode</format></identification><bibliographic><title>Bronze</title><author>Emily Short</author><language>en</language><firstpublished>2006</firstpublished><genre>Fantasy</genre><description>When the seventh day comes and it is time for you to return to the castle in the forest, your sisters cling to your sleeves.</description><series>fractured fairy tales</series></bibliographic><contact><url>http://inform7.com/learn/eg/bronze/index.html</url></contact><ifdb xmlns="http://ifdb.tads.org/api/xmlns"><tuid>9p8kh3im2j9h2881</tuid><link>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881</link><coverart><url>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881&amp;coverart</url></coverart><averageRating>4.2917</averageRating><starRating>4.5</starRating><ratingCountAvg>192</ratingCountAvg><ratingCountTot>192</ratingCountTot></ifdb></story></ifindex>"""
           ),
@@ -107,6 +107,8 @@ open class TestStoryXml(override val url: String, override val xmlString: String
 
     ZorkI("http://ifdb.tads.org/viewgame?ifiction&id=0dbnusxunq7fw5ro",
           """<?xml version="1.0" encoding="UTF-8"?><ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/"><story><colophon><generator>ifdb.tads.org/viewgame</generator><generatorversion>1</generatorversion><originated>2017-03-28</originated></colophon><identification><ifid>HUGO-25-49-53-02-06-99</ifid><ifid>ZCODE-88-840726-A129</ifid><ifid>ZCODE-52-871125</ifid><ifid>ZCODE-88-840726</ifid><bafn>987</bafn><format>hugo</format></identification><bibliographic><title>Zork I</title><author>Marc Blank and Dave Lebling</author><language>English, Castilian (en, es)</language><firstpublished>1980</firstpublished><genre>Zorkian/Cave crawl</genre><description>Many strange tales have been told of the fabulous treasure, exotic creatures, and diabolical puzzles in the Great Underground Empire. As an aspiring adventurer, you will undoubtedly want to locate these treasures and deposit them in your trophy case.  [--blurb from The Z-Files Catalogue]</description><series>Zork</series><seriesnumber>1</seriesnumber><forgiveness>Cruel</forgiveness></bibliographic><contact></contact><ifdb xmlns="http://ifdb.tads.org/api/xmlns"><tuid>0dbnusxunq7fw5ro</tuid><link>http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro</link><coverart><url>http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&amp;coverart</url></coverart><averageRating>3.7547</averageRating><starRating>4</starRating><ratingCountAvg>159</ratingCountAvg><ratingCountTot>159</ratingCountTot></ifdb></story></ifindex>"""
-         )
+         );
+
+    fun create() = TestStoryXml(url, this.xml)
   }
 }

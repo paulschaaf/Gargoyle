@@ -26,44 +26,35 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.reflect.full.memberProperties
 
-/**
- * Created by pschaaf on 9/3/17.
- */
-
 @RunWith(AndroidJUnit4::class)
 class IFDBTest {
   // http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&ifiction
   val baseURL = "http://ifdb.tads.org"
 
   @Test
-  fun testBronze() = assertXMLMatchesStory(TestStoryXml.Samples.Bronze)
-
-  @Test
-  fun testLostPig() = assertXMLMatchesStory(TestStoryXml.Samples.LostPig)
-
-  @Test
-  fun testSpellBreaker() = assertXMLMatchesStory(TestStoryXml.Samples.SpellBreaker)
-
-  @Test
-  fun testViolet() = assertXMLMatchesStory(TestStoryXml.Samples.Violet)
-
-  @Test
-  fun testZorkI() = assertXMLMatchesStory(TestStoryXml.Samples.ZorkI)
-
-//  @Test
-//  fun testAllSamples() = TestStoryXml.Samples.values().forEach {
-//    println("Checking XML for ${it.name}")
-//    assertXMLMatchesStory(it)
-//  }
+  fun testAllSamples() {
+    val errors = mutableListOf<Exception>()
+    TestStoryXml.SampleCreators.values().forEach {
+      println("Checking XML for ${it.name}")
+      try {
+        assertXMLMatchesStory(it.create())
+      }
+      catch (ex: Exception) {
+        errors.add(ex)
+      }
+    }
+  }
 
   @Test
   fun handleSpecialCharacterFields() {
     val author = "©2017, Rosencrantz & Guildenstern"
     val description = "This's as \"complicated\" as it gets!"
-    val alteredStory = TestStoryXml.Samples.ZorkI
-      .with("author", author)
-      .with("description", description)
-      .with("averageRating", 1.0)
+    val alteredStory = TestStoryXml.SampleCreators.ZorkI.create().apply {
+      this.title += " (Customized)"
+      this.author = author
+      this.description = description
+      this.averageRating = 1.0
+    }
 
     assertThat(alteredStory.author)
       .describedAs("Did not successfully change the author. ")
@@ -73,10 +64,11 @@ class IFDBTest {
 
   @Test
   fun handleNullFields() = assertXMLMatchesStory(
-      TestStoryXml.Samples.ZorkI
-        .with("description", null)
-        .with("seriesNumber", null)
-        .with("starRating", null)
+      TestStoryXml.SampleCreators.ZorkI.create().apply {
+        this.description = null
+        this.seriesNumber = null
+        this.starRating = null
+      }
   )
 
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {

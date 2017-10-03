@@ -18,25 +18,25 @@
 package com.github.paulschaaf.gargoyle.model
 
 interface IFDBStory {
-  val ifId: String
+  var ifId: String
 
-  val averageRating: Double?
-  val starRating: Double?
+  var averageRating: Double?
+  var starRating: Double?
 
-  val author: String?
-  val coverArtURL: String?
-  val description: String?
-  val firstPublished: String?
-  val forgiveness: String?
-  val genre: String?
-  val language: String?
-  val link: String?
-  val path: String?
-  val series: String?
-  val tuid: String?
-  val title: String?
+  var author: String?
+  var coverArtURL: String?
+  var description: String?
+  var firstPublished: String?
+  var forgiveness: String?
+  var genre: String?
+  var language: String?
+  var link: String?
+  var path: String?
+  var series: String?
+  var tuid: String?
+  var title: String?
 
-  val ratingCountAvg: Int?
-  val ratingCountTotal: Int?
-  val seriesNumber: Int?
+  var ratingCountAvg: Int?
+  var ratingCountTotal: Int?
+  var seriesNumber: Int?
 }

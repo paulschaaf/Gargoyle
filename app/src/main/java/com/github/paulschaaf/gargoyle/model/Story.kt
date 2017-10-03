@@ -29,9 +29,7 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
   constructor(): this(ContentValues()) {
     lookedUp = Date().toString()
   }
-
   override fun toString() = title + " #" + ifId
-
   val exists: Boolean
     get() = file?.exists() == true
 
