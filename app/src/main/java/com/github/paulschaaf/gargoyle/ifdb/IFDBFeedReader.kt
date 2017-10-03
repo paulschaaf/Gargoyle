@@ -19,6 +19,7 @@ package com.github.paulschaaf.gargoyle.ifdb
 
 import android.util.Log
 import android.util.Xml
+import com.github.paulschaaf.gargoyle.enhancements.releaseAfter
 import com.github.paulschaaf.gargoyle.model.Story
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
@@ -32,36 +33,38 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     val READ_TIMEOUT = 10000
     val TAG = "IFDBFeedReader"
 
-    fun createStoryFrom(ifID: String): Story {
+    fun createStoryFromIfID(ifID: String): Story {
       val urlString = QUERY_URL + ifID
-      val conn = URL(urlString).openConnection() as HttpURLConnection
-      conn.apply {
+      val httpURLConnection = (URL(urlString).openConnection() as HttpURLConnection).apply {
         readTimeout = READ_TIMEOUT
         connectTimeout = CONNECT_TIMEOUT
         requestMethod = "GET"
         doInput = true
       }
 
-      val inputStream = conn.inputStream
-      try {
-        conn.connect()
-        return createStoryFrom(inputStream)
+      return httpURLConnection.releaseAfter { conn->
+        conn.inputStream.releaseAfter { inputStream->
+          createStoryFrom(inputStream)
+        }
       }
-      catch (ex: Exception) {
-        Log.e(TAG, "Hit exception " + ex.toString())
-      }
-      finally {
-        inputStream.close()
-      }
-      return Story()
     }
+
+    fun createStoryFrom(string: String) = string
+      .byteInputStream()
+      .releaseAfter { createStoryFrom(it) }
 
     fun createStoryFrom(inputStream: InputStream): Story {
       val parser = Xml.newPullParser().apply {
         setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
         setInput(inputStream, null)
       }
-      return IFDBFeedReader(parser).parseIFIndex()
+      try {
+        return inputStream.releaseAfter { IFDBFeedReader(parser).parseIFIndex() }
+      }
+      catch (ex: Exception) {
+        Log.e(TAG, "Hit exception " + ex.toString())
+      }
+      return Story()
     }
   }
 
@@ -168,7 +171,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     var result: String? = null
     do {
       if (parser.next() == XmlPullParser.TEXT) {
-        result = parser.text
+        result = (result ?: "") + parser.text
         // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns "null".
         if (result == "null") result = null
         parser.nextTag()

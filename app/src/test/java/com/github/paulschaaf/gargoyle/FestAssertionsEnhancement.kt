@@ -17,8 +17,11 @@
 
 package com.github.paulschaaf.gargoyle
 
+import com.github.paulschaaf.gargoyle.model.IFDBStory
+import org.fest.assertions.api.AbstractAssert
 import org.fest.assertions.api.Assertions.assertThat
 import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.full.memberProperties
 
 fun assertThat(prop: KMutableProperty0<Double?>) =
     assertThat(prop.invoke())
@@ -35,3 +38,17 @@ fun assertThat(prop: KMutableProperty0<Int?>) =
 fun assertThat(prop: KMutableProperty0<String?>) =
     assertThat(prop.invoke())
       .describedAs(prop.name)
+
+class IFDBStoryAssert internal constructor(actual: IFDBStory):
+    AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
+
+  fun isDescribedBy(other: IFDBStory) = IFDBStory::class.memberProperties.forEach { prop->
+    assertThat(prop(other))
+      .describedAs("actual value in '${prop.name}'")
+      .isEqualTo(prop(other))
+
+    print("verified property: " + prop.name)
+  }
+}
+
+fun assertThat(story: IFDBStory) = IFDBStoryAssert(story)

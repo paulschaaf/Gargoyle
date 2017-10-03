@@ -20,6 +20,7 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
 import com.github.paulschaaf.gargoyle.model.IFDBStory
+import org.fest.assertions.api.AbstractAssert
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,22 +36,22 @@ class IFDBTest {
   val baseURL = "http://ifdb.tads.org"
 
   @Test
-  fun testBronze() = assertXMLMatchesStory(StoryXML.Samples.Bronze)
+  fun testBronze() = assertXMLMatchesStory(TestStoryXml.Samples.Bronze)
 
   @Test
-  fun testLostPig() = assertXMLMatchesStory(StoryXML.Samples.LostPig)
+  fun testLostPig() = assertXMLMatchesStory(TestStoryXml.Samples.LostPig)
 
   @Test
-  fun testSpellBreaker() = assertXMLMatchesStory(StoryXML.Samples.SpellBreaker)
+  fun testSpellBreaker() = assertXMLMatchesStory(TestStoryXml.Samples.SpellBreaker)
 
   @Test
-  fun testViolet() = assertXMLMatchesStory(StoryXML.Samples.Violet)
+  fun testViolet() = assertXMLMatchesStory(TestStoryXml.Samples.Violet)
 
   @Test
-  fun testZorkI() = assertXMLMatchesStory(StoryXML.Samples.ZorkI)
+  fun testZorkI() = assertXMLMatchesStory(TestStoryXml.Samples.ZorkI)
 
 //  @Test
-//  fun testAllSamples() = StoryXML.Samples.values().forEach {
+//  fun testAllSamples() = TestStoryXml.Samples.values().forEach {
 //    println("Checking XML for ${it.name}")
 //    assertXMLMatchesStory(it)
 //  }
@@ -59,38 +60,43 @@ class IFDBTest {
   fun handleSpecialCharacterFields() {
     val author = "©2017, Rosencrantz & Guildenstern"
     val description = "This's as \"complicated\" as it gets!"
-    val alteredGame = StoryXML.Samples.ZorkI
+    val alteredStory = TestStoryXml.Samples.ZorkI
       .with("author", author)
       .with("description", description)
       .with("averageRating", 1.0)
 
-    assertThat(alteredGame.author)
+    assertThat(alteredStory.author)
       .describedAs("Did not successfully change the author. ")
       .isEqualTo(author)
-    assertXMLMatchesStory(alteredGame)
+    assertXMLMatchesStory(alteredStory)
   }
 
   @Test
   fun handleNullFields() = assertXMLMatchesStory(
-      StoryXML.Samples.ZorkI
+      TestStoryXml.Samples.ZorkI
         .with("description", null)
         .with("seriesNumber", null)
         .with("starRating", null)
   )
 
-  private fun assertXMLMatchesStory(gameXML: IStoryXML) =
-      IFDBFeedReader
-        .createStoryFrom(gameXML.xmlString.byteInputStream())
-        .assertIsDescribedBy(gameXML)
+  private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
+    val story = IFDBFeedReader.createStoryFrom(storyXML.xmlString)
+    assertThat(story)
+      .isDescribedBy(storyXML)
+  }
 
-  fun IFDBStory.assertIsDescribedBy(other: IFDBStory) {
-    IFDBStory::class.memberProperties.forEach { readProperty->
-      assertThat(readProperty(other))
-        .describedAs("bad value in '${readProperty.name}'")
-        .isEqualTo(readProperty(this))
+  class IFDBStoryAssert internal constructor(actual: IFDBStory):
+      AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
 
-      print("verified property: " + readProperty.name)
+    fun isDescribedBy(other: IFDBStory) = IFDBStory::class.memberProperties.forEach { prop->
+      assertThat(prop(other))
+        .describedAs("actual value in '${prop.name}'")
+        .isEqualTo(prop(other))
+
+      print("verified property: " + prop.name)
     }
   }
+
+  fun assertThat(story: IFDBStory) = IFDBStoryAssert(story)
 }
 

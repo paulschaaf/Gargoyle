@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import com.github.paulschaaf.gargoyle.model.IFDBStory
 
-interface IStoryXML: IFDBStory {
+interface ITestStoryXml: IFDBStory {
   val url: String
   val xmlString: String
 
@@ -52,7 +52,7 @@ interface IStoryXML: IFDBStory {
     return if (value.isNullOrEmpty()) null else value!!.unescape()
   }
 
-  fun with(tag: String, value: String): StoryXML {
+  fun with(tag: String, value: String): TestStoryXml {
     val (prefix, suffix) = if (tag == "coverart")
       "<url>" to "</url"
     else
@@ -62,13 +62,13 @@ interface IStoryXML: IFDBStory {
         Regex("<$tag>$prefix[^<]+$suffix</$tag>"),
         "<$tag>${value.escape()}</$tag>"
     )
-    return StoryXML("custom", newXML)
+    return TestStoryXml("custom", newXML)
   }
 
-  fun with(tag: String, value: Any?): StoryXML = with(tag, value?.toString() ?: "")
+  fun with(tag: String, value: Any?): TestStoryXml = with(tag, value?.toString() ?: "")
 }
 
-open class StoryXML(override val url: String, override val xmlString: String): IStoryXML {
+open class TestStoryXml(override val url: String, override val xmlString: String): ITestStoryXml {
   override val author = this["author"]
   override val averageRating = this["averageRating"]?.toDoubleOrNull()
   override var coverArtURL = this["coverart"]
@@ -88,7 +88,7 @@ open class StoryXML(override val url: String, override val xmlString: String): I
   override val seriesNumber = this["seriesnumber"]?.toIntOrNull()
   override val starRating = this["starRating"]?.toDoubleOrNull()
 
-  enum class Samples(url: String, str: String): IStoryXML by StoryXML(url, str) {
+  enum class Samples(url: String, str: String): ITestStoryXml by TestStoryXml(url, str) {
     Bronze("http://ifdb.tads.org/viewgame?ifiction&id=9p8kh3im2j9h2881",
            """<?xml version="1.0" encoding="UTF-8"?><ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/"><story><colophon><generator>ifdb.tads.org/viewgame</generator><generatorversion>1</generatorversion><originated>2016-10-23</originated></colophon><identification><ifid>1810847C-0DC7-44D5-94EF-313A3E7AF257</ifid><bafn>2893</bafn><format>zcode</format></identification><bibliographic><title>Bronze</title><author>Emily Short</author><language>en</language><firstpublished>2006</firstpublished><genre>Fantasy</genre><description>When the seventh day comes and it is time for you to return to the castle in the forest, your sisters cling to your sleeves.</description><series>fractured fairy tales</series></bibliographic><contact><url>http://inform7.com/learn/eg/bronze/index.html</url></contact><ifdb xmlns="http://ifdb.tads.org/api/xmlns"><tuid>9p8kh3im2j9h2881</tuid><link>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881</link><coverart><url>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881&amp;coverart</url></coverart><averageRating>4.2917</averageRating><starRating>4.5</starRating><ratingCountAvg>192</ratingCountAvg><ratingCountTot>192</ratingCountTot></ifdb></story></ifindex>"""
           ),
