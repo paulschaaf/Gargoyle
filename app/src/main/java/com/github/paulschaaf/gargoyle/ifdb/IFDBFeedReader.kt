@@ -166,12 +166,15 @@ class IFDBFeedReader(val parser: XmlPullParser) {
     val elementName = parser.name
     parser.require(XmlPullParser.START_TAG, null, elementName)
     var result: String? = null
-    if (parser.next() == XmlPullParser.TEXT) {
-      result = parser.text
-      // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns "null".
-      if (result == "null") result = null
-      parser.nextTag()
+    do {
+      if (parser.next() == XmlPullParser.TEXT) {
+        result = parser.text
+        // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns "null".
+        if (result == "null") result = null
+        parser.nextTag()
+      }
     }
+    while (parser.name != elementName)
     parser.require(XmlPullParser.END_TAG, null, elementName)
     return result
   }
