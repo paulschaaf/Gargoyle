@@ -18,6 +18,14 @@
 package com.github.paulschaaf.gargoyle.database
 
 import android.content.ContentValues
+import org.jetbrains.anko.db.INTEGER
+import org.jetbrains.anko.db.NOT_NULL
+import org.jetbrains.anko.db.PRIMARY_KEY
+import org.jetbrains.anko.db.REAL
+import org.jetbrains.anko.db.SqlType
+import org.jetbrains.anko.db.SqlTypeModifier
+import org.jetbrains.anko.db.TEXT
+import org.jetbrains.anko.db.UNIQUE
 import read
 import set
 import kotlin.reflect.KProperty
@@ -27,19 +35,19 @@ interface IColumn<T> {
   val table: ISqlTable?
   val klass: Class<T>
 
-  val sqlDataType: String
+  val sqlDataType: SqlType
     get() = when (klass) {
-      java.lang.Double::class.java -> "DOUBLE"
-      java.lang.Float::class.java  -> "FLOAT"
-      Int::class.java              -> "INTEGER"
-      else                         -> "TEXT"
+      java.lang.Double::class.java -> REAL
+      java.lang.Float::class.java  -> REAL
+      Int::class.java              -> INTEGER
+      else                         -> TEXT
     }
 
-  val createProperties: String
-    get() = ""
+  val typeModifiers: List<SqlTypeModifier>
+    get() = listOf()
 
-  val createSQL: String
-    get() = "$name $sqlDataType $createProperties".trim()
+  val createSQL: Pair<String, SqlType>
+    get() = name to (typeModifiers.fold(sqlDataType) { sql: SqlType, mod: SqlTypeModifier-> sql + mod })
 
   fun get(conValues: ContentValues): T = conValues.read(name, klass)
 
@@ -84,7 +92,7 @@ class IntColumn(table: ISqlTable, name: String): IColumn<Int?> by Column(table, 
           NonNull(table, property.name)
     }
 
-    override val createProperties = "NOT NULL"
+    override val typeModifiers = super.typeModifiers + NOT_NULL
   }
 }
 
@@ -93,6 +101,8 @@ class PrimaryKeyColumn(table: ISqlTable, name: String): IntColumn.NonNull(table,
     operator fun getValue(table: ISqlTable, property: KProperty<*>) =
         PrimaryKeyColumn(table, property.name)
   }
+
+  override val typeModifiers = super.typeModifiers + PRIMARY_KEY
 }
 
 class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(table, name) {
@@ -107,7 +117,7 @@ class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(t
           NonNull(table, property.name)
     }
 
-    override val createProperties = "NOT NULL"
+    override val typeModifiers = super.typeModifiers + NOT_NULL
 
     open class Unique(table: ISqlTable, name: String): NonNull(table, name) {
       companion object {
@@ -115,7 +125,7 @@ class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(t
             Unique(table, property.name)
       }
 
-      override val createProperties = "UNIQUE NOT NULL"
+      override val typeModifiers = super.typeModifiers + UNIQUE
     }
   }
 }

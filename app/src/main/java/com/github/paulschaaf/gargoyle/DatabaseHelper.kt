@@ -17,35 +17,61 @@
 
 package com.github.paulschaaf.gargoyle
 
-/**
- * Created by pschaaf on 9/8/17.
- */
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
+import com.github.paulschaaf.gargoyle.database.SqlTable
 import com.github.paulschaaf.gargoyle.database.StoryTable
-import com.github.paulschaaf.gargoyle.model.Story
+import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
+import org.jetbrains.anko.db.createTable
+import org.jetbrains.anko.db.dropTable
 
-class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-  override fun onCreate(db: SQLiteDatabase) = db.execSQL(StoryTable.createSQL)
+class DatabaseHelper(context: Context):
+    ManagedSQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+  companion object {
+    val DATABASE_NAME = "gargoyle.db"
+    val DATABASE_VERSION = 1
+    val TABLES = listOf<SqlTable>(StoryTable)
 
-  override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
+    private var instance: DatabaseHelper? = null
 
-  fun insertStory(story: Story): Long {
-    val writableDatabase = writableDatabase
-    val rowID = writableDatabase.insert(StoryTable.tableName, null, story.contentValues)
-    if (rowID == -1L) Log.e(TAG, "The insert failed!")
-    return rowID
+    @Synchronized
+    fun getInstance(ctx: Context): DatabaseHelper {
+      if (instance == null) {
+        instance = DatabaseHelper(ctx.applicationContext)
+      }
+      return instance!!
+    }
   }
 
-  fun rebuildDatabase() {
-    val db = writableDatabase
-    db.execSQL("DROP TABLE " + StoryTable.tableName)
+  override fun onCreate(db: SQLiteDatabase) {
+    // Here you create tables
+    TABLES.forEach {
+      db.createTable(
+          it.tableName,
+          true,
+          *it.columns.map { (_, column)-> column.createSQL }.toTypedArray()
+      )
+    }
+  }
+
+  override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+    // Here you can upgrade tables, as usual
+    TABLES.forEach { db.dropTable(it.tableName, true) }
+  }
+
+//  fun insertStory(story: Story): Long {
+//    val writableDatabase = writableDatabase
+//    val rowID = writableDatabase.insert(StoryTable.tableName, null, story.contentValues)
+//    if (rowID == -1L) Log.e(TAG, "The insert failed!")
+//    return rowID
+//  }
+//
+//  fun rebuildDatabase() {
+//    val db = writableDatabase
+//    db.execSQL("DROP TABLE " + StoryTable.tableName)
 //    db.delete(Story.TableName, null, null)
-    db.close()
-  }
+//    db.close()
+//  }
 
 //  fun deleteStory(story: Story): IIntColumn {
 //    var success = true
@@ -60,31 +86,26 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
 //    return db.delete(Story.TableName, Story.id + "=?", arrayOf(storyId))
 //  }
 
-  fun updateStory(story: Story) = writableDatabase.update(
-      StoryTable.tableName,
-      story.contentValues,
-      "${StoryTable.id} = ${story.id}",
-      null
-  )
+//  fun updateStory(story: Story) = writableDatabase.update(
+//      StoryTable.tableName,
+//      story.contentValues,
+//      "${StoryTable.id} = ${story.id}",
+//      null
+//  )
 
   // SIMPLE ACCESSORS
 
-  val newCursor: Cursor
-    get() {
-      val cursor = readableDatabase.query(
-          StoryTable.tableName, null, null, null, null, null,
-          StoryTable.title.name + " COLLATE NOCASE"
-      )
-      cursor.moveToFirst()
-      return cursor
-    }
+//  val newCursor: Cursor
+//    get() {
+//      val cursor = readableDatabase.query(
+//          StoryTable.tableName, null, null, null, null, null,
+//          StoryTable.title.name + " COLLATE NOCASE"
+//      )
+//      cursor.moveToFirst()
+//      return cursor
+//    }
 
-  companion object {
-//    val Story = 1
-//    val GAME_ID = 2
-//    val GAME_IFID = 3
-    val TAG = "DatabaseHelper"
-    val DATABASE_NAME = "gargoyle.db"
-    val DATABASE_VERSION = 2
-  }
 }
+
+val Context.database: DatabaseHelper
+  get() = DatabaseHelper.getInstance(applicationContext)

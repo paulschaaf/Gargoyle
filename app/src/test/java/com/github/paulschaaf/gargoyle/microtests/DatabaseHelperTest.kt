@@ -17,50 +17,44 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import com.github.paulschaaf.gargoyle.database.StoryTable
-import com.github.paulschaaf.gargoyle.model.IFDBStory
-import org.fest.assertions.api.Assertions.assertThat
-import org.junit.Test
-import kotlin.reflect.full.memberProperties
-
 class DatabaseHelperTest: MockContentValuesTestBase() {
-  private val fieldNames = IFDBStory::class.memberProperties.map { it.name }
-
-  val tableDef = StoryTable.createSQL
-    .split("[,)(]".toRegex())
-    .map { str-> str.trim() }
-    .toSet()
-
-  @Test
-  fun createSQLContainsAllFields() {
-    val columns = StoryTable.columns
-
-    // sanity check
-    assertThat(columns)
-      .describedAs("StoryTable should have at least one column!")
-      .isNotEmpty
-
-    val unmatchedFieldNames = fieldNames.toMutableSet()
-    val unmatchedColumnNames = mutableSetOf<String>()
-
-    columns.forEach { (columnName, column)->
-      assertThat(tableDef)
-        .describedAs("CreateSQL is missing a column definition!")
-        .contains(column.createSQL)
-
-      if (columnName == "id" || columnName == "lookedUp")
-      // ignore it -- these db fields aren't part of the fetched IFDB record
-      else if (unmatchedFieldNames.remove(columnName))
-        println("matched " + columnName)
-      else unmatchedColumnNames.add(columnName)
-    }
-
-    assertThat(unmatchedFieldNames)
-      .describedAs("Fields with no corresponding column")
-      .isEmpty()
-
-    assertThat(unmatchedColumnNames)
-      .describedAs("Columns with no corresponding field")
-      .isEmpty()
-  }
+//  private val fieldNames = IFDBStory::class.memberProperties.map { it.name }
+//
+//  val tableDef = StoryTable.createSQL
+//    .split("[,)(]".toRegex())
+//    .map { str-> str.trim() }
+//    .toSet()
+//
+//  @Test
+//  fun createSQLContainsAllFields() {
+//    val columns = StoryTable.columns
+//
+//    // sanity check
+//    assertThat(columns)
+//      .describedAs("StoryTable should have at least one column!")
+//      .isNotEmpty
+//
+//    val unmatchedFieldNames = fieldNames.toMutableSet()
+//    val unmatchedColumnNames = mutableSetOf<String>()
+//
+//    columns.forEach { (columnName, column)->
+//      assertThat(tableDef)
+//        .describedAs("CreateSQL is missing a column definition!")
+//        .contains(column.createSQL)
+//
+//      if (columnName == "id" || columnName == "lookedUp")
+//      // ignore it -- these db fields aren't part of the fetched IFDB record
+//      else if (unmatchedFieldNames.remove(columnName))
+//        println("matched " + columnName)
+//      else unmatchedColumnNames.add(columnName)
+//    }
+//
+//    assertThat(unmatchedFieldNames)
+//      .describedAs("Fields with no corresponding column")
+//      .isEmpty()
+//
+//    assertThat(unmatchedColumnNames)
+//      .describedAs("Columns with no corresponding field")
+//      .isEmpty()
+//  }
 }
