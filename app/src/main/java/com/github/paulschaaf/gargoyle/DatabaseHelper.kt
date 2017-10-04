@@ -44,18 +44,16 @@ class DatabaseHelper(context: Context):
   }
 
   override fun onCreate(db: SQLiteDatabase) {
-    // Here you create tables
     TABLES.forEach {
       db.createTable(
           it.tableName,
           true,
-          *it.columns.map { (_, column)-> column.createSQL }.toTypedArray()
+          *it.columns.map { column-> column.createSQL }.toTypedArray()
       )
     }
   }
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-    // Here you can upgrade tables, as usual
     TABLES.forEach { db.dropTable(it.tableName, true) }
   }
 

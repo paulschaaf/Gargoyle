@@ -47,27 +47,27 @@ class IFDBTest {
 
   @Test
   fun handleSpecialCharacterFields() {
-    val author = "©2017, Rosencrantz & Guildenstern"
-    val description = "This's as \"complicated\" as it gets!"
+    val newAuthor = "©2017, Rosencrantz & Guildenstern"
+    val newDescription = "This's as \"complicated\" as it gets!"
     val alteredStory = TestStoryXml.SampleCreators.ZorkI.create().apply {
-      this.title += " (Customized)"
-      this.author = author
-      this.description = description
-      this.averageRating = 1.0
+      title += " (Customized)"
+      author = newAuthor
+      description = newDescription
+      averageRating = 1.0
     }
 
     assertThat(alteredStory.author)
       .describedAs("Did not successfully change the author. ")
-      .isEqualTo(author)
+      .isEqualTo(newAuthor)
     assertXMLMatchesStory(alteredStory)
   }
 
   @Test
   fun handleNullFields() = assertXMLMatchesStory(
       TestStoryXml.SampleCreators.ZorkI.create().apply {
-        this.description = null
-        this.seriesNumber = null
-        this.starRating = null
+        description = null
+        seriesNumber = null
+        starRating = null
       }
   )
 

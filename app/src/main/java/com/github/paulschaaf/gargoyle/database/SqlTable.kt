@@ -17,14 +17,16 @@
 
 package com.github.paulschaaf.gargoyle.database
 
-import java.util.*
-
 abstract class SqlTable(override val tableName: String): ISqlTable {
   private val mutableColumns = mutableMapOf<String, IColumn<*>>()
-  override val columns = Collections.unmodifiableMap(mutableColumns)
+  override val columns: Array<IColumn<*>>
+    get() = mutableColumns.values.toTypedArray()
 
   override val id by PrimaryKeyColumn
 
+  /**
+   * Add a new column, replacing any earlier additions with the same name.
+   */
   override fun addColumn(column: IColumn<*>) {
     mutableColumns[column.name] = column
   }

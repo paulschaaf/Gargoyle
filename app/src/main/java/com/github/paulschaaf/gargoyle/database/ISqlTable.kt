@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle.database
 
 interface ISqlTable {
   val id: PrimaryKeyColumn
-  val columns: Map<String, IColumn<*>>
+  val columns: Array<IColumn<*>>
   val tableName: String
 
   fun addColumn(column: IColumn<*>)
