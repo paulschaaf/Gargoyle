@@ -22,4 +22,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="dir_covers">covers</string>
+    <string name="dir_temp">temp</string>
+    <string name="dir_fonts">Fonts</string>
+    <string name="dir_stories">Interactive Fiction</string>
+    <string name="dir_transcript">transcripts</string>
 </resources>
