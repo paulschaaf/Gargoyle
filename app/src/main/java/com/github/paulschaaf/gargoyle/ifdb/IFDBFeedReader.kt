@@ -19,7 +19,6 @@ package com.github.paulschaaf.gargoyle.ifdb
 
 import android.util.Log
 import android.util.Xml
-import com.github.paulschaaf.gargoyle.enhancements.releaseAfter
 import com.github.paulschaaf.gargoyle.model.Story
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
@@ -42,16 +41,14 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         doInput = true
       }
 
-      return httpURLConnection.releaseAfter { conn->
-        conn.inputStream.releaseAfter { inputStream->
-          createStoryFrom(inputStream)
-        }
+      return httpURLConnection.use { conn->
+        conn.inputStream.use { createStoryFrom(it) }
       }
     }
 
     fun createStoryFrom(string: String) = string
       .byteInputStream()
-      .releaseAfter { createStoryFrom(it) }
+      .use { createStoryFrom(it) }
 
     fun createStoryFrom(inputStream: InputStream): Story {
       val parser = Xml.newPullParser().apply {
@@ -59,7 +56,7 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         setInput(inputStream, null)
       }
       try {
-        return inputStream.releaseAfter { IFDBFeedReader(parser).parseIFIndex() }
+        return inputStream.use { IFDBFeedReader(parser).parseIFIndex() }
       }
       catch (ex: Exception) {
         Log.e(TAG, "Hit exception " + ex.toString())
@@ -196,5 +193,15 @@ class IFDBFeedReader(val parser: XmlPullParser) {
         }
       }
     }
+  }
+}
+
+fun <T> HttpURLConnection.use(action: (c: HttpURLConnection) -> T): T {
+  this.connect()
+  try {
+    return action(this)
+  }
+  finally {
+    this.disconnect()
   }
 }

@@ -27,8 +27,8 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class FilesystemLoaderTest {
 
-  val rootDirName = Environment.getExternalStorageDirectory().absolutePath + // == /storage/emulated/0
-      R.string.dir_stories
+  val rootDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
+      + R.string.dir_stories)
   val rootDir = File(rootDirName)
 
   @Test
