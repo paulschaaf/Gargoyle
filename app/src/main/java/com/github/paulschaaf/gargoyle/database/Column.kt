@@ -56,21 +56,16 @@ interface IColumn<T> {
 
 open class Column<T>(final override val table: ISqlTable?, override val name: String, override val klass: Class<T>):
     IColumn<T> {
+
   companion object {
     // save and extract the generic type parameter
     inline operator fun <reified T> invoke(table: ISqlTable, name: String) =
         Column(table, name, T::class.java)
-
-    inline operator fun <reified T> getValue(table: ISqlTable, property: KProperty<*>): Column<T> =
-        Column<T>(table, property.name, T::class.java)
   }
 
   init {
     table?.addColumn(this)
   }
-
-  inline operator fun <reified T> getValue(table: StoryTable, property: KProperty<*>) =
-      Column<T>(table, property.name, T::class.java)
 }
 
 class DoubleColumn(table: ISqlTable, name: String): IColumn<Double?> by Column(table, name) {

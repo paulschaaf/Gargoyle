@@ -18,13 +18,11 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
+import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
-import com.github.paulschaaf.gargoyle.model.IFDBStory
-import org.fest.assertions.api.AbstractAssert
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.reflect.full.memberProperties
 
 @RunWith(AndroidJUnit4::class)
 class IFDBTest {
@@ -73,22 +71,7 @@ class IFDBTest {
 
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
     val story = IFDBFeedReader.createStoryFrom(storyXML.xmlString)
-    assertThat(story)
-      .isDescribedBy(storyXML)
+    assertThat(story).isDescribedBy(storyXML)
   }
-
-  class IFDBStoryAssert internal constructor(actual: IFDBStory):
-      AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
-
-    fun isDescribedBy(other: IFDBStory) = IFDBStory::class.memberProperties.forEach { prop->
-      assertThat(prop(other))
-        .describedAs("actual value in '${prop.name}'")
-        .isEqualTo(prop(other))
-
-      print("verified property: " + prop.name)
-    }
-  }
-
-  fun assertThat(story: IFDBStory) = IFDBStoryAssert(story)
 }
 
