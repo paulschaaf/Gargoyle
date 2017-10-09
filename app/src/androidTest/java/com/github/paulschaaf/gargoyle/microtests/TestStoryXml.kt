@@ -64,8 +64,6 @@ interface ITestStoryXml: IFDBStory {
     )
     return TestStoryXml("custom", newXML)
   }
-
-  fun set(tag: String, value: Any?): TestStoryXml = set(tag, value?.toString() ?: "")
 }
 
 open class TestStoryXml(override val url: String, override val xmlString: String): ITestStoryXml {
