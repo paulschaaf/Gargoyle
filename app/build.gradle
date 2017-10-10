@@ -35,6 +35,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        String sharedTestUtils = 'src/sharedTestUtils/kotlin'
+        test {
+            java.srcDir sharedTestUtils
+        }
+        androidTest {
+            java.srcDir sharedTestUtils
+        }
+    }
 }
 
 dependencies {
@@ -49,7 +58,7 @@ dependencies {
     compile "org.jetbrains.anko:anko:$anko_version"
     implementation 'org.w3c:dom:2.3.0-jaxb-1.0.6'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-common:1.1.51'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
 }
 repositories {
     mavenCentral()

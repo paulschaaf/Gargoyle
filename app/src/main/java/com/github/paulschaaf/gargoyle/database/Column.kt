@@ -60,9 +60,6 @@ open class Column<T>(final override val table: ISqlTable, override val name: Str
     // save and extract the generic type parameter
     inline operator fun <reified T> invoke(table: ISqlTable, name: String) =
         Column(table, name, T::class.java)
-
-    inline operator fun <reified T> getValue(table: ISqlTable, property: KProperty<*>) =
-        Column<T>(table, property.name, T::class.java)
   }
 
   init {
@@ -92,16 +89,6 @@ class IntColumn(table: ISqlTable, name: String): IColumn<Int?> by Column(table, 
     override val typeModifiers = super.typeModifiers + NOT_NULL
   }
 }
-
-class PrimaryKeyColumn(table: ISqlTable, name: String): IntColumn.NonNull(table, name) {
-  companion object {
-    operator fun getValue(table: ISqlTable, property: KProperty<*>) =
-        PrimaryKeyColumn(table, property.name)
-  }
-
-  override val typeModifiers = super.typeModifiers + PRIMARY_KEY
-}
-
 class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(table, name) {
   companion object {
     operator fun getValue(table: ISqlTable, property: KProperty<*>)
@@ -127,3 +114,11 @@ class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(t
   }
 }
 
+class PrimaryKeyColumn(table: ISqlTable, name: String): IntColumn.NonNull(table, name) {
+  companion object {
+    operator fun getValue(table: ISqlTable, property: KProperty<*>) =
+        PrimaryKeyColumn(table, property.name)
+  }
+
+  override val typeModifiers = super.typeModifiers + PRIMARY_KEY
+}
