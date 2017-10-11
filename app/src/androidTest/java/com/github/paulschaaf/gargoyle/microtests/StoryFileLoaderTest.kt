@@ -18,7 +18,7 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
-import com.github.paulschaaf.gargoyle.database.StoryFileLoader
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -36,8 +36,10 @@ class StoryFileLoaderTest {
 //    val lostPig = assets.open("LostPig.z8").reader()
 //    print("Story files in rootDir")
 
+    val lostPig = javaClass.classLoader.getResourceAsStream("LostPig.z8")
+    assertThat(lostPig).isNotNull
 
-    val stories = StoryFileLoader().allStoryFiles
-    print(stories.map { it.name }.joinToString(", "))
+//    val stories = StoryFileLoader().allStoryFiles
+//    print(stories.map { it.name }.joinToString(", "))
   }
 }

@@ -36,12 +36,15 @@ android {
         }
     }
     sourceSets {
+        String sharedTestResources = 'src/sharedTestUtils/resources'
         String sharedTestUtils = 'src/sharedTestUtils/kotlin'
         test {
             java.srcDir sharedTestUtils
+            resources.srcDirs += sharedTestResources
         }
         androidTest {
             java.srcDir sharedTestUtils
+            resources.srcDirs += sharedTestResources
         }
     }
 }
