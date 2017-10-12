@@ -19,6 +19,7 @@ package com.github.paulschaaf.gargoyle.database
 
 import android.os.Environment
 import com.github.paulschaaf.gargoyle.R
+import org.andglk.babel.Babel
 import java.io.File
 
 /*
@@ -39,11 +40,11 @@ import java.io.File
  */
 
 class StoryFileLoader {
-  val storyDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
-      + R.string.dir_stories)
+  companion object {
+    val storyDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
+        + R.string.dir_stories)
+    val storyDir = File(storyDirName)
 
-  val storyDir = File(storyDirName)
-
-  val allStoryFiles: Array<File>
-    get() = storyDir.listFiles()
+    val storyFiles = storyDir.listFiles().associate { Babel.examine(it) to it }
+  }
 }

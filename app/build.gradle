@@ -21,6 +21,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
+
     defaultConfig {
         applicationId "com.github.paulschaaf.gargoyle"
         minSdkVersion 19
@@ -29,13 +30,21 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    sourceSets.main {
+        jni.srcDirs = [] // This prevents the auto generation of Android.mk
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                debuggable true
+            }
         }
     }
     sourceSets {
+        jni.resources.srcDirs = []
         String sharedTestResources = 'src/sharedTestUtils/resources'
         String sharedTestUtils = 'src/sharedTestUtils/kotlin'
         test {
@@ -50,7 +59,6 @@ android {
 }
 
 dependencies {
-    //    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     implementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'maven:maven:20030211.132709'

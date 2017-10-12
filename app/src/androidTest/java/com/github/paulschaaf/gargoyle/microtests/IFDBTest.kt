@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.assertThat
-import com.github.paulschaaf.gargoyle.ifdb.IFDBFeedReader
+import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,7 +70,7 @@ class IFDBTest {
   )
 
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
-    val story = IFDBFeedReader.createStoryFrom(storyXML.xmlString)
+    val story = IFDBXmlParser.createStoryFrom(storyXML.xmlString)
     assertThat(story).isDescribedBy(storyXML)
   }
 }

@@ -17,29 +17,39 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
+import android.os.Environment
 import android.support.test.runner.AndroidJUnit4
+import org.andglk.babel.Babel
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class StoryFileLoaderTest {
-
-//  val storyDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
-//      + R.string.dir_stories)
+  val storyDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
+      + File.separator + "Interactive Fiction")
 //  val rootDir = File(storyDirName)
 
-  @Test
-  fun verifyStoryFilesFound() {
+//  @Test
+//  fun verifyStoryFileFoundInAssets() {
 //    val testContext = InstrumentationRegistry.getInstrumentation().context
 //    val assets = testContext.assets
 //    val lostPig = assets.open("LostPig.z8").reader()
-//    print("Story files in rootDir")
+//    assertThat(lostPig).isNotNull
+//  }
 
-    val lostPig = javaClass.classLoader.getResourceAsStream("LostPig.z8")
-    assertThat(lostPig).isNotNull
+//  @Test
+//  fun verifyStoryFileFoundThroughClassloader() {
+//    val lostPig = javaClass.classLoader.getResourceAsStream("LostPig.z8").readBytes().toString()
+//    val result = Babel.examine(lostPig)
+//    assertThat(lostPig).isNotNull
+//  }
 
-//    val stories = StoryFileLoader().allStoryFiles
-//    print(stories.map { it.name }.joinToString(", "))
+  @Test
+  fun verifyStoryFilesFoundByName() {
+    val enchanterSpec = storyDirName + File.separator + "Enchanter.dat"
+    val result = Babel.examine(enchanterSpec)
+    assertThat(result).isNotEmpty
   }
 }
