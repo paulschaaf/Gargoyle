@@ -26,7 +26,6 @@ class IFDB {
     val CONNECT_TIMEOUT = 15000
     val QUERY_URL = "http://ifdb.tads.org/viewgame?ifiction&id="
     val READ_TIMEOUT = 10000
-    val TAG = "IFDB"
 
     fun createStoryFromIfID(ifID: String): Story {
       val urlString = QUERY_URL + ifID
@@ -38,7 +37,7 @@ class IFDB {
       }
 
       return httpURLConnection.use { conn->
-        conn.inputStream.use { IFDBXmlParser.createStoryFrom(it) }
+        conn.inputStream.use { IFDBXmlParser().parseIFXml(it) }
       }
     }
   }

@@ -17,129 +17,94 @@
 
 package com.github.paulschaaf.gargoyle.ifdb
 
-import android.util.Log
 import android.util.Xml
 import com.github.paulschaaf.gargoyle.model.Story
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
-class IFDBXmlParser(val parser: XmlPullParser) {
-  companion object {
-    val TAG = "IFDBXmlParser"
-
-    fun createStoryFrom(string: String) = string
-      .byteInputStream()
-      .use { createStoryFrom(it) }
-
-    fun createStoryFrom(inputStream: InputStream): Story {
-      val parser = Xml.newPullParser().apply {
-        setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-        setInput(inputStream, null)
-      }
-      try {
-        return inputStream.use { IFDBXmlParser(parser).parseIFIndex() }
-      }
-      catch (ex: Exception) {
-        Log.e(TAG, "Hit exception " + ex.toString())
-      }
-      return Story()
-    }
+class IFDBXmlParser {
+  val parser = Xml.newPullParser().apply {
+    setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
   }
 
   val story = Story()
 
-  private fun parseIFIndex(): Story {
-    parser.next()
-    parser.require(XmlPullParser.START_TAG, null, "ifindex")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "story" -> parseStory()
-        else    -> skip()
+  fun parseIFXml(inputStream: InputStream): Story {
+    with(parser) {
+      setInput(inputStream, null)
+      next()
+      require(XmlPullParser.START_TAG, null, "ifindex")
+      while (next() != XmlPullParser.END_TAG) {
+        if (eventType != XmlPullParser.START_TAG) continue
+        when (name) {
+          "story" -> readStory()
+          else    -> skip()
+        }
       }
     }
     return story
   }
 
-  private fun parseStory() {
-    parser.require(XmlPullParser.START_TAG, null, "story")
+  fun readChildren(parseChild: (String) -> Unit) {
+    parser.require(XmlPullParser.START_TAG, null, parser.name)
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "colophon"       -> readColophon()
-        "identification" -> readIdentification()
-        "bibliographic"  -> readBibliographic()
-        "ifdb"           -> readIFDB()
-        "contact"        -> skip()
-        else             -> skip()
-      }
+      parseChild(parser.name)
     }
   }
 
-  private fun readColophon() {
-    parser.require(XmlPullParser.START_TAG, null, "colophon")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      skip()
+  private fun readStory() = readChildren {
+    when (it) {
+      "colophon"       -> readColophon()
+      "identification" -> readIdentification()
+      "bibliographic"  -> readBibliographic()
+      "ifdb"           -> readIFDB()
+      "contact"        -> skip()
     }
   }
 
-  private fun readIdentification() {
-    parser.require(XmlPullParser.START_TAG, null, "identification")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "ifid"   -> story.ifId = getText() ?: "-error-"
-        "format" -> skip()
-        else     -> skip()
-      }
+  private fun readColophon() = readChildren { skip() }
+
+  private fun readIdentification() = readChildren {
+    when (it) {
+      "ifid"   -> story.ifId = getText() ?: "-error-"
+      "format" -> skip()
+      else     -> skip()
     }
   }
 
-  private fun readBibliographic() {
-    parser.require(XmlPullParser.START_TAG, null, "bibliographic")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "title"          -> story.title = getText()
-        "author"         -> story.author = getText()
-        "language"       -> story.language = getText()
-        "firstpublished" -> story.firstPublished = getText()
-        "genre"          -> story.genre = getText()
-        "description"    -> story.description = getText()
-        "series"         -> story.series = getText()
-        "seriesnumber"   -> story.seriesNumber = getText()?.toIntOrNull()
-        "forgiveness"    -> story.forgiveness = getText()
-        else             -> skip()
-      }
+  private fun readBibliographic() = readChildren {
+    when (it) {
+      "title"          -> story.title = getText()
+      "author"         -> story.author = getText()
+      "language"       -> story.language = getText()
+      "firstpublished" -> story.firstPublished = getText()
+      "genre"          -> story.genre = getText()
+      "description"    -> story.description = getText()
+      "series"         -> story.series = getText()
+      "seriesnumber"   -> story.seriesNumber = getText()?.toIntOrNull()
+      "forgiveness"    -> story.forgiveness = getText()
+      else             -> skip()
     }
   }
 
-  private fun readIFDB() {
-    parser.require(XmlPullParser.START_TAG, null, "ifdb")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "tuid"           -> story.tuid = getText()
-        "link"           -> story.link = getText()
-        "coverart"       -> readCoverArt()
-        "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
-        "starRating"     -> story.starRating = getText()?.toDoubleOrNull()
-        "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
-        "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
-        else             -> skip()
-      }
+  private fun readIFDB() = readChildren {
+    when (it) {
+      "tuid"           -> story.tuid = getText()
+      "link"           -> story.link = getText()
+      "coverart"       -> readCoverArt()
+      "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
+      "starRating"     -> story.starRating = getText()?.toDoubleOrNull()
+      "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
+      "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
+      else             -> skip()
     }
   }
 
-  private fun readCoverArt() {
-    parser.require(XmlPullParser.START_TAG, null, "coverart")
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      when (parser.name) {
-        "url" -> story.coverArtURL = getText()
-        else  -> skip()
-      }
+  private fun readCoverArt() = readChildren {
+    when (it) {
+      "url" -> story.coverArtURL = getText()
+      else  -> skip()
     }
   }
 

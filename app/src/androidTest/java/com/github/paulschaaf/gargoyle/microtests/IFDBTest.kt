@@ -70,7 +70,7 @@ class IFDBTest {
   )
 
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
-    val story = IFDBXmlParser.createStoryFrom(storyXML.xmlString)
+    val story = IFDBXmlParser().parseIFXml(storyXML.xmlString.byteInputStream())
     assertThat(story).isDescribedBy(storyXML)
   }
 }
