@@ -29,28 +29,26 @@ class IFDBXmlParser {
 
   val story = Story()
 
-  fun parseIFXml(inputStream: InputStream): Story {
-    with(parser) {
-      setInput(inputStream, null)
-      next()
-      require(XmlPullParser.START_TAG, null, "ifindex")
-      while (next() != XmlPullParser.END_TAG) {
-        if (eventType != XmlPullParser.START_TAG) continue
-        when (name) {
-          "story" -> readStory()
-          else    -> skip()
-        }
-      }
-    }
-    return story
-  }
+  fun readChildren(parseChild: (String) -> Unit) = readChildren(parser.name, parseChild)
 
-  fun readChildren(parseChild: (String) -> Unit) {
-    parser.require(XmlPullParser.START_TAG, null, parser.name)
+  fun readChildren(tag: String, parseChild: (String) -> Unit) {
+    parser.require(XmlPullParser.START_TAG, null, tag)
     while (parser.next() != XmlPullParser.END_TAG) {
       if (parser.eventType != XmlPullParser.START_TAG) continue
       parseChild(parser.name)
     }
+  }
+
+  fun parseIFXml(inputStream: InputStream): Story {
+    parser.setInput(inputStream, null)
+    parser.next()
+    readChildren("ifindex") {
+      when (it) {
+        "story" -> readStory()
+        else    -> skip()
+      }
+    }
+    return story
   }
 
   private fun readStory() = readChildren {
