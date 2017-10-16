@@ -23,29 +23,25 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
 class IFDBXmlParser {
+  var path = listOf<String>()
   val parser = Xml.newPullParser().apply {
     setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
   }
 
   val story = Story()
 
-  fun readChildren(parseChild: (String) -> Unit) = readChildren(parser.name, parseChild)
-
-  fun readChildren(tag: String, parseChild: (String) -> Unit) {
-    parser.require(XmlPullParser.START_TAG, null, tag)
+  fun readChildren(parseChild: (String) -> Unit) {
     while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType != XmlPullParser.START_TAG) continue
-      parseChild(parser.name)
+      if (parser.eventType == XmlPullParser.START_TAG) parseChild(parser.name)
     }
   }
 
   fun parseIFXml(inputStream: InputStream): Story {
     parser.setInput(inputStream, null)
     parser.next()
-    readChildren("ifindex") {
+    readChildren {
       when (it) {
         "story" -> readStory()
-        else    -> skip()
       }
     }
     return story
@@ -53,21 +49,13 @@ class IFDBXmlParser {
 
   private fun readStory() = readChildren {
     when (it) {
-      "colophon"       -> readColophon()
-      "identification" -> readIdentification()
+      "identification" -> readChildren {
+        when (it) {
+          "ifid" -> story.ifId = getText() ?: "-error-"
+        }
+      }
       "bibliographic"  -> readBibliographic()
       "ifdb"           -> readIFDB()
-      "contact"        -> skip()
-    }
-  }
-
-  private fun readColophon() = readChildren { skip() }
-
-  private fun readIdentification() = readChildren {
-    when (it) {
-      "ifid"   -> story.ifId = getText() ?: "-error-"
-      "format" -> skip()
-      else     -> skip()
     }
   }
 
@@ -82,7 +70,6 @@ class IFDBXmlParser {
       "series"         -> story.series = getText()
       "seriesnumber"   -> story.seriesNumber = getText()?.toIntOrNull()
       "forgiveness"    -> story.forgiveness = getText()
-      else             -> skip()
     }
   }
 
@@ -90,19 +77,15 @@ class IFDBXmlParser {
     when (it) {
       "tuid"           -> story.tuid = getText()
       "link"           -> story.link = getText()
-      "coverart"       -> readCoverArt()
+      "coverart"       -> readChildren {
+        when (it) {
+          "url" -> story.coverArtURL = getText()
+        }
+      }
       "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
       "starRating"     -> story.starRating = getText()?.toDoubleOrNull()
       "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
       "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
-      else             -> skip()
-    }
-  }
-
-  private fun readCoverArt() = readChildren {
-    when (it) {
-      "url" -> story.coverArtURL = getText()
-      else  -> skip()
     }
   }
 
@@ -121,21 +104,5 @@ class IFDBXmlParser {
     while (parser.name != elementName)
     parser.require(XmlPullParser.END_TAG, null, elementName)
     return result
-  }
-
-  private fun skip() {
-    if (parser.eventType == XmlPullParser.END_TAG) parser.next()
-    else {
-      if (parser.eventType != XmlPullParser.START_TAG) {
-        throw IllegalStateException()
-      }
-      var depth = 1
-      while (depth != 0) {
-        when (parser.next()) {
-          XmlPullParser.START_TAG -> depth++
-          XmlPullParser.END_TAG   -> depth--
-        }
-      }
-    }
   }
 }
