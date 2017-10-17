@@ -105,4 +105,62 @@ class IFDBXmlParser {
     parser.require(XmlPullParser.END_TAG, null, elementName)
     return result
   }
+
+  inner class ElementParser(protected val _parseBlock: () -> Unit) {
+    fun parse() = _parseBlock.invoke()
+
+    constructor(vararg components: Pair<String, ElementParser>): this({ })
+  }
+
+  inner class Foo {
+    operator infix fun String.div(other: String): String = other
+    val grp: Function<Unit> = { story.ifId = getText() ?: "-error-" }
+
+    val baz = "identification" / "id" / { story.ifId = getText() ?: "-error-" }
+
+    val bar = (
+        "identification" to (
+            "ifid" to { story.ifId = getText() ?: "-error-" }
+            ),
+    "bibliographic"  to (
+    "title"          to
+    { story.title = getText() },
+    "author"         to
+    { story.author = getText() },
+    "language"       to
+    { story.language = getText() },
+    "firstpublished" to
+    { story.firstPublished = getText() },
+    "genre"          to
+    { story.genre = getText() },
+    "description"    to
+    { story.description = getText() },
+    "series"         to
+    { story.series = getText() },
+    "seriesnumber"   to
+    { story.seriesNumber = getText()?.toIntOrNull() },
+    "forgiveness"    to
+    { story.forgiveness = getText() }
+    ),
+    "ifdb"           to (
+    "tuid"           to
+    { story.tuid = getText() },
+    "link"           to
+    { story.link = getText() },
+    "coverart"       to (
+    "url" to
+    { story.coverArtURL = getText() }
+    )
+    ),
+    "averageRating"  to
+    { story.averageRating = getText()?.toDoubleOrNull() },
+    "starRating"     to
+    { story.starRating = getText()?.toDoubleOrNull() },
+    "ratingCountAvg" to
+    { story.ratingCountAvg = getText()?.toIntOrNull() },
+    "ratingCountTot" to
+    { story.ratingCountTotal = getText()?.toIntOrNull() }
+    ).toMap()
+  }
+
 }
