@@ -75,17 +75,17 @@ class IFDBXmlParser {
 
   private fun readIFDB() = readChildren {
     when (it) {
-      "tuid"           -> story.tuid = getText()
-      "link"           -> story.link = getText()
+      "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
       "coverart"       -> readChildren {
         when (it) {
           "url" -> story.coverArtURL = getText()
         }
       }
-      "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
+      "link"           -> story.link = getText()
       "starRating"     -> story.starRating = getText()?.toDoubleOrNull()
       "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
       "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
+      "tuid"           -> story.tuid = getText()
     }
   }
 
@@ -106,61 +106,63 @@ class IFDBXmlParser {
     return result
   }
 
-  inner class ElementParser(protected val _parseBlock: () -> Unit) {
-    fun parse() = _parseBlock.invoke()
+  open inner class XMLElement {
+    val children = mutableMapOf<String, XMLElement>()
 
-    constructor(vararg components: Pair<String, ElementParser>): this({ })
+    operator fun String.invoke(fn: XMLElement.() -> Unit) = children.set(this,
+                                                                         XMLElement().apply(fn)
+    )
+
+    infix fun String.then(fn: () -> Unit) = children.set(this, LeafElement(fn))
+
+    open fun parse() {
+      while (parser.next() != XmlPullParser.END_TAG) {
+        if (parser.eventType == XmlPullParser.START_TAG)
+          children[parser.name]?.parse()
+        else
+          print("skipping element '${parser.name}'")
+      }
+    }
+
+    val baz = "ifdb" {
+      "averageRating" then { story.averageRating = getText()?.toDoubleOrNull() }
+      "coverart" {
+        "url" then { story.coverArtURL = getText() }
+      }
+      "link" then { story.link = getText() }
+    }
+
+//    val bar = (
+//        "identification" to (
+//          "ifid" to { story.ifId = getText() ?: "-error-" }
+//        ),
+//        "bibliographic"  to (
+//          "title"          to { story.title = getText() },
+//          "author"         to { story.author = getText() },
+//          "language"       to { story.language = getText() },
+//          "firstpublished" to { story.firstPublished = getText() },
+//          "genre"          to { story.genre = getText() },
+//          "description"    to { story.description = getText() },
+//          "series"         to { story.series = getText() },
+//          "seriesnumber"   to { story.seriesNumber = getText()?.toIntOrNull() },
+//          "forgiveness"    to { story.forgiveness = getText() }
+//        ),
+//        "ifdb"           to (
+//          "tuid"           to { story.tuid = getText() },
+//          "link"           to { story.link = getText() },
+//          "coverart"       to (
+//              "url" to { story.coverArtURL = getText() }
+//          )
+//          "averageRating"  to { story.averageRating = getText()?.toDoubleOrNull() },
+//          "starRating"     to { story.starRating = getText()?.toDoubleOrNull() },
+//          "ratingCountAvg" to { story.ratingCountAvg = getText()?.toIntOrNull() },
+//          "ratingCountTot" to { story.ratingCountTotal = getText()?.toIntOrNull() }
+//        ),
+//    )
   }
 
-  inner class Foo {
-    operator infix fun String.div(other: String): String = other
-    val grp: Function<Unit> = { story.ifId = getText() ?: "-error-" }
-
-    val baz = "identification" / "id" / { story.ifId = getText() ?: "-error-" }
-
-    val bar = (
-        "identification" to (
-            "ifid" to { story.ifId = getText() ?: "-error-" }
-            ),
-    "bibliographic"  to (
-    "title"          to
-    { story.title = getText() },
-    "author"         to
-    { story.author = getText() },
-    "language"       to
-    { story.language = getText() },
-    "firstpublished" to
-    { story.firstPublished = getText() },
-    "genre"          to
-    { story.genre = getText() },
-    "description"    to
-    { story.description = getText() },
-    "series"         to
-    { story.series = getText() },
-    "seriesnumber"   to
-    { story.seriesNumber = getText()?.toIntOrNull() },
-    "forgiveness"    to
-    { story.forgiveness = getText() }
-    ),
-    "ifdb"           to (
-    "tuid"           to
-    { story.tuid = getText() },
-    "link"           to
-    { story.link = getText() },
-    "coverart"       to (
-    "url" to
-    { story.coverArtURL = getText() }
-    )
-    ),
-    "averageRating"  to
-    { story.averageRating = getText()?.toDoubleOrNull() },
-    "starRating"     to
-    { story.starRating = getText()?.toDoubleOrNull() },
-    "ratingCountAvg" to
-    { story.ratingCountAvg = getText()?.toIntOrNull() },
-    "ratingCountTot" to
-    { story.ratingCountTotal = getText()?.toIntOrNull() }
-    ).toMap()
+  inner class LeafElement(private val fn: () -> Unit): XMLElement() {
+    override fun parse() = fn()
   }
 
 }
