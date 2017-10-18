@@ -91,6 +91,47 @@ open class TestStoryXml(override val url: String, override val xmlString: String
            """<?xml version="1.0" encoding="UTF-8"?><ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/"><story><colophon><generator>ifdb.tads.org/viewgame</generator><generatorversion>1</generatorversion><originated>2016-10-23</originated></colophon><identification><ifid>1810847C-0DC7-44D5-94EF-313A3E7AF257</ifid><bafn>2893</bafn><format>zcode</format></identification><bibliographic><title>Bronze</title><author>Emily Short</author><language>en</language><firstpublished>2006</firstpublished><genre>Fantasy</genre><description>When the seventh day comes and it is time for you to return to the castle in the forest, your sisters cling to your sleeves.</description><series>fractured fairy tales</series></bibliographic><contact><url>http://inform7.com/learn/eg/bronze/index.html</url></contact><ifdb xmlns="http://ifdb.tads.org/api/xmlns"><tuid>9p8kh3im2j9h2881</tuid><link>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881</link><coverart><url>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881&amp;coverart</url></coverart><averageRating>4.2917</averageRating><starRating>4.5</starRating><ratingCountAvg>192</ratingCountAvg><ratingCountTot>192</ratingCountTot></ifdb></story></ifindex>"""
           ),
 
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
+  <story>
+    <colophon>
+      <generator>ifdb.tads.org/viewgame</generator>
+      <generatorversion>1</generatorversion>
+      <originated>2016-10-23</originated>
+    </colophon>
+    <identification>
+      <ifid>1810847C-0DC7-44D5-94EF-313A3E7AF257</ifid>
+      <bafn>2893</bafn>
+      <format>zcode</format>
+    </identification>
+    <bibliographic>
+      <title>Bronze</title>
+      <author>Emily Short</author>
+      <language>en</language>
+      <firstpublished>2006</firstpublished>
+      <genre>Fantasy</genre>
+      <description>When the seventh day comes and it is time for you to return to the castle in the forest, your sisters cling to your sleeves.</description>
+      <series>fractured fairy tales</series>
+    </bibliographic>
+    <contact>
+      <url>http://inform7.com/learn/eg/bronze/index.html</url>
+    </contact>
+    <ifdb xmlns="http://ifdb.tads.org/api/xmlns">
+      <tuid>9p8kh3im2j9h2881</tuid>
+      <link>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881</link>
+      <coverart>
+	<url>http://ifdb.tads.org/viewgame?id=9p8kh3im2j9h2881&amp;coverart</url>
+      </coverart>
+      <averageRating>4.2917</averageRating>
+      <starRating>4.5</starRating>
+      <ratingCountAvg>192</ratingCountAvg>
+      <ratingCountTot>192</ratingCountTot>
+    </ifdb>
+  </story>
+</ifindex>
+ */
+
     LostPig("http://ifdb.tads.org/viewgame?ifiction&id=mohwfk47yjzii14w",
             """<?xml version="1.0" encoding="UTF-8"?><ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/"><story><colophon><generator>ifdb.tads.org/viewgame</generator><generatorversion>1</generatorversion><originated>2013-09-21</originated></colophon><identification><ifid>ZCODE-1-070917-994E</ifid><ifid>ZCODE-2-080406-A377</ifid><bafn>3035</bafn><format>zcode</format></identification><bibliographic><title>Lost Pig</title><author>Admiral Jota</author><language>en</language><firstpublished>2007-09-30</firstpublished><genre>Fantasy, Humor</genre><forgiveness>Polite</forgiveness></bibliographic><contact><url>http://www.grunk.org/lostpig</url></contact><ifdb xmlns="http://ifdb.tads.org/api/xmlns"><tuid>mohwfk47yjzii14w</tuid><link>http://ifdb.tads.org/viewgame?id=mohwfk47yjzii14w</link><coverart><url>http://ifdb.tads.org/viewgame?id=mohwfk47yjzii14w&amp;coverart</url></coverart><averageRating>4.4661</averageRating><starRating>4.5</starRating><ratingCountAvg>339</ratingCountAvg><ratingCountTot>340</ratingCountTot></ifdb></story></ifindex>"""
            ),

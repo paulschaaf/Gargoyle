@@ -30,64 +30,41 @@ class IFDBXmlParser {
 
   val story = Story()
 
-  fun readChildren(parseChild: (String) -> Unit) {
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType == XmlPullParser.START_TAG) parseChild(parser.name)
+  val documentParser = XmlParentElement(parser).apply {
+    "identification" {
+      "ifid" then { story.ifId = getText() ?: "-error-" }
+    }
+    "bibliographic" {
+      "title" then { story.title = getText() }
+      "author" then { story.author = getText() }
+      "language" then { story.language = getText() }
+      "firstpublished" then { story.firstPublished = getText() }
+      "genre" then { story.genre = getText() }
+      "description" then { story.description = getText() }
+      "series" then { story.series = getText() }
+      "seriesnumber" then { story.seriesNumber = getText()?.toIntOrNull() }
+      "forgiveness" then { story.forgiveness = getText() }
+    }
+    "ifdb" {
+      "tuid" then { story.tuid = getText() }
+      "link" then { story.link = getText() }
+      "coverart" {
+        "url" then { story.coverArtURL = getText() }
+      }
+      "averageRating" then { story.averageRating = getText()?.toDoubleOrNull() }
+      "starRating" then { story.starRating = getText()?.toDoubleOrNull() }
+      "ratingCountAvg" then { story.ratingCountAvg = getText()?.toIntOrNull() }
+      "ratingCountTot" then { story.ratingCountTotal = getText()?.toIntOrNull() }
     }
   }
 
   fun parseIFXml(inputStream: InputStream): Story {
     parser.setInput(inputStream, null)
     parser.next()
-    readChildren {
-      when (it) {
-        "story" -> readStory()
-      }
-    }
+    documentParser.parse()
     return story
   }
 
-  private fun readStory() = readChildren {
-    when (it) {
-      "identification" -> readChildren {
-        when (it) {
-          "ifid" -> story.ifId = getText() ?: "-error-"
-        }
-      }
-      "bibliographic"  -> readBibliographic()
-      "ifdb"           -> readIFDB()
-    }
-  }
-
-  private fun readBibliographic() = readChildren {
-    when (it) {
-      "title"          -> story.title = getText()
-      "author"         -> story.author = getText()
-      "language"       -> story.language = getText()
-      "firstpublished" -> story.firstPublished = getText()
-      "genre"          -> story.genre = getText()
-      "description"    -> story.description = getText()
-      "series"         -> story.series = getText()
-      "seriesnumber"   -> story.seriesNumber = getText()?.toIntOrNull()
-      "forgiveness"    -> story.forgiveness = getText()
-    }
-  }
-
-  private fun readIFDB() = readChildren {
-    when (it) {
-      "averageRating"  -> story.averageRating = getText()?.toDoubleOrNull()
-      "coverart"       -> readChildren {
-        when (it) {
-          "url" -> story.coverArtURL = getText()
-        }
-      }
-      "link"           -> story.link = getText()
-      "starRating"     -> story.starRating = getText()?.toDoubleOrNull()
-      "ratingCountAvg" -> story.ratingCountAvg = getText()?.toIntOrNull()
-      "ratingCountTot" -> story.ratingCountTotal = getText()?.toIntOrNull()
-      "tuid"           -> story.tuid = getText()
-    }
-  }
 
   private fun getText(): String? {
     val elementName = parser.name
@@ -106,70 +83,35 @@ class IFDBXmlParser {
     return result
   }
 
-  interface XmlElementParser {
-    fun parse()
-  }
+}
 
-  inner class XmlLeafElement(private val fn: () -> Unit): XmlElementParser {
-    override fun parse() = fn()
-  }
+interface XmlElement {
+  fun parse()
+}
 
-  operator fun String.invoke(fn: XmlElementParser.() -> Unit): XmlElementParser {
-    val element = XmlParentElement().apply(fn)
-    element.children[this] = element.fn(this@XmlParentElement))
+class XmlLeafElement(private val fn: () -> Unit): XmlElement {
+  override fun parse() = fn()
+}
+
+class XmlParentElement(val parser: XmlPullParser): XmlElement {
+  val children = mutableMapOf<String, XmlElement>()
+
+  operator fun String.invoke(fn: XmlElement.() -> Unit): XmlElement {
+    val element = XmlParentElement(parser).apply(fn)
+    children[this] = element
     return element
   }
 
-  inner class XmlParentElement: XmlElementParser {
-    val children = mutableMapOf<String, XmlElementParser>()
-
-    infix fun String.then(fn: () -> Unit) = children.set(this, XmlLeafElement(fn))
-
-    override fun parse() {
-      while (parser.next() != XmlPullParser.END_TAG) {
-        if (parser.eventType == XmlPullParser.START_TAG)
-          children[parser.name]?.parse()
-        else
-          print("skipping element '${parser.name}'")
-      }
-    }
+  infix fun String.then(fn: () -> Unit) {
+    children[this] = XmlLeafElement(fn)
   }
 
-    val baz = "ifdb" {
-      "averageRating" then { story.averageRating = getText()?.toDoubleOrNull() }
-      "coverart" {
-        "url" then { story.coverArtURL = getText() }
-      }
-      "link" then { story.link = getText() }
+  override fun parse() {
+    while (parser.next() != XmlPullParser.END_TAG) {
+      if (parser.eventType == XmlPullParser.START_TAG)
+        children[parser.name]?.parse()
+      else
+        println("skipping element '${parser.name}'")
     }
-
-//    val bar = (
-//        "identification" to (
-//          "ifid" to { story.ifId = getText() ?: "-error-" }
-//        ),
-//        "bibliographic"  to (
-//          "title"          to { story.title = getText() },
-//          "author"         to { story.author = getText() },
-//          "language"       to { story.language = getText() },
-//          "firstpublished" to { story.firstPublished = getText() },
-//          "genre"          to { story.genre = getText() },
-//          "description"    to { story.description = getText() },
-//          "series"         to { story.series = getText() },
-//          "seriesnumber"   to { story.seriesNumber = getText()?.toIntOrNull() },
-//          "forgiveness"    to { story.forgiveness = getText() }
-//        ),
-//        "ifdb"           to (
-//          "tuid"           to { story.tuid = getText() },
-//          "link"           to { story.link = getText() },
-//          "coverart"       to (
-//              "url" to { story.coverArtURL = getText() }
-//          )
-//          "averageRating"  to { story.averageRating = getText()?.toDoubleOrNull() },
-//          "starRating"     to { story.starRating = getText()?.toDoubleOrNull() },
-//          "ratingCountAvg" to { story.ratingCountAvg = getText()?.toIntOrNull() },
-//          "ratingCountTot" to { story.ratingCountTotal = getText()?.toIntOrNull() }
-//        ),
-//    )
   }
-
 }
