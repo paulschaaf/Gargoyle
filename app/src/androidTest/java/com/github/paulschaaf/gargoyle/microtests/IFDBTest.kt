@@ -20,9 +20,11 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
+import com.github.paulschaaf.gargoyle.model.IFDBStory
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.reflect.full.memberProperties
 
 @RunWith(AndroidJUnit4::class)
 class IFDBTest {
@@ -30,12 +32,24 @@ class IFDBTest {
   val baseURL = "http://ifdb.tads.org"
 
   @Test
+  fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
+    val storyCreator = TestStoryXml.SampleCreators.Bronze
+    val storyXML = storyCreator.create()
+
+    IFDBStory::class.memberProperties.forEach {
+      assertThat(it.get(storyXML))
+        .describedAs(it.name)
+        .isNotNull
+    }
+  }
+
+  @Test
   fun testAllSamples() {
     val errors = mutableListOf<Exception>()
-    TestStoryXml.SampleCreators.values().forEach {
-      println("Checking XML for ${it.name}")
+    TestStoryXml.SampleCreators.values().forEach { storyCreator->
+      println("Checking XML for ${storyCreator.name}")
       try {
-        assertXMLMatchesStory(it.create())
+        assertXMLMatchesStory(storyCreator.create())
       }
       catch (ex: Exception) {
         errors.add(ex)
@@ -47,17 +61,17 @@ class IFDBTest {
   fun handleSpecialCharacterFields() {
     val newAuthor = "©2017, Rosencrantz & Guildenstern"
     val newDescription = "This's as \"complicated\" as it gets!"
-    val alteredStory = TestStoryXml.SampleCreators.ZorkI.create().apply {
+    val testStoryXml = TestStoryXml.SampleCreators.ZorkI.create().apply {
       title += " (Customized)"
       author = newAuthor
       description = newDescription
       averageRating = 1.0
     }
 
-    assertThat(alteredStory.author)
+    assertThat(testStoryXml.author)
       .describedAs("Did not successfully change the author. ")
       .isEqualTo(newAuthor)
-    assertXMLMatchesStory(alteredStory)
+    assertXMLMatchesStory(testStoryXml)
   }
 
   @Test

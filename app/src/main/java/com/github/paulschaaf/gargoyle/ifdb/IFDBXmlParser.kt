@@ -35,7 +35,7 @@ class IFDBXmlParser {
       "ifid" then { story.ifId = getText() ?: "-error-" }
     }
     "bibliographic" {
-      "title" then { story.title = getText() }
+      "title" then { story.title = getText() ?: "-Unknown-" }
       "author" then { story.author = getText() }
       "language" then { story.language = getText() }
       "firstpublished" then { story.firstPublished = getText() }
@@ -94,7 +94,7 @@ class XmlLeafElement(private val fn: () -> Unit): XmlElement {
 }
 
 class XmlParentElement(val parser: XmlPullParser): XmlElement {
-  val children = mutableMapOf<String, XmlElement>()
+  private val children = mutableMapOf<String, XmlElement>()
 
   operator fun String.invoke(fn: XmlElement.() -> Unit): XmlElement {
     val element = XmlParentElement(parser).apply(fn)

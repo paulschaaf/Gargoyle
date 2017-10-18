@@ -80,7 +80,7 @@ open class TestStoryXml(override val url: String, override val xmlString: String
   override var path = this["path"]
   override var series = this["series"]
   override var tuid = this["tuid"]
-  override var title = this["title"]
+  override var title = this["title"] ?: "-Unknown-"
   override var ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
   override var ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
   override var seriesNumber = this["seriesnumber"]?.toIntOrNull()

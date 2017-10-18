@@ -18,6 +18,9 @@
 package com.github.paulschaaf.gargoyle.model
 
 interface IFDBStory {
+  //  companion object {
+//    val storyProperties = this::class.memberProperties
+//  }
   var ifId: String
 
   var averageRating: Double?
@@ -34,7 +37,7 @@ interface IFDBStory {
   var path: String?
   var series: String?
   var tuid: String?
-  var title: String?
+  var title: String
 
   var ratingCountAvg: Int?
   var ratingCountTotal: Int?

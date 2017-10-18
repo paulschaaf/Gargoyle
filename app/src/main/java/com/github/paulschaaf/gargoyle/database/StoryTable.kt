@@ -32,7 +32,7 @@ object StoryTable: SqlTable("Story") {
   val path by StringColumn
   val series by StringColumn
   val tuid by StringColumn
-  val title by StringColumn
+  val title by StringColumn.NonNull
   val averageRating by DoubleColumn
   val ratingCountAvg by IntColumn
   val ratingCountTotal by IntColumn
