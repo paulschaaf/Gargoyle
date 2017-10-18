@@ -106,16 +106,26 @@ class IFDBXmlParser {
     return result
   }
 
-  open inner class XMLElement {
-    val children = mutableMapOf<String, XMLElement>()
+  interface XmlElementParser {
+    fun parse()
+  }
 
-    operator fun String.invoke(fn: XMLElement.() -> Unit) = children.set(this,
-                                                                         XMLElement().apply(fn)
-    )
+  inner class XmlLeafElement(private val fn: () -> Unit): XmlElementParser {
+    override fun parse() = fn()
+  }
 
-    infix fun String.then(fn: () -> Unit) = children.set(this, LeafElement(fn))
+  operator fun String.invoke(fn: XmlElementParser.() -> Unit): XmlElementParser {
+    val element = XmlParentElement().apply(fn)
+    element.children[this] = element.fn(this@XmlParentElement))
+    return element
+  }
 
-    open fun parse() {
+  inner class XmlParentElement: XmlElementParser {
+    val children = mutableMapOf<String, XmlElementParser>()
+
+    infix fun String.then(fn: () -> Unit) = children.set(this, XmlLeafElement(fn))
+
+    override fun parse() {
       while (parser.next() != XmlPullParser.END_TAG) {
         if (parser.eventType == XmlPullParser.START_TAG)
           children[parser.name]?.parse()
@@ -123,6 +133,7 @@ class IFDBXmlParser {
           print("skipping element '${parser.name}'")
       }
     }
+  }
 
     val baz = "ifdb" {
       "averageRating" then { story.averageRating = getText()?.toDoubleOrNull() }
@@ -159,10 +170,6 @@ class IFDBXmlParser {
 //          "ratingCountTot" to { story.ratingCountTotal = getText()?.toIntOrNull() }
 //        ),
 //    )
-  }
-
-  inner class LeafElement(private val fn: () -> Unit): XMLElement() {
-    override fun parse() = fn()
   }
 
 }
