@@ -49,7 +49,7 @@ class IFDBStoryAssert internal constructor(actual: IFDBStory):
 
   fun isDescribedBy(other: IFDBStory) = IFDBStory::class.memberProperties.forEach { prop->
     assertThat(prop, actual)
-      .describedAs("(${other.title} ${other.link})::${prop.name}")
+      .describedAs("(${other.title} ${other.link}) ${prop.name}")
       .isEqualTo(prop(other))
 
     println("verified property: " + prop.name)

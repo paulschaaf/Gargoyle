@@ -73,20 +73,6 @@ class IFDBXmlParserTest {
 
   private fun testStory(story: TestStoryXml.SampleCreators) = assertXMLMatchesStory(story.create())
 
-//  @Test
-//  fun testAllSamples() {
-//    val errors = mutableListOf<Exception>()
-//    TestStoryXml.SampleCreators.values().forEach { storyCreator->
-//      println("Checking XML for ${storyCreator.name}")
-//      try {
-//        assertXMLMatchesStory(storyCreator.create())
-//      }
-//      catch (ex: Exception) {
-//        errors.add(ex)
-//      }
-//    }
-//  }
-
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
     val story = IFDBXmlParser().parseIFXml(storyXML.xmlString.byteInputStream())
     assertThat(story).isDescribedBy(storyXML)

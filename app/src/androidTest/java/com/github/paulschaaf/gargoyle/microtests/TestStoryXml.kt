@@ -32,10 +32,6 @@ interface ITestStoryXml: IFDBStory {
         "&gt;" to ">"
     )
 
-  private fun String.escape() = toHtml.entries.fold(this) { acc, (code, escapedCode)->
-    acc.replace(code, escapedCode)
-  }
-
   private fun String.unescape() = toHtml.entries.fold(this) { acc, (code, escapedCode)->
     acc.replace(escapedCode, code)
   }
@@ -50,19 +46,6 @@ interface ITestStoryXml: IFDBStory {
     val match = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$").matchEntire(xmlString)
     val value = match?.groups?.get(1)?.value
     return if (value.isNullOrEmpty()) null else value!!.unescape()
-  }
-
-  fun set(tag: String, value: String): TestStoryXml {
-    val (prefix, suffix) = if (tag == "coverart")
-      "<url>" to "</url"
-    else
-      "" to ""
-
-    val newXML = xmlString.replace(
-        Regex("<$tag>$prefix[^<]+$suffix</$tag>"),
-        "<$tag>${value.escape()}</$tag>"
-    )
-    return TestStoryXml("custom", newXML)
   }
 }
 

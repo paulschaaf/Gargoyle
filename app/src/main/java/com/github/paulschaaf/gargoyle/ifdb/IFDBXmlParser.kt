@@ -23,7 +23,6 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
 class IFDBXmlParser {
-  //  var path = listOf<String>()
   val parser = Xml.newPullParser().apply {
     setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
   }
@@ -64,24 +63,6 @@ class IFDBXmlParser {
     documentParser.parse(parser)
     return story
   }
-
-
-  private fun getText(): String? {
-    val elementName = parser.name
-    parser.require(XmlPullParser.START_TAG, null, elementName)
-    var result: String? = null
-    do {
-      if (parser.next() == XmlPullParser.TEXT) {
-        result = (result ?: "") + parser.text
-        // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns "null".
-        if (result == "null") result = null
-        parser.nextTag()
-      }
-    }
-    while (parser.name != elementName)
-    parser.require(XmlPullParser.END_TAG, null, elementName)
-    return result
-  }
 }
 
 interface XmlElement {
@@ -90,13 +71,32 @@ interface XmlElement {
 
 class XmlDocument(val name: String, structure: XmlParentElement.() -> Unit): XmlElement {
   val root = XmlParentElement().apply { name.invoke(structure) }
-  override fun parse(parser: XmlPullParser) {
-    root.parse(parser)
-  }
+  override fun parse(parser: XmlPullParser) = root.parse(parser)
 }
 
-class XmlLeafElement(private val fn: () -> Unit): XmlElement {
-  override fun parse(parser: XmlPullParser) = fn()
+class XmlLeafElement(private val fn: XmlLeafElement.() -> Unit): XmlElement {
+  private var _parser: XmlPullParser? = null
+  override fun parse(parser: XmlPullParser) {
+    _parser = parser  // todo pschaaf 10/291/17 18:10: this is a hack
+    fn(this)
+  }
+
+  fun getText(): String? {
+    val elementName = _parser?.name
+    var result: String? = null
+    do {
+      if (_parser?.next() == XmlPullParser.TEXT) {
+        result = (result ?: "") + _parser?.text
+        // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns "null".
+        if (result == "null") result = null
+        _parser?.nextTag()
+      }
+    }
+    while (_parser?.name != elementName)
+    _parser?.require(XmlPullParser.END_TAG, null, elementName)
+    return result
+  }
+
 }
 
 open class XmlParentElement: XmlElement {
@@ -108,7 +108,7 @@ open class XmlParentElement: XmlElement {
     return element
   }
 
-  infix fun String.then(fn: () -> Unit) {
+  infix fun String.then(fn: XmlLeafElement.() -> Unit) {
     children[this] = XmlLeafElement(fn)
   }
 
