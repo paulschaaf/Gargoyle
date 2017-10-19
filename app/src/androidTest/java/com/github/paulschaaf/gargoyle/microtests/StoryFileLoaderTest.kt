@@ -49,7 +49,7 @@ class StoryFileLoaderTest {
   fun verifyStoryFilesFoundByName() {
     val enchanterSpec = storyDirName + File.separator + "Enchanter.dat"
     val result = Babel.examine(enchanterSpec)
-    // todo pschaaf 10/291/17 16:10: make this do something
+    // todo pschaaf 10/18/17 16:10: make this do something
 //    assertThat(result).isNotEmpty
   }
 }

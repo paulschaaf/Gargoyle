@@ -32,29 +32,29 @@ class IFDBXmlParser {
 
   val documentParser = XmlDocument("story") {
     "identification" {
-      "ifid" then { story.ifId = getText() ?: "-error-" }
+      "ifid".writeTo(story::ifId, "-error-")
     }
     "bibliographic" {
-      "title" then { story.title = getText() ?: "-Unknown-" }
-      "author" then { story.author = getText() }
-      "language" then { story.language = getText() }
-      "firstpublished" then { story.firstPublished = getText() }
-      "genre" then { story.genre = getText() }
-      "description" then { story.description = getText() }
-      "series" then { story.series = getText() }
-      "seriesnumber" sets story::seriesNumber
-      "forgiveness" then { story.forgiveness = getText() }
+      "title".writeTo(story::title, "-Unknown-")
+      "author".writeTo(story::author)
+      "language".writeTo(story::language)
+      "firstpublished".writeTo(story::firstPublished)
+      "genre".writeTo(story::genre)
+      "description".writeTo(story::description)
+      "series".writeTo(story::series)
+      "seriesnumber".writeTo(story::seriesNumber) { it?.toIntOrNull() }
+      "forgiveness".writeTo(story::forgiveness)
     }
     "ifdb" {
-      "tuid" then { story.tuid = getText() }
-      "link" then { story.link = getText() }
+      "tuid".writeTo(story::tuid)
+      "link".writeTo(story::link)
       "coverart" {
-        "url" then { story.coverArtURL = getText() }
+        "url".writeTo(story::coverArtURL)
       }
-      "averageRating" then { story.averageRating = getText()?.toDoubleOrNull() }
-      "starRating" then { story.starRating = getText()?.toDoubleOrNull() }
-      "ratingCountAvg" sets story::ratingCountAvg
-      "ratingCountTot" sets story::ratingCountTotal
+      "averageRating".writeTo(story::averageRating) { it?.toDoubleOrNull() }
+      "starRating".writeTo(story::starRating) { it?.toDoubleOrNull() }
+      "ratingCountAvg".writeTo(story::ratingCountAvg) { it?.toIntOrNull() }
+      "ratingCountTot".writeTo(story::ratingCountTotal) { it?.toIntOrNull() }
     }
   }
 
@@ -75,29 +75,22 @@ class XmlDocument(val name: String, structure: XmlParentElement.() -> Unit): Xml
   override fun parse(parser: XmlPullParser) = root.parse(parser)
 }
 
-class XmlLeafElement(private val fn: XmlLeafElement.() -> Unit): XmlElement {
-  private var _parser: XmlPullParser? = null
+class XmlLeafElement<T>(private val prop: KMutableProperty<T>, private val convert: (String?) -> T):
+    XmlElement {
   override fun parse(parser: XmlPullParser) {
-    _parser = parser  // todo pschaaf 10/291/17 18:10: this is a hack
-    fn(this)
-  }
-
-  fun getText(): String? {
-    val elementName = _parser?.name
+    val elementName = parser.name
     var result: String? = null
     do {
-      if (_parser?.next() == XmlPullParser.TEXT) {
-        result = (result ?: "") + _parser?.text
-        // pschaaf 09/250/17 14:09: this is a hack, but what else can I do? Instead of returning null the library returns "null".
-        if (result == "null") result = null
-        _parser?.nextTag()
+      if (parser.next() == XmlPullParser.TEXT) {
+        result = parser.text
+        parser.nextTag()
       }
     }
-    while (_parser?.name != elementName)
-    _parser?.require(XmlPullParser.END_TAG, null, elementName)
-    return result
+    while (parser.name != elementName)
+    parser.require(XmlPullParser.END_TAG, null, elementName)
+    val convertedValue = convert(result)
+    prop.setter.call(convertedValue)
   }
-
 }
 
 open class XmlParentElement: XmlElement {
@@ -109,12 +102,14 @@ open class XmlParentElement: XmlElement {
     return element
   }
 
-  infix fun String.then(fn: XmlLeafElement.() -> Unit) {
-    children[this] = XmlLeafElement(fn)
-  }
+  fun String.writeTo(prop: KMutableProperty<String>, default: String) = writeTo(prop,
+                                                                                { it ?: default }
+  )
 
-  infix fun String.sets(prop: KMutableProperty<Int?>) {
-    children[this] = XmlLeafElement { prop.setter.call(this.getText()?.toIntOrNull()) }
+  fun String.writeTo(prop: KMutableProperty<String?>) = writeTo(prop, { it })
+
+  fun <T> String.writeTo(prop: KMutableProperty<T>, converter: (String?) -> T) {
+    children[this] = XmlLeafElement<T>(prop, converter)
   }
 
   override fun parse(parser: XmlPullParser) {
