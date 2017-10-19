@@ -21,6 +21,7 @@ import android.util.Xml
 import com.github.paulschaaf.gargoyle.model.Story
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
+import kotlin.reflect.KMutableProperty
 
 class IFDBXmlParser {
   val parser = Xml.newPullParser().apply {
@@ -41,7 +42,7 @@ class IFDBXmlParser {
       "genre" then { story.genre = getText() }
       "description" then { story.description = getText() }
       "series" then { story.series = getText() }
-      "seriesnumber" then { story.seriesNumber = getText()?.toIntOrNull() }
+      "seriesnumber" sets story::seriesNumber
       "forgiveness" then { story.forgiveness = getText() }
     }
     "ifdb" {
@@ -52,8 +53,8 @@ class IFDBXmlParser {
       }
       "averageRating" then { story.averageRating = getText()?.toDoubleOrNull() }
       "starRating" then { story.starRating = getText()?.toDoubleOrNull() }
-      "ratingCountAvg" then { story.ratingCountAvg = getText()?.toIntOrNull() }
-      "ratingCountTot" then { story.ratingCountTotal = getText()?.toIntOrNull() }
+      "ratingCountAvg" sets story::ratingCountAvg
+      "ratingCountTot" sets story::ratingCountTotal
     }
   }
 
@@ -110,6 +111,10 @@ open class XmlParentElement: XmlElement {
 
   infix fun String.then(fn: XmlLeafElement.() -> Unit) {
     children[this] = XmlLeafElement(fn)
+  }
+
+  infix fun String.sets(prop: KMutableProperty<Int?>) {
+    children[this] = XmlLeafElement { prop.setter.call(this.getText()?.toIntOrNull()) }
   }
 
   override fun parse(parser: XmlPullParser) {
