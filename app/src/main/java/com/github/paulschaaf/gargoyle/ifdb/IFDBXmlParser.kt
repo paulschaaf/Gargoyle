@@ -23,14 +23,14 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
 class IFDBXmlParser {
-  var path = listOf<String>()
+  //  var path = listOf<String>()
   val parser = Xml.newPullParser().apply {
     setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
   }
 
   val story = Story()
 
-  val documentParser = XmlParentElement(parser).apply {
+  val documentParser = XmlDocument("story") {
     "identification" {
       "ifid" then { story.ifId = getText() ?: "-error-" }
     }
@@ -61,7 +61,7 @@ class IFDBXmlParser {
   fun parseIFXml(inputStream: InputStream): Story {
     parser.setInput(inputStream, null)
     parser.next()
-    documentParser.parse()
+    documentParser.parse(parser)
     return story
   }
 
@@ -82,22 +82,28 @@ class IFDBXmlParser {
     parser.require(XmlPullParser.END_TAG, null, elementName)
     return result
   }
-
 }
 
 interface XmlElement {
-  fun parse()
+  fun parse(parser: XmlPullParser)
+}
+
+class XmlDocument(val name: String, structure: XmlParentElement.() -> Unit): XmlElement {
+  val root = XmlParentElement().apply { name.invoke(structure) }
+  override fun parse(parser: XmlPullParser) {
+    root.parse(parser)
+  }
 }
 
 class XmlLeafElement(private val fn: () -> Unit): XmlElement {
-  override fun parse() = fn()
+  override fun parse(parser: XmlPullParser) = fn()
 }
 
-class XmlParentElement(val parser: XmlPullParser): XmlElement {
-  private val children = mutableMapOf<String, XmlElement>()
+open class XmlParentElement: XmlElement {
+  val children = mutableMapOf<String, XmlElement>()
 
-  operator fun String.invoke(fn: XmlElement.() -> Unit): XmlElement {
-    val element = XmlParentElement(parser).apply(fn)
+  operator fun String.invoke(fn: XmlParentElement.() -> Unit): XmlParentElement {
+    val element = XmlParentElement().apply(fn)
     children[this] = element
     return element
   }
@@ -106,12 +112,18 @@ class XmlParentElement(val parser: XmlPullParser): XmlElement {
     children[this] = XmlLeafElement(fn)
   }
 
-  override fun parse() {
+  override fun parse(parser: XmlPullParser) {
     while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType == XmlPullParser.START_TAG)
-        children[parser.name]?.parse()
-      else
+      if (parser.eventType == XmlPullParser.START_TAG && children.containsKey(parser.name))
+        children[parser.name]!!.parse(parser)
+      else {
         println("skipping element '${parser.name}'")
+        var depth = 1
+        while (depth != 0) when (parser.next()) {
+          XmlPullParser.START_TAG -> depth++
+          XmlPullParser.END_TAG   -> depth--
+        }
+      }
     }
   }
 }
