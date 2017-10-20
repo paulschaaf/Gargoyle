@@ -70,12 +70,13 @@ interface XmlElement {
   fun parse(parser: XmlPullParser)
 }
 
-class XmlDocument(val name: String, structure: XmlParentElement.() -> Unit): XmlElement {
-  val root = XmlParentElement().apply { name.invoke(structure) }
-  override fun parse(parser: XmlPullParser) = root.parse(parser)
+class XmlDocument(val name: String, val structure: XmlParentElement.() -> Unit): XmlElement {
+  override fun parse(parser: XmlPullParser) = XmlParentElement()
+    .apply { name.invoke(structure) }
+    .parse(parser)
 }
 
-class XmlLeafElement<T>(private val prop: KMutableProperty<T>, private val convert: (String?) -> T):
+class XmlLeafElement<T>(val prop: KMutableProperty<T>, val convert: (String?) -> T):
     XmlElement {
   override fun parse(parser: XmlPullParser) {
     val elementName = parser.name
@@ -102,14 +103,13 @@ open class XmlParentElement: XmlElement {
     return element
   }
 
-  fun String.writeTo(prop: KMutableProperty<String>, default: String) = writeTo(prop,
-                                                                                { it ?: default }
-  )
+  fun String.writeTo(prop: KMutableProperty<String>, default: String) =
+      writeTo(prop) { it ?: default }
 
-  fun String.writeTo(prop: KMutableProperty<String?>) = writeTo(prop, { it })
+  fun String.writeTo(prop: KMutableProperty<String?>) = writeTo(prop) { it }
 
   fun <T> String.writeTo(prop: KMutableProperty<T>, converter: (String?) -> T) {
-    children[this] = XmlLeafElement<T>(prop, converter)
+    children[this] = XmlLeafElement(prop, converter)
   }
 
   override fun parse(parser: XmlPullParser) {
