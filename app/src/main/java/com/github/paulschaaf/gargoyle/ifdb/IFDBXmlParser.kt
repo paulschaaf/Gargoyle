@@ -17,20 +17,13 @@
 
 package com.github.paulschaaf.gargoyle.ifdb
 
-import android.util.Xml
 import com.github.paulschaaf.gargoyle.model.Story
-import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
-import kotlin.reflect.KMutableProperty
 
 class IFDBXmlParser {
-  val parser = Xml.newPullParser().apply {
-    setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-  }
-
   val story = Story()
 
-  val documentParser = XmlDocument("story") {
+  val storyXmlDocumentGrammar = XmlDocument("story") {
     "identification" {
       "ifid".writeTo(story::ifId) { it ?: "-error-" }
     }
@@ -45,6 +38,9 @@ class IFDBXmlParser {
       "seriesnumber".writeTo(story::seriesNumber) { it?.toIntOrNull() }
       "forgiveness".writeTo(story::forgiveness)
     }
+    "contact" {
+      "url".writeTo(story::contact)
+    }
     "ifdb" {
       "tuid".writeTo(story::tuid)
       "link".writeTo(story::link)
@@ -55,73 +51,12 @@ class IFDBXmlParser {
       "starRating".writeTo(story::starRating) { it?.toDoubleOrNull() }
       "ratingCountAvg".writeTo(story::ratingCountAvg) { it?.toIntOrNull() }
       "ratingCountTot".writeTo(story::ratingCountTotal) { it?.toIntOrNull() }
-//      "ratingCountTot" transform { it?.toIntOrNull() } thenWriteTo story::ratingCountTotal
     }
   }
 
-  fun parseIFXml(inputStream: InputStream): Story {
-    parser.setInput(inputStream, null)
-    parser.next()
-    documentParser.parse(parser)
+  fun parse(inputStream: InputStream): Story {
+    storyXmlDocumentGrammar.parse(inputStream)
     return story
   }
 }
 
-interface XmlElement {
-  fun parse(parser: XmlPullParser)
-}
-
-class XmlDocument(val name: String, val structure: XmlParentElement.() -> Unit): XmlElement {
-  override fun parse(parser: XmlPullParser) = XmlParentElement()
-    .apply { name.invoke(structure) }
-    .parse(parser)
-}
-
-class XmlLeafElement<T>(val prop: KMutableProperty<T>, val convert: (String?) -> T):
-    XmlElement {
-  override fun parse(parser: XmlPullParser) {
-    val elementName = parser.name
-    var result: String? = null
-    do {
-      if (parser.next() == XmlPullParser.TEXT) {
-        result = parser.text
-        parser.nextTag()
-      }
-    }
-    while (parser.name != elementName)
-    parser.require(XmlPullParser.END_TAG, null, elementName)
-    val convertedValue = convert(result)
-    prop.setter.call(convertedValue)
-  }
-}
-
-open class XmlParentElement: XmlElement {
-  val children = mutableMapOf<String, XmlElement>()
-
-  operator fun String.invoke(fn: XmlParentElement.() -> Unit): XmlParentElement {
-    val element = XmlParentElement().apply(fn)
-    children[this] = element
-    return element
-  }
-
-  fun String.writeTo(prop: KMutableProperty<String?>) = writeTo(prop) { it }
-
-  fun <T> String.writeTo(prop: KMutableProperty<T>, converter: (String?) -> T) {
-    children[this] = XmlLeafElement(prop, converter)
-  }
-
-  override fun parse(parser: XmlPullParser) {
-    while (parser.next() != XmlPullParser.END_TAG) {
-      if (parser.eventType == XmlPullParser.START_TAG && children.containsKey(parser.name))
-        children[parser.name]!!.parse(parser)
-      else {
-        println("skipping element '${parser.name}'")
-        var depth = 1
-        while (depth != 0) when (parser.next()) {
-          XmlPullParser.START_TAG -> depth++
-          XmlPullParser.END_TAG   -> depth--
-        }
-      }
-    }
-  }
-}

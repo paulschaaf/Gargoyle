@@ -18,24 +18,24 @@
 package com.github.paulschaaf.gargoyle.database
 
 object StoryTable: SqlTable("Story") {
-  val ifId by StringColumn.NonNull.Unique
-
   val author by StringColumn
+  val averageRating by DoubleColumn
+  val contact by StringColumn
   val coverArtURL by StringColumn
   val description by StringColumn
   val firstPublished by StringColumn
   val forgiveness by StringColumn
   val genre by StringColumn
+  val ifId by StringColumn.NonNull.Unique
   val language by StringColumn
   val link by StringColumn
   val lookedUp by StringColumn
   val path by StringColumn
-  val series by StringColumn
-  val tuid by StringColumn
-  val title by StringColumn.NonNull
-  val averageRating by DoubleColumn
   val ratingCountAvg by IntColumn
   val ratingCountTotal by IntColumn
+  val series by StringColumn
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
+  val title by StringColumn.NonNull
+  val tuid by StringColumn
 }

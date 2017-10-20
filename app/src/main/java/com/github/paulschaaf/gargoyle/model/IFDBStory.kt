@@ -18,28 +18,23 @@
 package com.github.paulschaaf.gargoyle.model
 
 interface IFDBStory {
-  //  companion object {
-//    val storyProperties = this::class.memberProperties
-//  }
-  var ifId: String
-
-  var averageRating: Double?
-  var starRating: Double?
-
-  var author: String?
-  var coverArtURL: String?
-  var description: String?
-  var firstPublished: String?
-  var forgiveness: String?
-  var genre: String?
-  var language: String?
-  var link: String?
-  var path: String?
-  var series: String?
-  var tuid: String?
-  var title: String
-
-  var ratingCountAvg: Int?
-  var ratingCountTotal: Int?
-  var seriesNumber: Int?
+  val author: String?
+  val averageRating: Double?
+  val contact: String?
+  val coverArtURL: String?
+  val description: String?
+  val firstPublished: String?
+  val forgiveness: String?
+  val genre: String?
+  val ifId: String
+  val language: String?
+  val link: String?
+  val path: String?
+  val ratingCountAvg: Int?
+  val ratingCountTotal: Int?
+  val series: String?
+  val seriesNumber: Int?
+  val starRating: Double?
+  val title: String
+  val tuid: String?
 }

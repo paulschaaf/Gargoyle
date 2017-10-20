@@ -51,6 +51,7 @@ data class Story constructor(val contentValues: ContentValues): IFDBStory {
   var id by StoryTable.id
   override var author by StoryTable.author
   override var averageRating by StoryTable.averageRating
+  override var contact by StoryTable.contact
   override var coverArtURL by StoryTable.coverArtURL
   override var description by StoryTable.description
   override var firstPublished by StoryTable.firstPublished

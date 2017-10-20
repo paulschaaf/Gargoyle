@@ -37,7 +37,7 @@ class IFDB {
       }
 
       return httpURLConnection.use { conn->
-        conn.inputStream.use { IFDBXmlParser().parseIFXml(it) }
+        conn.inputStream.use { IFDBXmlParser().parse(it) }
       }
     }
   }

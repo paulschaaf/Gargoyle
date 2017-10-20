@@ -30,52 +30,53 @@ class IFDBXmlParserTest {
 
   @Test
   fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
-    val storyCreator = TestStoryXml.SampleCreators.Bronze
-    val storyXML = storyCreator.create()
+    val storyCreator = TestStoryXml.SampleBuilder.Bronze
+    val storyXML = storyCreator.build()
 
-    assertThat(storyXML::ifId).isNotNull
-    assertThat(storyXML::title).isNotNull
     assertThat(storyXML::author).isNotNull
-    assertThat(storyXML::language).isNotNull
-    assertThat(storyXML::genre).isNotNull
-    assertThat(storyXML::description).isNotNull
-    assertThat(storyXML::series).isNotNull
-    assertThat(storyXML::url).isNotNull
-    assertThat(storyXML::tuid).isNotNull
-    assertThat(storyXML::link).isNotNull
-    assertThat(storyXML::coverArtURL).isNotNull
     assertThat(storyXML::averageRating).isNotNull
-    assertThat(storyXML::starRating).isNotNull
+    assertThat(storyXML::contact).isNotNull
+    assertThat(storyXML::coverArtURL).isNotNull
+    assertThat(storyXML::description).isNotNull
+    assertThat(storyXML::genre).isNotNull
+    assertThat(storyXML::ifId).isNotNull
+    assertThat(storyXML::language).isNotNull
+    assertThat(storyXML::link).isNotNull
     assertThat(storyXML::ratingCountAvg).isNotNull
     assertThat(storyXML::ratingCountTotal).isNotNull
+    assertThat(storyXML::series).isNotNull
+    assertThat(storyXML::starRating).isNotNull
+    assertThat(storyXML::title).isNotNull
+    assertThat(storyXML::tuid).isNotNull
+    assertThat(storyXML::url).isNotNull
   }
 
   @Test
-  fun testBronze() = testStory(TestStoryXml.SampleCreators.Bronze)
+  fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
 
   @Test
-  fun testLostPig() = testStory(TestStoryXml.SampleCreators.LostPig)
+  fun testLostPig() = testStory(TestStoryXml.SampleBuilder.LostPig)
 
   @Test
-  fun testSpellBreaker() = testStory(TestStoryXml.SampleCreators.SpellBreaker)
+  fun testSpellBreaker() = testStory(TestStoryXml.SampleBuilder.SpellBreaker)
 
   @Test
-  fun testViolet() = testStory(TestStoryXml.SampleCreators.Violet)
+  fun testViolet() = testStory(TestStoryXml.SampleBuilder.Violet)
 
   @Test
-  fun testZorkI() = testStory(TestStoryXml.SampleCreators.ZorkI)
+  fun testZorkI() = testStory(TestStoryXml.SampleBuilder.ZorkI)
 
   @Test
-  fun testNullFields() = testStory(TestStoryXml.SampleCreators.Zork_nullFields)
+  fun testNullFields() = testStory(TestStoryXml.SampleBuilder.Zork_nullFields)
 
   @Test
-  fun testSpecialChars() = testStory(TestStoryXml.SampleCreators.ZorkI_specialChars)
+  fun testSpecialChars() = testStory(TestStoryXml.SampleBuilder.ZorkI_specialChars)
 
-  private fun testStory(story: TestStoryXml.SampleCreators) = assertXMLMatchesStory(story.create())
+  private fun testStory(testStoryXmlBuilder: TestStoryXml.SampleBuilder) =
+      assertXMLMatchesStory(testStoryXmlBuilder.build())
 
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
-    val story = IFDBXmlParser().parseIFXml(storyXML.xmlString.byteInputStream())
+    val story = IFDBXmlParser().parse(storyXML.xmlString.byteInputStream())
     assertThat(story).isDescribedBy(storyXML)
   }
 }
-
