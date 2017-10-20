@@ -32,10 +32,10 @@ class IFDBXmlParser {
 
   val documentParser = XmlDocument("story") {
     "identification" {
-      "ifid".writeTo(story::ifId, "-error-")
+      "ifid".writeTo(story::ifId) { it ?: "-error-" }
     }
     "bibliographic" {
-      "title".writeTo(story::title, "-Unknown-")
+      "title".writeTo(story::title) { it ?: "-Unknown-" }
       "author".writeTo(story::author)
       "language".writeTo(story::language)
       "firstpublished".writeTo(story::firstPublished)
@@ -55,6 +55,7 @@ class IFDBXmlParser {
       "starRating".writeTo(story::starRating) { it?.toDoubleOrNull() }
       "ratingCountAvg".writeTo(story::ratingCountAvg) { it?.toIntOrNull() }
       "ratingCountTot".writeTo(story::ratingCountTotal) { it?.toIntOrNull() }
+//      "ratingCountTot" transform { it?.toIntOrNull() } thenWriteTo story::ratingCountTotal
     }
   }
 
@@ -102,9 +103,6 @@ open class XmlParentElement: XmlElement {
     children[this] = element
     return element
   }
-
-  fun String.writeTo(prop: KMutableProperty<String>, default: String) =
-      writeTo(prop) { it ?: default }
 
   fun String.writeTo(prop: KMutableProperty<String?>) = writeTo(prop) { it }
 
