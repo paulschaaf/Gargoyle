@@ -36,5 +36,5 @@ interface IFDBStory {
   val seriesNumber: Int?
   val starRating: Double?
   val title: String
-  val tuid: String?
+  val tuid: String
 }

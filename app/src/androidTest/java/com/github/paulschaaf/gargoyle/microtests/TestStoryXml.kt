@@ -61,13 +61,13 @@ class TestStoryXml(val url: String, override val xmlString: String): ITestStoryX
   override val firstPublished = this["firstpublished"]
   override val forgiveness by this
   override val genre by this
-  override val ifId = this["ifid"] ?: "-error-"
+  override val ifId = this["ifid"] ?: "?ifid?"
   override val language by this
   override val link = this["link"]?.replace("&amp;", "&")
   override val path by this
   override val series by this
-  override val tuid by this
-  override val title = this["title"] ?: "-Unknown-"
+  override val tuid = this["tuid"] ?: "?tuid?"
+  override val title = this["title"] ?: "?title?"
   override val ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
   override val ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
   override val seriesNumber = this["seriesnumber"]?.toIntOrNull()

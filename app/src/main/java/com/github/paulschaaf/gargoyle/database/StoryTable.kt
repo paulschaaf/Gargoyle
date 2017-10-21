@@ -37,5 +37,5 @@ object StoryTable: SqlTable("Story") {
   val seriesNumber by IntColumn
   val starRating by DoubleColumn
   val title by StringColumn.NonNull
-  val tuid by StringColumn
+  val tuid by StringColumn.NonNull
 }

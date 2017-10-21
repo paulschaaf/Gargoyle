@@ -15,39 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.paulschaaf.gargoyle.microtests
+package com.github.paulschaaf.gargoyle
 
 import android.support.test.runner.AndroidJUnit4
-import com.github.paulschaaf.gargoyle.assertThat
-import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
+import com.github.paulschaaf.gargoyle.ifdb.IFDB
+import com.github.paulschaaf.gargoyle.microtests.ITestStoryXml
+import com.github.paulschaaf.gargoyle.microtests.TestStoryXml
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IFDBXmlParserTest {
-  @Test
-  fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
-    val storyCreator = TestStoryXml.SampleBuilder.Bronze
-    val storyXML = storyCreator.build()
-
-    assertThat(storyXML::author).isNotNull
-    assertThat(storyXML::averageRating).isNotNull
-    assertThat(storyXML::contact).isNotNull
-    assertThat(storyXML::coverArtURL).isNotNull
-    assertThat(storyXML::description).isNotNull
-    assertThat(storyXML::genre).isNotNull
-    assertThat(storyXML::ifId).isNotNull
-    assertThat(storyXML::language).isNotNull
-    assertThat(storyXML::link).isNotNull
-    assertThat(storyXML::ratingCountAvg).isNotNull
-    assertThat(storyXML::ratingCountTotal).isNotNull
-    assertThat(storyXML::series).isNotNull
-    assertThat(storyXML::starRating).isNotNull
-    assertThat(storyXML::title).isNotNull
-    assertThat(storyXML::tuid).isNotNull
-    assertThat(storyXML::url).isNotNull
-  }
-
+class IFDBTest {
   @Test
   fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
 
@@ -63,17 +42,23 @@ class IFDBXmlParserTest {
   @Test
   fun testZorkI() = testStory(TestStoryXml.SampleBuilder.ZorkI)
 
-  @Test
-  fun testNullFields() = testStory(TestStoryXml.SampleBuilder.Zork_nullFields)
-
-  @Test
-  fun testSpecialChars() = testStory(TestStoryXml.SampleBuilder.ZorkI_specialChars)
-
   private fun testStory(testStoryXmlBuilder: TestStoryXml.SampleBuilder) =
       assertXMLMatchesStory(testStoryXmlBuilder.build())
 
+  // the numbers in the ratings region have likely changed from our cached test data
+  private fun String.removeRatingRegion() = replace("<averageRating.*ratingCountTot>".toRegex(), "")
+
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
-    val story = IFDBXmlParser().parse(storyXML.xmlString.byteInputStream())
-    assertThat(story).isDescribedBy(storyXML)
+    val tuid = storyXML.tuid
+    val ifIDLookup = IFDB.lookupIFID(tuid)
+
+    val expected = storyXML.xmlString
+      .replace(Regex(">\\s*", RegexOption.DOT_MATCHES_ALL), ">")
+      .removeRatingRegion()
+    val actual = ifIDLookup.processXml { it.reader().readText().removeRatingRegion() }
+
+    assertThat(actual)
+      .describedAs("Looked up story #$tuid at " + ifIDLookup.urlString)
+      .isEqualTo(expected)
   }
 }
