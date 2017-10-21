@@ -23,34 +23,36 @@ import java.io.InputStream
 class IFDBXmlParser {
   val story = Story()
 
-  val storyXmlDocumentGrammar = XmlDocument("story") {
-    "identification" {
-      "ifid".writeTo(story::ifId) { it ?: "-error-" }
-    }
-    "bibliographic" {
-      "title".writeTo(story::title) { it ?: "-Unknown-" }
-      "author".writeTo(story::author)
-      "language".writeTo(story::language)
-      "firstpublished".writeTo(story::firstPublished)
-      "genre".writeTo(story::genre)
-      "description".writeTo(story::description)
-      "series".writeTo(story::series)
-      "seriesnumber".writeTo(story::seriesNumber) { it?.toIntOrNull() }
-      "forgiveness".writeTo(story::forgiveness)
-    }
-    "contact" {
-      "url".writeTo(story::contact)
-    }
-    "ifdb" {
-      "tuid".writeTo(story::tuid)
-      "link".writeTo(story::link)
-      "coverart" {
-        "url".writeTo(story::coverArtURL)
+  val storyXmlDocumentGrammar = XmlDocument("ifindex") {
+    "story" {
+      "identification" {
+        "ifid".writeTo(story::ifId) { it ?: "-error-" }
       }
-      "averageRating".writeTo(story::averageRating) { it?.toDoubleOrNull() }
-      "starRating".writeTo(story::starRating) { it?.toDoubleOrNull() }
-      "ratingCountAvg".writeTo(story::ratingCountAvg) { it?.toIntOrNull() }
-      "ratingCountTot".writeTo(story::ratingCountTotal) { it?.toIntOrNull() }
+      "bibliographic" {
+        "title".writeTo(story::title) { it ?: "-Unknown-" }
+        "author" to story::author
+        "language".writeTo(story::language)
+        "firstpublished".writeTo(story::firstPublished)
+        "genre".writeTo(story::genre)
+        "description".writeTo(story::description)
+        "series".writeTo(story::series)
+        "seriesnumber".writeTo(story::seriesNumber) { it?.toIntOrNull() }
+        "forgiveness".writeTo(story::forgiveness)
+      }
+      "contact" {
+        "url".writeTo(story::contact)
+      }
+      "ifdb" {
+        "tuid".writeTo(story::tuid)
+        "link".writeTo(story::link)
+        "coverart" {
+          "url".writeTo(story::coverArtURL)
+        }
+        "averageRating".writeTo(story::averageRating) { it?.toDoubleOrNull() }
+        "starRating".writeTo(story::starRating) { it?.toDoubleOrNull() }
+        "ratingCountAvg".writeTo(story::ratingCountAvg) { it?.toIntOrNull() }
+        "ratingCountTot".writeTo(story::ratingCountTotal) { it?.toIntOrNull() }
+      }
     }
   }
 

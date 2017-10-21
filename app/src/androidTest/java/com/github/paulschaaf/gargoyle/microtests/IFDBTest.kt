@@ -17,15 +17,13 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import org.junit.Test
-
 //@RunWith(AndroidJUnit4::class)
 class IFDBTest {
   // http://ifdb.tads.org/viewgame?id=0dbnusxunq7fw5ro&ifiction
   val baseURL = "http://ifdb.tads.org"
 
-  @Test
-  fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
+//  @Test
+//  fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
 
 //  @Test
 //  fun testLostPig() = testStory(TestStoryXml.SampleBuilder.LostPig)

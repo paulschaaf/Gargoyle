@@ -19,6 +19,7 @@ package com.github.paulschaaf.gargoyle
 
 import com.github.paulschaaf.gargoyle.model.IFDBStory
 import org.fest.assertions.api.AbstractAssert
+import org.fest.assertions.api.Assertions
 import org.fest.assertions.api.Assertions.assertThat
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
@@ -47,12 +48,24 @@ fun <T> assertThat(prop: KProperty1<T, *>, actual: T) =
 class IFDBStoryAssert internal constructor(actual: IFDBStory):
     AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
 
-  fun isDescribedBy(other: IFDBStory) = IFDBStory::class.memberProperties.forEach { prop->
-    assertThat(prop, actual)
-      .describedAs("(${other.title} ${other.link}) ${prop.name}")
-      .isEqualTo(prop(other))
+  fun isDescribedBy(other: IFDBStory) {
+    val failures = StringBuilder()
+    IFDBStory::class.memberProperties.forEach { prop->
+      val actualValue = prop(actual)
+      val expectedValue = prop(other)
 
-    println("verified property: " + prop.name)
+      if (actualValue != expectedValue) {
+        failures.append('\n')
+          .append(prop.name).append('\n')
+          .append(".  expected: ").append(expectedValue).append('\n')
+          .append(".   but was: ").append(actualValue)
+      }
+    }
+
+    if (failures.isNotEmpty()) {
+      failures.insert(0, "${other.title} ${other.link}")
+      Assertions.fail(failures.toString())
+    }
   }
 }
 
