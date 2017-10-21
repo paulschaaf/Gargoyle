@@ -26,32 +26,32 @@ class IFDBXmlParser {
   val storyXmlDocumentGrammar = XmlDocument("ifindex") {
     "story" {
       "identification" {
-        "ifid".writeTo(story::ifId) { it ?: "-error-" }
+        "ifid" to story::ifId default "-error-"
       }
       "bibliographic" {
-        "title".writeTo(story::title) { it ?: "-Unknown-" }
+        "title" to story::title default "-Unknown-"
         "author" to story::author
-        "language".writeTo(story::language)
-        "firstpublished".writeTo(story::firstPublished)
-        "genre".writeTo(story::genre)
-        "description".writeTo(story::description)
-        "series".writeTo(story::series)
-        "seriesnumber".writeTo(story::seriesNumber) { it?.toIntOrNull() }
-        "forgiveness".writeTo(story::forgiveness)
+        "language" to story::language
+        "firstpublished" to story::firstPublished
+        "genre" to story::genre
+        "description" to story::description
+        "series" to story::series
+        "seriesnumber" to story::seriesNumber via { it?.toIntOrNull() }
+        "forgiveness" to story::forgiveness
       }
       "contact" {
-        "url".writeTo(story::contact)
+        "url" to story::contact
       }
       "ifdb" {
-        "tuid".writeTo(story::tuid)
-        "link".writeTo(story::link)
+        "tuid" to story::tuid
+        "link" to story::link
         "coverart" {
-          "url".writeTo(story::coverArtURL)
+          "url" to story::coverArtURL
         }
-        "averageRating".writeTo(story::averageRating) { it?.toDoubleOrNull() }
-        "starRating".writeTo(story::starRating) { it?.toDoubleOrNull() }
-        "ratingCountAvg".writeTo(story::ratingCountAvg) { it?.toIntOrNull() }
-        "ratingCountTot".writeTo(story::ratingCountTotal) { it?.toIntOrNull() }
+        "averageRating" to story::averageRating via { it?.toDoubleOrNull() }
+        "starRating" to story::starRating via { it?.toDoubleOrNull() }
+        "ratingCountAvg" to story::ratingCountAvg via { it?.toIntOrNull() }
+        "ratingCountTot" to story::ratingCountTotal via { it?.toIntOrNull() }
       }
     }
   }
@@ -61,4 +61,3 @@ class IFDBXmlParser {
     return story
   }
 }
-

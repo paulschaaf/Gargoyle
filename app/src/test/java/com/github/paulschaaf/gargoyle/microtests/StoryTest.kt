@@ -47,7 +47,7 @@ class StoryTest: MockContentValuesTestBase() {
   }
 
   @Test
-  fun updateProperties() {
+  fun testUpdateProperties() {
     assertThat(story::author)
       .isEqualTo(properties["author"] as String)
 

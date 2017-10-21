@@ -37,21 +37,28 @@ class XmlDocument(val name: String, val structure: XmlParentElement.() -> Unit) 
 
 abstract class XmlElement(val name: String) {
   abstract fun parse(parser: XmlPullParser)
-  protected fun skipElement(parser: XmlPullParser): StringBuilder {
+
+  protected fun skipElement(parser: XmlPullParser) {
+    println("skipping element '${parser.name}'")
+    summarizeElement(parser, null)
+  }
+
+  protected fun summarizeElement(parser: XmlPullParser, summary: StringBuilder?): String? {
     var depth = 1
-    val result = StringBuilder()
     while (depth != 0) when (parser.next()) {
-      XmlPullParser.TEXT      -> result.append(parser.text)
+      XmlPullParser.TEXT      -> summary?.append(parser.text)
       XmlPullParser.START_TAG -> {
         depth++
-        result.append('<').append(parser.name).append('>')
+        if (summary != null) summary.append('<').append(parser.name).append('>')
       }
       XmlPullParser.END_TAG   -> {
         depth--
-        if (depth > 0) result.append("</").append(parser.name).append('>')
+        if (depth > 0 && summary != null) summary.append("</").append(parser.name).append('>')
       }
     }
-    return result
+    if (summary == null || summary.isEmpty()) return null
+    return summary.toString()
+      .replace("<([^>]+)></\\1>".toRegex(), "<$1/>") // collapse empty tags like <br></br> to <br/>
   }
 }
 
@@ -69,12 +76,10 @@ open class XmlParentElement(name: String, val structure: XmlParentElement.() -> 
     return element
   }
 
-  infix fun String.to(prop: KMutableProperty<String?>) = writeTo(prop) { it }
-
-  fun String.writeTo(prop: KMutableProperty<String?>) = writeTo(prop) { it }
-
-  fun <T> String.writeTo(prop: KMutableProperty<T>, converter: (String?) -> T) {
-    children[this] = XmlLeafElement(this, prop, converter)
+  infix fun <T> String.to(prop: KMutableProperty<T>): XmlLeafElement<T> {
+    val elem = XmlLeafElement(this, prop)
+    children[this] = elem
+    return elem
   }
 
   override fun parse(parser: XmlPullParser) {
@@ -82,22 +87,27 @@ open class XmlParentElement(name: String, val structure: XmlParentElement.() -> 
       if (parser.eventType == XmlPullParser.START_TAG) {
         if (children.containsKey(parser.name))
           children[parser.name]!!.parse(parser)
-        else {
-          println("skipping element '${parser.name}'")
-          skipElement(parser)
-        }
+        else skipElement(parser)
       }
     }
   }
 }
 
-class XmlLeafElement<T>(name: String, val prop: KMutableProperty<T>, val convert: (String?) -> T):
-    XmlElement(name) {
+class XmlLeafElement<T>(name: String, val prop: KMutableProperty<T>): XmlElement(name) {
+  @Suppress("UNCHECKED_CAST")
+  private var convertBlock = { it: String?-> it as T }
+
+  infix fun via(action: (String?) -> T) {
+    convertBlock = action
+  }
+
+  infix fun default(defaultValue: T) {
+    @Suppress("UNCHECKED_CAST")
+    convertBlock = { it as T ?: defaultValue }
+  }
+
   override fun parse(parser: XmlPullParser) {
-    val result = skipElement(parser)
-    val convertedValue =
-        if (result.isEmpty()) null
-        else convert(result.toString().replace("<([^>]+)></\\1>".toRegex(), "<$1/>"))
-    prop.setter.call(convertedValue)
+    val str = summarizeElement(parser, StringBuilder())
+    prop.setter.call(convertBlock(str))
   }
 }

@@ -26,7 +26,7 @@ class DatabaseHelperTest: MockContentValuesTestBase() {
 //    .toSet()
 //
 //  @Test
-//  fun createSQLContainsAllFields() {
+//  fun testCreateSQLContainsAllFields() {
 //    val columns = StoryTable.columns
 //
 //    // sanity check
