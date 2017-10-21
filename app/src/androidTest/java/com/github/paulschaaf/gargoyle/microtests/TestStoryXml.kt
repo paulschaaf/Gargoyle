@@ -52,26 +52,55 @@ interface ITestStoryXml: IFDBStory {
   }
 }
 
+class StringField(val fieldName: String? = null) {
+  companion object {
+    operator fun getValue(story: TestStoryXml, property: KProperty<*>) = StringField().getValue(
+        story,
+        property
+    )
+  }
+
+  operator fun getValue(story: TestStoryXml, property: KProperty<*>) = story[fieldName ?: property.name]
+}
+
+class DoubleField(val fieldName: String? = null) {
+  companion object {
+    operator fun getValue(story: TestStoryXml, property: KProperty<*>) = DoubleField()
+      .getValue(story, property)
+  }
+
+  operator fun getValue(story: TestStoryXml, property: KProperty<*>) = story[fieldName ?: property.name]?.toDoubleOrNull()
+}
+
+class IntField(val fieldName: String? = null) {
+  companion object {
+    operator fun getValue(story: TestStoryXml, property: KProperty<*>) = IntField()
+      .getValue(story, property)
+  }
+
+  operator fun getValue(story: TestStoryXml, property: KProperty<*>) = story[fieldName ?: property.name]?.toIntOrNull()
+}
+
 class TestStoryXml(val url: String, override val xmlString: String): ITestStoryXml {
-  override val author by this
-  override val averageRating = this["averageRating"]?.toDoubleOrNull()
-  override val contact by this
-  override val coverArtURL = this["coverart"]
-  override val description by this
-  override val firstPublished = this["firstpublished"]
-  override val forgiveness by this
-  override val genre by this
+  override val author by StringField
+  override val averageRating by DoubleField
+  override val contact by StringField
+  override val coverArtURL by StringField("coverart")
+  override val description by StringField
+  override val firstPublished by StringField("firstpublished")
+  override val forgiveness by StringField
+  override val genre by StringField
   override val ifId = this["ifid"] ?: "?ifid?"
-  override val language by this
+  override val language by StringField
   override val link = this["link"]?.replace("&amp;", "&")
-  override val path by this
-  override val series by this
+  override val path by StringField
+  override val series by StringField
   override val tuid = this["tuid"] ?: "?tuid?"
   override val title = this["title"] ?: "?title?"
-  override val ratingCountAvg = this["ratingCountAvg"]?.toIntOrNull()
-  override val ratingCountTotal = this["ratingCountTot"]?.toIntOrNull()
-  override val seriesNumber = this["seriesnumber"]?.toIntOrNull()
-  override val starRating = this["starRating"]?.toDoubleOrNull()
+  override val ratingCountAvg by IntField
+  override val ratingCountTotal by IntField("ratingCountTot")
+  override val seriesNumber by IntField("seriesnumber")
+  override val starRating by DoubleField
 
   enum class SampleBuilder(val url: String, val xml: String) {
     Bronze("http://ifdb.tads.org/viewgame?ifiction&id=9p8kh3im2j9h2881",
