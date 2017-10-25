@@ -22,12 +22,10 @@ import com.github.paulschaaf.gargoyle.R
 import org.andglk.babel.Babel
 import java.io.File
 
-class StoryFileLoader {
-  companion object {
+object StoryFileLoader {
     val storyDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
         + R.string.dir_stories)
     val storyDir = File(storyDirName)
 
-    val storyFiles = storyDir.listFiles().associate { Babel.examine(it) to it }
-  }
+  fun readStoryFiles() = storyDir.listFiles().associate { Babel.examine(it) to it }
 }

@@ -26,7 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IFDBTest {
+class IFDBLookupTest {
   @Test
   fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
 
@@ -45,7 +45,7 @@ class IFDBTest {
   private fun testStory(testStoryXmlBuilder: TestStoryXml.SampleBuilder) =
       assertXMLMatchesStory(testStoryXmlBuilder.build())
 
-  // the numbers in the ratings region have likely changed from our cached test data
+  // ignore the numbers in the ratings region: they've likely changed from our cached test data
   private fun String.removeRatingRegion() = replace("<averageRating.*ratingCountTot>".toRegex(), "")
 
   private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
