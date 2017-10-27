@@ -21,6 +21,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.github.paulschaaf.gargoyle.database.SqlTable
 import com.github.paulschaaf.gargoyle.database.StoryTable
+import com.github.paulschaaf.gargoyle.model.Story
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
@@ -57,21 +58,20 @@ class DatabaseHelper(context: Context):
     TABLES.forEach { db.dropTable(it.tableName, true) }
   }
 
-//  fun insertStory(story: Story): Long {
-//    val writableDatabase = writableDatabase
-//    val rowID = writableDatabase.insert(StoryTable.tableName, null, story.contentValues)
+  fun insertStory(story: Story): Long {
+    val rowID = writableDatabase.use { it.insert(StoryTable.tableName, null, story.contentValues) }
 //    if (rowID == -1L) Log.e(TAG, "The insert failed!")
-//    return rowID
-//  }
-//
-//  fun rebuildDatabase() {
-//    val db = writableDatabase
-//    db.execSQL("DROP TABLE " + StoryTable.tableName)
-//    db.delete(Story.TableName, null, null)
-//    db.close()
-//  }
+    return rowID
+  }
 
-//  fun deleteStory(story: Story): IIntColumn {
+  fun rebuildDatabase() {
+    writableDatabase.use {
+      it.execSQL("DROP TABLE " + StoryTable.tableName)
+      it.delete(StoryTable.tableName, null, null)
+    }
+  }
+
+  fun deleteStory(story: Story): Int {
 //    var success = true
 //    val storyFile = story.file
 //    if (storyFile != null && storyFile!!.exists()) success = success and storyFile!!.delete()
@@ -79,17 +79,18 @@ class DatabaseHelper(context: Context):
 //    val coverFile = story.cover
 //    if (coverFile != null && coverFile!!.exists()) success = success and coverFile!!.delete()
 //
-//    val db = writableDatabase
 //    val storyId = story.id
-//    return db.delete(Story.TableName, Story.id + "=?", arrayOf(storyId))
-//  }
+    return writableDatabase.use {
+      it.delete(StoryTable.tableName, StoryTable.ifId.name + "=?", arrayOf(story.id))
+    }
+  }
 
-//  fun updateStory(story: Story) = writableDatabase.update(
-//      StoryTable.tableName,
-//      story.contentValues,
-//      "${StoryTable.id} = ${story.id}",
-//      null
-//  )
+  fun updateStory(story: Story) = writableDatabase.update(
+      StoryTable.tableName,
+      story.contentValues,
+      "${StoryTable.id} = ${story.id}",
+      null
+  )
 
   // SIMPLE ACCESSORS
 
