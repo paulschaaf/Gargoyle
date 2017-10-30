@@ -18,6 +18,7 @@
 package com.github.paulschaaf.gargoyle
 
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.github.paulschaaf.gargoyle.database.SqlTable
 import com.github.paulschaaf.gargoyle.database.StoryTable
@@ -81,7 +82,7 @@ class DatabaseHelper(context: Context):
 //
 //    val storyId = story.id
     return writableDatabase.use {
-      it.delete(StoryTable.tableName, StoryTable.ifId.name + "=?", arrayOf(story.id))
+      it.delete(StoryTable.tableName, StoryTable.id.name + "=?", arrayOf(story.id))
     }
   }
 
@@ -94,16 +95,20 @@ class DatabaseHelper(context: Context):
 
   // SIMPLE ACCESSORS
 
-//  val newCursor: Cursor
-//    get() {
-//      val cursor = readableDatabase.query(
-//          StoryTable.tableName, null, null, null, null, null,
-//          StoryTable.title.name + " COLLATE NOCASE"
-//      )
-//      cursor.moveToFirst()
-//      return cursor
-//    }
-
+  val newCursor: Cursor
+    get() {
+      val cursor = readableDatabase.query(
+          /* table         */ StoryTable.tableName,
+          /* columns       */ null,
+          /* selection     */ null,
+          /* selectionArgs */ null,
+          /* groupBy       */ null,
+          /* having        */ null,
+          /* orderBy       */ StoryTable.title.name + " COLLATE NOCASE"
+      )
+      cursor.moveToFirst()
+      return cursor
+    }
 }
 
 val Context.database: DatabaseHelper

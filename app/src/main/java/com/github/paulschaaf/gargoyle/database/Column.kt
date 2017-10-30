@@ -89,6 +89,7 @@ class IntColumn(table: ISqlTable, name: String): IColumn<Int?> by Column(table, 
     override val typeModifiers = super.typeModifiers + NOT_NULL
   }
 }
+
 class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(table, name) {
   companion object {
     operator fun getValue(table: ISqlTable, property: KProperty<*>)
@@ -114,7 +115,7 @@ class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(t
   }
 }
 
-class PrimaryKeyColumn(table: ISqlTable, name: String): IntColumn.NonNull(table, name) {
+class PrimaryKeyColumn(table: ISqlTable, name: String): StringColumn.NonNull(table, name) {
   companion object {
     operator fun getValue(table: ISqlTable, property: KProperty<*>) =
         PrimaryKeyColumn(table, property.name)

@@ -63,6 +63,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'maven:maven:20030211.132709'
     implementation 'com.android.support.test:runner:1.0.1'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
     testCompile "org.mockito:mockito-core:$mockito_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'org.easytesting:fest-assert-core:2.0M10'
@@ -75,3 +78,5 @@ repositories {
     mavenCentral()
     google()
 }
+
+apply plugin: 'kotlin-android-extensions'
