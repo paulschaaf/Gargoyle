@@ -96,6 +96,10 @@ class StringColumn(table: ISqlTable, name: String): IColumn<String?> by Column(t
         = StringColumn(table, property.name)
   }
 
+  override fun get(conValues: ContentValues): String? = super.get(conValues)?.trim()
+
+  override fun set(conValues: ContentValues, value: String?) = super.set(conValues, value?.trim())
+
   open class NonNull(table: ISqlTable, name: String): IColumn<String> by Column(table, name) {
     companion object {
       operator fun getValue(table: ISqlTable, property: KProperty<*>) =

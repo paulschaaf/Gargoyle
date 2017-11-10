@@ -36,7 +36,7 @@ class IFDBXmlParser {
         "genre" to story::genre
         "description" to story::description
         "series" to story::series
-        "seriesnumber" to story::seriesNumber via { it?.toIntOrNull() }
+        "seriesnumber" to story::seriesNumber via { it.toInt() }
         "forgiveness" to story::forgiveness
       }
       "contact" {
@@ -48,10 +48,10 @@ class IFDBXmlParser {
         "coverart" {
           "url" to story::coverArtURL
         }
-        "averageRating" to story::averageRating via { it?.toDoubleOrNull() }
-        "starRating" to story::starRating via { it?.toDoubleOrNull() }
-        "ratingCountAvg" to story::ratingCountAvg via { it?.toIntOrNull() }
-        "ratingCountTot" to story::ratingCountTotal via { it?.toIntOrNull() }
+        "averageRating" to story::averageRating via { it.toDouble() }
+        "starRating" to story::starRating via { it.toDouble() }
+        "ratingCountAvg" to story::ratingCountAvg via { it.toInt() }
+        "ratingCountTot" to story::ratingCountTotal via { it.toInt() }
       }
     }
   }

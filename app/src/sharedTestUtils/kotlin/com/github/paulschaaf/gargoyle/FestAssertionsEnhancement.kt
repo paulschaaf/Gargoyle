@@ -57,8 +57,8 @@ class IFDBStoryAssert internal constructor(actual: IFDBStory):
       if (actualValue != expectedValue) {
         failures.append('\n')
           .append(prop.name).append('\n')
-          .append(".  expected: ").append(expectedValue).append('\n')
-          .append(".   but was: ").append(actualValue)
+          .append(".  expected: >").append(expectedValue).append("<\n")
+          .append(".   but was: >").append(actualValue).append('<')
       }
     }
 

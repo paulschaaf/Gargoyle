@@ -31,7 +31,7 @@ abstract class MockContentValuesTestBase {
       "firstPublished" to "5/6/2017",
       "forgiveness" to "hard",
       "genre" to "Adventure",
-      "id" to 31415,
+      "id" to "31415",
       "ifId" to "ifid_zork_pi",
       "language" to "EN/US",
       "link" to "http://paulschaaf.com/",

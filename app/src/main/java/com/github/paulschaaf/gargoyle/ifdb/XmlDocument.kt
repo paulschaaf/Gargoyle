@@ -46,7 +46,7 @@ abstract class XmlElement(val name: String) {
   protected fun summarizeElement(parser: XmlPullParser, summary: StringBuilder?): String? {
     var depth = 1
     while (depth != 0) when (parser.next()) {
-      XmlPullParser.TEXT      -> summary?.append(parser.text)
+      XmlPullParser.TEXT      -> summary?.append(parser.text.trim())
       XmlPullParser.START_TAG -> {
         depth++
         if (summary != null) summary.append('<').append(parser.name).append('>')
@@ -95,9 +95,9 @@ open class XmlParentElement(name: String, val structure: XmlParentElement.() -> 
 
 class XmlLeafElement<T>(name: String, val prop: KMutableProperty<T>): XmlElement(name) {
   @Suppress("UNCHECKED_CAST")
-  private var convertBlock = { it: String?-> it as T }
+  private var convertBlock = { it: String-> it as T }
 
-  infix fun via(action: (String?) -> T) {
+  infix fun via(action: (String) -> T) {
     convertBlock = action
   }
 
@@ -108,6 +108,6 @@ class XmlLeafElement<T>(name: String, val prop: KMutableProperty<T>): XmlElement
 
   override fun parse(parser: XmlPullParser) {
     val str = summarizeElement(parser, StringBuilder())
-    prop.setter.call(convertBlock(str))
+    if (str != null && str.isNotBlank()) prop.setter.call(convertBlock(str))
   }
 }
