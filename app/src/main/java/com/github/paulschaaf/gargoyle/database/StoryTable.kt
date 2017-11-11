@@ -39,3 +39,4 @@ object StoryTable: SqlTable("Story") {
   val title by StringColumn.NonNull
   val tuid by StringColumn.NonNull
 }
+

@@ -47,7 +47,7 @@ interface ITestStoryXml: IFDBStory {
     val match = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$",
                       RegexOption.DOT_MATCHES_ALL
     ).matchEntire(xmlString)
-    val value = match?.groups?.get(1)?.value
+    val value = match?.groups?.get(1)?.value?.trim()
     return if (value.isNullOrEmpty()) null else value!!.unescape()
   }
 }
