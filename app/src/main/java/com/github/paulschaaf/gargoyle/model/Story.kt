@@ -77,3 +77,4 @@ operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
 
 operator fun <T> IColumn<T>.setValue(story: Story, property: KProperty<*>, value: T)
     = set(story.contentValues, value)
+

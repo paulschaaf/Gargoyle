@@ -46,7 +46,7 @@ abstract class XmlElement(val name: String) {
   protected fun summarizeElement(parser: XmlPullParser, summary: StringBuilder?): String? {
     var depth = 1
     while (depth != 0) when (parser.next()) {
-      XmlPullParser.TEXT      -> summary?.append(parser.text.trim())
+      XmlPullParser.TEXT      -> summary?.append(parser.text)
       XmlPullParser.START_TAG -> {
         depth++
         if (summary != null) summary.append('<').append(parser.name).append('>')
@@ -56,8 +56,9 @@ abstract class XmlElement(val name: String) {
         if (depth > 0 && summary != null) summary.append("</").append(parser.name).append('>')
       }
     }
-    if (summary == null || summary.isEmpty()) return null
-    return summary.toString()
+    val summaryString = summary?.toString()?.trim()
+    if (summaryString == null || summaryString.isEmpty()) return null
+    return summaryString
       .replace("<([^>]+)></\\1>".toRegex(), "<$1/>") // collapse empty tags like <br></br> to <br/>
   }
 }

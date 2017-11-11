@@ -55,7 +55,7 @@ class IFDBStoryAssert internal constructor(actual: IFDBStory):
       val expectedValue = prop(other)
 
       if (actualValue != expectedValue) {
-        failures.append('\n')
+        failures.append("\n::")
           .append(prop.name).append('\n')
           .append(".  expected: >").append(expectedValue).append("<\n")
           .append(".   but was: >").append(actualValue).append('<')
