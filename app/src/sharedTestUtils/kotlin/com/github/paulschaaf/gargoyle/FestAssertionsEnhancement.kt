@@ -51,17 +51,26 @@ class IFDBStoryAssert internal constructor(actual: IFDBStory):
   fun isDescribedBy(other: IFDBStory) {
     val failures = StringBuilder()
     IFDBStory::class.memberProperties.forEach { prop->
-      val actualValue = prop(actual)
-      val expectedValue = prop(other)
+      try {
+        val actualValue = prop(actual)
+        val expectedValue = prop(other)
 
-      if (actualValue != expectedValue) {
+        if (actualValue != expectedValue) {
+          failures.append("\n::")
+            .append(prop.name).append('\n')
+            .append(".  expected: >").append(expectedValue).append("<\n")
+            .append(".   but was: >").append(actualValue).append('<')
+        }
+      }
+      catch (ex: Exception) {
         failures.append("\n::")
-          .append(prop.name).append('\n')
-          .append(".  expected: >").append(expectedValue).append("<\n")
-          .append(".   but was: >").append(actualValue).append('<')
+          .append(prop.name).append("\n   ")
+          .append(ex.cause)
+        ex.stackTrace.forEach { frame->
+          failures.append('\n').append(frame.toString())
+        }
       }
     }
-
     if (failures.isNotEmpty()) {
       failures.insert(0, "${other.title} ${other.link}")
       Assertions.fail(failures.toString())
