@@ -19,13 +19,16 @@ package com.github.paulschaaf.gargoyle
 
 import android.content.Context
 import android.database.Cursor
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import com.github.paulschaaf.gargoyle.database.SqlTable
 import com.github.paulschaaf.gargoyle.database.StoryTable
 import com.github.paulschaaf.gargoyle.model.Story
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
+import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
+
 
 class DatabaseHelper(context: Context):
     ManagedSQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -97,7 +100,7 @@ class DatabaseHelper(context: Context):
 
   val newCursor: Cursor
     get() {
-      val cursor = readableDatabase.query(
+      return readableDatabase.query(
           /* table         */ StoryTable.tableName,
           /* columns       */ null,
           /* selection     */ null,
@@ -106,10 +109,30 @@ class DatabaseHelper(context: Context):
           /* having        */ null,
           /* orderBy       */ StoryTable.title.name + " COLLATE NOCASE"
       )
-      cursor.moveToFirst()
-      return cursor
+    }
+
+  val stories: Collection<Story>
+    get() {
+      val stories = ArrayList<Story>()
+      newCursor.use { cursor->
+        if (cursor.moveToFirst()) {
+          do {
+            val newStory = Story()
+            DatabaseUtils.cursorRowToContentValues(cursor, newStory.contentValues)
+            stories.add(newStory)
+          }
+          while (cursor.moveToNext())
+        }
+        return stories
+      }
     }
 }
 
 val Context.database: DatabaseHelper
   get() = DatabaseHelper.getInstance(applicationContext)
+
+class StoryParser: MapRowParser<Story> {
+  override fun parseRow(columns: Map<String, Any?>): Story {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+}
