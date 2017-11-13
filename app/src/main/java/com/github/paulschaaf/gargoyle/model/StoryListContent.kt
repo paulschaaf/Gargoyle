@@ -18,7 +18,6 @@
 package com.github.paulschaaf.gargoyle.model
 
 import android.content.Context
-import android.database.DatabaseUtils
 import com.github.paulschaaf.gargoyle.DatabaseHelper
 import java.util.*
 
@@ -37,13 +36,7 @@ object StoryListContent {
   private val COUNT = 25
 
   fun setup(context: Context) {
-    val cursor = DatabaseHelper.getInstance(context).newCursor
-    cursor.use {
-      val newStory = Story()
-      DatabaseUtils.cursorRowToContentValues(it, newStory.contentValues)
-      ITEM_MAP.put(newStory.id, newStory)
-      STORIES.add(newStory)
-    }
+    STORIES.addAll(DatabaseHelper.getInstance(context).stories)
   }
 
 //  private fun makeDetails(position: Int): String {

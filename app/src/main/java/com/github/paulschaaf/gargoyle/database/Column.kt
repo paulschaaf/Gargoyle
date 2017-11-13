@@ -32,7 +32,7 @@ import kotlin.reflect.KProperty
 
 interface IColumn<T> {
   val name: String
-  val table: ISqlTable?
+  val table: ISqlTable
   val klass: Class<T>
 
   val sqlDataType: SqlType

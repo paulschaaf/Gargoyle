@@ -412,6 +412,6 @@ class TestStoryXml(val url: String, override val xmlString: String): ITestStoryX
  """
                       );
 
-    fun build(): TestStoryXml = TestStoryXml(url, xml)
+    fun build() = TestStoryXml(url, xml)
   }
 }
