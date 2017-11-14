@@ -27,8 +27,7 @@ import org.junit.runner.RunWith
 class IFDBXmlParserTest {
   @Test
   fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
-    val storyCreator = TestStoryXml.SampleBuilder.Bronze
-    val storyXML = storyCreator.build()
+    val storyXML = TestStoryXml.Bronze
 
     assertThat(storyXML::author).isNotNull
     assertThat(storyXML::averageRating).isNotNull
@@ -49,31 +48,28 @@ class IFDBXmlParserTest {
   }
 
   @Test
-  fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
+  fun testBronze() = testStory(TestStoryXml.Bronze)
 
   @Test
-  fun testLostPig() = testStory(TestStoryXml.SampleBuilder.LostPig)
+  fun testLostPig() = testStory(TestStoryXml.LostPig)
 
   @Test
-  fun testSpellBreaker() = testStory(TestStoryXml.SampleBuilder.SpellBreaker)
+  fun testSpellBreaker() = testStory(TestStoryXml.SpellBreaker)
 
   @Test
-  fun testViolet() = testStory(TestStoryXml.SampleBuilder.Violet)
+  fun testViolet() = testStory(TestStoryXml.Violet)
 
   @Test
-  fun testZorkI() = testStory(TestStoryXml.SampleBuilder.ZorkI)
+  fun testZorkI() = testStory(TestStoryXml.ZorkI)
 
   @Test
-  fun testNullFields() = testStory(TestStoryXml.SampleBuilder.Zork_nullFields)
+  fun testNullFields() = testStory(TestStoryXml.Zork_nullFields)
 
   @Test
-  fun testSpecialChars() = testStory(TestStoryXml.SampleBuilder.ZorkI_specialChars)
+  fun testSpecialChars() = testStory(TestStoryXml.ZorkI_specialChars)
 
-  private fun testStory(testStoryXmlBuilder: TestStoryXml.SampleBuilder) =
-      assertXMLMatchesStory(testStoryXmlBuilder.build())
-
-  private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
-    val story = IFDBXmlParser().parse(storyXML.xmlString.byteInputStream())
-    assertThat(story).isDescribedBy(storyXML)
+  private fun testStory(testStoryXml: TestStoryXml) {
+    val story = IFDBXmlParser().parse(testStoryXml.xmlString.byteInputStream())
+    assertThat(story).isDescribedBy(testStoryXml)
   }
 }
