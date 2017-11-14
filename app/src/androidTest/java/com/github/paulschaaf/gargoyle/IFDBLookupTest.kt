@@ -19,7 +19,6 @@ package com.github.paulschaaf.gargoyle
 
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDB
-import com.github.paulschaaf.gargoyle.microtests.ITestStoryXml
 import com.github.paulschaaf.gargoyle.microtests.TestStoryXml
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
@@ -28,37 +27,32 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class IFDBLookupTest {
   @Test
-  fun testBronze() = testStory(TestStoryXml.SampleBuilder.Bronze)
+  fun testBronze() = testStory(TestStoryXml.Bronze)
 
   @Test
-  fun testLostPig() = testStory(TestStoryXml.SampleBuilder.LostPig)
+  fun testLostPig() = testStory(TestStoryXml.LostPig)
 
   @Test
-  fun testSpellBreaker() = testStory(TestStoryXml.SampleBuilder.SpellBreaker)
+  fun testSpellBreaker() = testStory(TestStoryXml.SpellBreaker)
 
   @Test
-  fun testViolet() = testStory(TestStoryXml.SampleBuilder.Violet)
+  fun testViolet() = testStory(TestStoryXml.Violet)
 
   @Test
-  fun testZorkI() = testStory(TestStoryXml.SampleBuilder.ZorkI)
+  fun testZorkI() = testStory(TestStoryXml.ZorkI)
 
-  private fun testStory(testStoryXmlBuilder: TestStoryXml.SampleBuilder) =
-      assertXMLMatchesStory(testStoryXmlBuilder.build())
-
-  // ignore the numbers in the ratings region: they've likely changed from our cached test data
-  private fun String.removeRatingRegion() = replace("<averageRating.*ratingCountTot>".toRegex(), "")
-
-  private fun assertXMLMatchesStory(storyXML: ITestStoryXml) {
-    val tuid = storyXML.tuid
+  private fun testStory(testStoryXmlBuilder: TestStoryXml) {
+    val tuid = testStoryXmlBuilder.tuid
     val ifIDLookup = IFDB.lookupIFID(tuid)
-
-    val expected = storyXML.xmlString
+    val expected = testStoryXmlBuilder.xmlString
       .replace(Regex(">\\s*", RegexOption.DOT_MATCHES_ALL), ">")
       .removeRatingRegion()
     val actual = ifIDLookup.processXml { it.reader().readText().removeRatingRegion() }
-
     assertThat(actual)
       .describedAs("Looked up story #$tuid at " + ifIDLookup.urlString)
       .isEqualTo(expected)
   }
+
+  // ignore the numbers in the ratings region: they've likely changed from our cached test data
+  private fun String.removeRatingRegion() = replace("<averageRating.*ratingCountTot>".toRegex(), "")
 }
