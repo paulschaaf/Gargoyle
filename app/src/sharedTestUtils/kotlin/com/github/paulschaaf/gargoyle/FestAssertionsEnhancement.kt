@@ -17,6 +17,7 @@
 
 package com.github.paulschaaf.gargoyle
 
+import com.github.paulschaaf.gargoyle.microtests.TestStoryXml
 import com.github.paulschaaf.gargoyle.model.IFDBStory
 import org.fest.assertions.api.AbstractAssert
 import org.fest.assertions.api.Assertions
@@ -47,6 +48,41 @@ fun <T> assertThat(prop: KProperty1<T, *>, actual: T) =
 
 class IFDBStoryAssert internal constructor(actual: IFDBStory):
     AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
+
+  fun isDescribedBy(other: TestStoryXml) {
+    val failures = StringBuilder()
+    IFDBStory::class.memberProperties.forEach { prop->
+      try {
+        val actualValue = prop(actual)
+        val expectedValue = other.get(prop.name)
+
+        val success = actualValue == (when (actualValue) {
+          is Int    -> expectedValue?.toInt()
+          is Double -> expectedValue?.toDouble()
+          else      -> expectedValue
+        })
+
+        if (!success) {
+          failures.append("\n::")
+            .append(prop.name).append('\n')
+            .append(".  expected: >").append(expectedValue).append("<\n")
+            .append(".   but was: >").append(actualValue).append('<')
+        }
+      }
+      catch (ex: Exception) {
+        failures.append("\n::")
+          .append(prop.name).append("\n   ")
+          .append(ex.cause)
+        ex.stackTrace.forEach { frame->
+          failures.append('\n').append(frame.toString())
+        }
+      }
+    }
+    if (failures.isNotEmpty()) {
+      failures.insert(0, "${other.title} ${other.link}")
+      Assertions.fail(failures.toString())
+    }
+  }
 
   fun isDescribedBy(other: IFDBStory) {
     val failures = StringBuilder()
