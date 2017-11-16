@@ -17,10 +17,13 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
+import com.github.paulschaaf.gargoyle.IFDBStoryAssert
 import com.github.paulschaaf.gargoyle.model.IFDBStory
+import org.fest.assertions.api.Assertions
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.memberProperties
 
-enum class TestStoryXml(val url: String, val xmlString: String): IFDBStory {
+enum class TestStoryXml(val url: String, val xmlString: String) {
   Bronze("http://ifdb.tads.org/viewgame?ifiction&id=9p8kh3im2j9h2881",
          """<?xml version="1.0" encoding="UTF-8"?>
 <ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
@@ -330,80 +333,82 @@ enum class TestStoryXml(val url: String, val xmlString: String): IFDBStory {
  """
                     );
 
-  override val author by StringField
-  override val averageRating by DoubleField
-  override val contact by StringField
-  override val coverArtURL by StringField("coverart")
-  override val description by StringField
-  override val firstPublished by StringField("firstpublished")
-  override val forgiveness by StringField
-  override val genre by StringField
-  override val ifId = this["ifid"] ?: "?ifid?"
-  override val language by StringField
-  override val link = this["link"]?.replace("&amp;", "&")
-  override val path by StringField
-  override val series by StringField
-  override val tuid = this["tuid"] ?: "?tuid?"
-  override val title = this["title"] ?: "?title?"
-  override val ratingCountAvg by IntField
-  override val ratingCountTotal by IntField("ratingCountTot")
-  override val seriesNumber by IntField("seriesnumber")
-  override val starRating by DoubleField
-
-  val toHtml: Map<String, String>
+  val htmlEscapes: Map<String, String>
     get() = mapOf(
         "&" to "&amp;",
         "\"" to "&quot;",
         "'" to "&apos;"
     )
 
-  private fun String.unescape() = toHtml.entries.fold(this) { acc, (code, escapedCode)->
+  private fun String.unescape() = htmlEscapes.entries.fold(this) { acc, (code, escapedCode)->
     acc.replace(escapedCode, code)
   }
 
   operator fun getValue(testStoryXml: TestStoryXml, property: KProperty<*>) = this.get(property.name)
 
-  operator fun get(tag: String): String? {
+  operator fun get(name: String): String? {
     var prefix = ""
     var suffix = ""
-    // these two values are held in a non uniquely-named subfield
-    if (tag == "coverart" || tag == "contact") {
-      prefix = "\\s*<url>\\s*"
-      suffix = "\\s*</url>\\s*"
+
+    val tag = when (name) {
+      "contact"          -> {
+        prefix = "\\s*<url>\\s*"
+        suffix = "\\s*</url>\\s*"
+        "contact"
+      }
+      "coverArtURL"      -> {
+        prefix = "\\s*<url>\\s*"
+        suffix = "\\s*</url>\\s*"
+        "coverart"
+      }
+      "firstPublished"   -> "firstpublished"
+      "ifId"             -> "ifid"
+      "link"             -> "link"
+      "ratingCountTotal" -> "ratingCountTot"
+      "seriesNumber"     -> "seriesnumber"
+      "tuid"             -> "tuid"
+      "title"            -> "title"
+      else               -> name
     }
-    val match = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$",
-                      RegexOption.DOT_MATCHES_ALL
-    ).matchEntire(xmlString)
+
+    val regex = Regex("^.*<$tag>$prefix(.*)$suffix</$tag>.*\$", RegexOption.DOT_MATCHES_ALL)
+    val match = regex.matchEntire(xmlString)
     val value = match?.groups?.get(1)?.value?.trim()
     return if (value.isNullOrEmpty()) null else value!!.unescape()
   }
 }
 
-class StringField(val fieldName: String? = null) {
-  companion object {
-    operator fun getValue(story: TestStoryXml, property: KProperty<*>) = StringField().getValue(
-        story,
-        property
-    )
+fun IFDBStoryAssert.isDescribedBy(expected: TestStoryXml) {
+  val failures = StringBuilder()
+  IFDBStory::class.memberProperties.forEach { prop->
+    try {
+      val actualValue = prop(actualStory)
+      val expectedValue = expected.get(prop.name)
+
+      val success = actualValue == (when (actualValue) {
+        is Double -> expectedValue?.toDouble()
+        is Int    -> expectedValue?.toInt()
+        else      -> expectedValue
+      })
+
+      if (!success) {
+        failures.append("\n#")
+          .append(prop.name).append('\n')
+          .append(".  expected: >").append(expectedValue).append("<\n")
+          .append(".   but was: >").append(actualValue).append('<')
+      }
+    }
+    catch (ex: Exception) {
+      failures.append("\n#")
+        .append(prop.name).append("\n   ")
+        .append(ex.cause)
+      ex.stackTrace.forEach { frame->
+        failures.append('\n').append(frame.toString())
+      }
+    }
   }
-
-  operator fun getValue(story: TestStoryXml, property: KProperty<*>) = story[fieldName ?: property.name]
-}
-
-class DoubleField(val fieldName: String? = null) {
-  companion object {
-    operator fun getValue(story: TestStoryXml, property: KProperty<*>) = DoubleField()
-      .getValue(story, property)
+  if (failures.isNotEmpty()) {
+    failures.insert(0, "${expected["title"]} ${expected["link"]}")
+    Assertions.fail(failures.toString())
   }
-
-  operator fun getValue(story: TestStoryXml, property: KProperty<*>) = story[fieldName ?: property.name]?.toDoubleOrNull()
-}
-
-class IntField(val fieldName: String? = null) {
-  companion object {
-    operator fun getValue(story: TestStoryXml, property: KProperty<*>) = IntField()
-      .getValue(story, property)
-  }
-
-  operator fun getValue(story: TestStoryXml, property: KProperty<*>) = story[fieldName ?: property.name]?.toIntOrNull()
 }

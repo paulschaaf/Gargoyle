@@ -22,7 +22,6 @@ import org.fest.assertions.api.AbstractAssert
 import org.fest.assertions.api.Assertions
 import org.fest.assertions.api.Assertions.assertThat
 import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 fun assertThat(prop: KProperty0<Double?>) =
@@ -41,29 +40,32 @@ fun assertThat(prop: KProperty0<String?>) =
     assertThat(prop.invoke())
       .describedAs(prop.name)
 
-fun <T> assertThat(prop: KProperty1<T, *>, actual: T) =
-    assertThat(prop.invoke(actual))
-      .describedAs(prop.name)
+//fun <T> assertThat(prop: KProperty1<T, *>, actual: T) =
+//    assertThat(prop.invoke(actual))
+//      .describedAs(prop.name)
 
 class IFDBStoryAssert internal constructor(actual: IFDBStory):
     AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
 
-  fun isDescribedBy(other: IFDBStory) {
+  val actualStory: IFDBStory
+    get() = actual
+
+  fun isDescribedBy(expected: IFDBStory) {
     val failures = StringBuilder()
     IFDBStory::class.memberProperties.forEach { prop->
       try {
         val actualValue = prop(actual)
-        val expectedValue = prop(other)
+        val expectedValue = prop(expected)
 
         if (actualValue != expectedValue) {
-          failures.append("\n::")
+          failures.append("\n#")
             .append(prop.name).append('\n')
             .append(".  expected: >").append(expectedValue).append("<\n")
             .append(".   but was: >").append(actualValue).append('<')
         }
       }
       catch (ex: Exception) {
-        failures.append("\n::")
+        failures.append("\n#")
           .append(prop.name).append("\n   ")
           .append(ex.cause)
         ex.stackTrace.forEach { frame->
@@ -72,7 +74,7 @@ class IFDBStoryAssert internal constructor(actual: IFDBStory):
       }
     }
     if (failures.isNotEmpty()) {
-      failures.insert(0, "${other.title} ${other.link}")
+      failures.insert(0, "${expected.title} ${expected.link}")
       Assertions.fail(failures.toString())
     }
   }

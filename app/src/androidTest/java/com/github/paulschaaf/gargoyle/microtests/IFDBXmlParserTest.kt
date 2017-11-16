@@ -20,6 +20,7 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -29,22 +30,22 @@ class IFDBXmlParserTest {
   fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
     val storyXML = TestStoryXml.Bronze
 
-    assertThat(storyXML::author).isNotNull
-    assertThat(storyXML::averageRating).isNotNull
-    assertThat(storyXML::contact).isNotNull
-    assertThat(storyXML::coverArtURL).isNotNull
-    assertThat(storyXML::description).isNotNull
-    assertThat(storyXML::genre).isNotNull
-    assertThat(storyXML::ifId).isNotNull
-    assertThat(storyXML::language).isNotNull
-    assertThat(storyXML::link).isNotNull
-    assertThat(storyXML::ratingCountAvg).isNotNull
-    assertThat(storyXML::ratingCountTotal).isNotNull
-    assertThat(storyXML::series).isNotNull
-    assertThat(storyXML::starRating).isNotNull
-    assertThat(storyXML::title).isNotNull
-    assertThat(storyXML::tuid).isNotNull
-    assertThat(storyXML::url).isNotNull
+    assertThat(storyXML["author"]).isNotNull
+    assertThat(storyXML["averageRating"]).isNotNull
+    assertThat(storyXML["contact"]).isNotNull
+    assertThat(storyXML["coverArtURL"]).isNotNull
+    assertThat(storyXML["description"]).isNotNull
+    assertThat(storyXML["genre"]).isNotNull
+    assertThat(storyXML["ifId"]).isNotNull
+    assertThat(storyXML["language"]).isNotNull
+    assertThat(storyXML["link"]).isNotNull
+    assertThat(storyXML["ratingCountAvg"]).isNotNull
+    assertThat(storyXML["ratingCountTotal"]).isNotNull
+    assertThat(storyXML["series"]).isNotNull
+    assertThat(storyXML["starRating"]).isNotNull
+    assertThat(storyXML["title"]).isNotNull
+    assertThat(storyXML["tuid"]).isNotNull
+    assertThat(storyXML["url"]).isNotNull
   }
 
   @Test

@@ -20,6 +20,7 @@ package com.github.paulschaaf.gargoyle.microtests
 import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.database.StoryTable
 import org.junit.Assert.assertEquals
+
 import org.junit.Test
 import org.mockito.Mockito.`when`
 
