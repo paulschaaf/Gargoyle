@@ -42,7 +42,7 @@ class IFDBLookupTest {
   fun testZorkI() = testStory(TestStoryXml.ZorkI)
 
   private fun testStory(testStoryXmlBuilder: TestStoryXml) {
-    val tuid = testStoryXmlBuilder.tuid
+    val tuid = testStoryXmlBuilder["tuid"]!!
     val ifIDLookup = IFDB.lookupIFID(tuid)
     val expected = testStoryXmlBuilder.xmlString
       .replace(Regex(">\\s*", RegexOption.DOT_MATCHES_ALL), ">")
