@@ -363,11 +363,11 @@ enum class TestStoryXml(val url: String, val xmlString: String) {
       }
       "firstPublished"   -> "firstpublished"
       "ifId"             -> "ifid"
-      "link"             -> "link"
       "ratingCountTotal" -> "ratingCountTot"
       "seriesNumber"     -> "seriesnumber"
-      "tuid"             -> "tuid"
-      "title"            -> "title"
+//      "link"             -> "link"
+//      "tuid"             -> "tuid"
+//      "title"            -> "title"
       else               -> name
     }
 
