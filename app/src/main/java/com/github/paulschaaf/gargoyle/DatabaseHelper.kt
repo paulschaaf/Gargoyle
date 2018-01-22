@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,17 @@ import android.database.Cursor
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import com.github.paulschaaf.gargoyle.database.SqlTable
+import com.github.paulschaaf.gargoyle.database.StoryFileLoader
 import com.github.paulschaaf.gargoyle.database.StoryTable
+import com.github.paulschaaf.gargoyle.ifdb.IFDBLookup
+import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
 import com.github.paulschaaf.gargoyle.model.Story
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import org.jetbrains.anko.db.MapRowParser
+import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
+import org.jetbrains.anko.db.select
 
 
 class DatabaseHelper(context: Context):
@@ -49,6 +54,10 @@ class DatabaseHelper(context: Context):
   }
 
   override fun onCreate(db: SQLiteDatabase) {
+    createTables(db)
+  }
+
+  private fun createTables(db: SQLiteDatabase) {
     TABLES.forEach {
       db.createTable(
           it.tableName,
@@ -56,6 +65,45 @@ class DatabaseHelper(context: Context):
           *it.columns.map { column-> column.createSQL }.toTypedArray()
       )
     }
+  }
+
+  fun populateTables(db: SQLiteDatabase) {
+    StringPairParser
+
+    // 1. Scan the disk to create a Map<IFID, File>
+    val storyFiles = StoryFileLoader.readStoryFiles().toMutableMap()
+
+    // 2. Read the DB to create a Map<IFID, PK>
+    val storyRows = readableDatabase
+      .select(StoryTable.tableName, StoryTable.ifId.name, StoryTable.id.name)
+      .parseList(StringPairParser)
+
+    val deleteKeys = mutableListOf<String>()
+
+    storyRows.forEach { (ifId, primaryKey)->
+      // 3. Ignore keys that are common to both maps
+      if (storyFiles.containsKey(ifId)) storyFiles.remove(ifId)
+
+      // 4. If an IFID has no corresponding File, DELETE the PK
+      else {
+        deleteKeys.add(primaryKey)
+        // then notify the user // todo pschaaf 01/21/18 21:01
+      }
+    }
+
+    // 5. Conversely, if a File has no corresponding PK, look it up in IFDB, then INSERT a new row
+    storyFiles.map { (ifId, file)->
+      val story = IFDBLookup(ifId).processXml { IFDBXmlParser().parse(it) }
+      story.path = file.absolutePath  // todo pschaaf 01/21/18 21:01: change this to the appropriate relative path
+      insertStory(story)
+    }
+    // 6. Read all Stories from the database
+    // 7. Display list of Stories
+  }
+
+  object StringPairParser: RowParser<Pair<String, String>> {
+    override fun parseRow(columns: Array<Any?>): Pair<String, String> =
+        columns[0].toString() to columns[1].toString()
   }
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -69,10 +117,7 @@ class DatabaseHelper(context: Context):
   }
 
   fun rebuildDatabase() {
-    writableDatabase.use {
-      it.execSQL("DROP TABLE " + StoryTable.tableName)
-      it.delete(StoryTable.tableName, null, null)
-    }
+    writableDatabase.use { it.dropTable(StoryTable.tableName, true) }
   }
 
   fun deleteStory(story: Story): Int {

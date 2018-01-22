@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,11 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class IFDB private constructor(val ifID: String) {
+class IFDBLookup constructor(val ifID: String) {
   companion object {
     val CONNECT_TIMEOUT = 15000
     val QUERY_URL = "http://ifdb.tads.org/viewgame?ifiction&id="
     val READ_TIMEOUT = 10000
-
-    fun lookupIFID(ifID: String) = IFDB(ifID)
   }
 
   val urlString = QUERY_URL + ifID
