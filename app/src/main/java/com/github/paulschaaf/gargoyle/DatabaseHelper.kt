@@ -68,8 +68,6 @@ class DatabaseHelper(context: Context):
   }
 
   fun populateTables(db: SQLiteDatabase) {
-    StringPairParser
-
     // 1. Scan the disk to create a Map<IFID, File>
     val storyFiles = StoryFileLoader.readStoryFiles().toMutableMap()
 
