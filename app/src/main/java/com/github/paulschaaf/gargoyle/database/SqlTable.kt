@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,12 @@
 package com.github.paulschaaf.gargoyle.database
 
 abstract class SqlTable(override val tableName: String): ISqlTable {
-  private val mutableColumns = mutableMapOf<String, IColumn<*>>()
-  override val columns: Array<IColumn<*>>
-    get() = mutableColumns.values.toTypedArray()
+  override val columns = sortedSetOf<IColumn<*>>()
 
   override val id by PrimaryKeyColumn
 
   /**
-   * Add a new column, replacing any earlier additions with the same name.
+   * Add a new column, replacing any any existing column that has the same name.
    */
-  override fun addColumn(column: IColumn<*>) {
-    mutableColumns[column.name] = column
-  }
+  override fun addColumn(column: IColumn<*>) = columns.add(column)
 }

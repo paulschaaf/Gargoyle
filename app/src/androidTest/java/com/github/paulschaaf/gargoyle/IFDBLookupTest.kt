@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 package com.github.paulschaaf.gargoyle
 
 import android.support.test.runner.AndroidJUnit4
-import com.github.paulschaaf.gargoyle.ifdb.IFDB
+import com.github.paulschaaf.gargoyle.ifdb.IFDBLookup
 import com.github.paulschaaf.gargoyle.microtests.TestStoryXml
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
@@ -43,7 +43,7 @@ class IFDBLookupTest {
 
   private fun testStory(testStoryXmlBuilder: TestStoryXml) {
     val tuid = testStoryXmlBuilder["tuid"]!!
-    val ifIDLookup = IFDB.lookupIFID(tuid)
+    val ifIDLookup = IFDBLookup(tuid)
     val expected = testStoryXmlBuilder.xmlString
       .replace(Regex(">\\s*", RegexOption.DOT_MATCHES_ALL), ">")
       .removeRatingRegion()
