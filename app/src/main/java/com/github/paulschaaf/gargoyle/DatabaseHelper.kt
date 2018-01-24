@@ -67,14 +67,14 @@ class DatabaseHelper(context: Context):
     }
   }
 
-  fun populateTables(db: SQLiteDatabase) {
+  fun populateTables() {
     // 1. Scan the disk to create a Map<IFID, File>
     val storyFiles = StoryFileLoader.readStoryFiles().toMutableMap()
 
     // 2. Read the DB to create a Map<IFID, PK>
     val storyRows = readableDatabase
       .select(StoryTable.tableName, StoryTable.ifId.name, StoryTable.id.name)
-      .parseList(StringPairParser)
+      .parseList(stringPairParser)
 
     val deleteKeys = mutableListOf<String>()
 
@@ -85,7 +85,7 @@ class DatabaseHelper(context: Context):
       // 4. If an IFID has no corresponding File, DELETE the PK
       else {
         deleteKeys.add(primaryKey)
-        // then notify the user // todo pschaaf 01/21/18 21:01
+        // todo pschaaf 01/21/18 21:01 then notify the user
       }
     }
 
@@ -99,7 +99,7 @@ class DatabaseHelper(context: Context):
     // 7. Display list of Stories
   }
 
-  object StringPairParser: RowParser<Pair<String, String>> {
+  private val stringPairParser = object: RowParser<Pair<String, String>> {
     override fun parseRow(columns: Array<Any?>): Pair<String, String> =
         columns[0].toString() to columns[1].toString()
   }
