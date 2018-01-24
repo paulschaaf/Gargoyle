@@ -53,9 +53,7 @@ class DatabaseHelper(context: Context):
     }
   }
 
-  override fun onCreate(db: SQLiteDatabase) {
-    createTables(db)
-  }
+  override fun onCreate(db: SQLiteDatabase) = createTables(db)
 
   private fun createTables(db: SQLiteDatabase) {
     TABLES.forEach {
@@ -76,27 +74,18 @@ class DatabaseHelper(context: Context):
       .select(StoryTable.tableName, StoryTable.ifId.name, StoryTable.id.name)
       .parseList(stringPairParser)
 
-    val deleteKeys = mutableListOf<String>()
+    // 3. Ignore keys that are common to both maps
+    val deleteKeys = storyRows.filter { (ifId, _)-> (storyFiles.remove(ifId) == null) }
 
-    storyRows.forEach { (ifId, primaryKey)->
-      // 3. Ignore keys that are common to both maps
-      if (storyFiles.containsKey(ifId)) storyFiles.remove(ifId)
-
-      // 4. If an IFID has no corresponding File, DELETE the PK
-      else {
-        deleteKeys.add(primaryKey)
-        // todo pschaaf 01/21/18 21:01 then notify the user
-      }
-    }
+    // 4. If an IFID has no corresponding File, DELETE the PK
+    // todo pschaaf 01/21/18 21:01 then notify the user
 
     // 5. Conversely, if a File has no corresponding PK, look it up in IFDB, then INSERT a new row
     storyFiles.map { (ifId, file)->
-      val story = IFDBLookup(ifId).processXml { IFDBXmlParser().parse(it) }
+      val story = IFDBLookup(ifId).processXml { IFDBXmlParser.parse(it) }
       story.path = file.absolutePath  // todo pschaaf 01/21/18 21:01: change this to the appropriate relative path
       insertStory(story)
     }
-    // 6. Read all Stories from the database
-    // 7. Display list of Stories
   }
 
   private val stringPairParser = object: RowParser<Pair<String, String>> {
