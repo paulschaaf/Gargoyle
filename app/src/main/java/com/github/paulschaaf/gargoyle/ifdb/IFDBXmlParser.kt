@@ -20,7 +20,7 @@ package com.github.paulschaaf.gargoyle.ifdb
 import com.github.paulschaaf.gargoyle.model.Story
 import java.io.InputStream
 
-class IFDBXmlParser {
+object IFDBXmlParser {
   val story = Story()
 
   val storyXmlDocumentGrammar = XmlDocument("ifindex") {
