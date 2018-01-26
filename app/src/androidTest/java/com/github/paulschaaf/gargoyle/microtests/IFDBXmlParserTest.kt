@@ -70,7 +70,7 @@ class IFDBXmlParserTest {
   fun testSpecialChars() = testStory(TestStoryXml.ZorkI_specialChars)
 
   private fun testStory(testStoryXml: TestStoryXml) {
-    val story = IFDBXmlParser().parse(testStoryXml.xmlString.byteInputStream())
+    val story = IFDBXmlParser.parse(testStoryXml.xmlString.byteInputStream())
     assertThat(story).isDescribedBy(testStoryXml)
   }
 }

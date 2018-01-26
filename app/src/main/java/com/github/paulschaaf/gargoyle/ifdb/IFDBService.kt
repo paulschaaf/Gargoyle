@@ -17,11 +17,12 @@
 
 package com.github.paulschaaf.gargoyle.ifdb
 
+import com.github.paulschaaf.gargoyle.model.Story
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class IFDBLookup constructor(val ifID: String) {
+class IFDBService constructor(val ifID: String) {
   companion object {
     val CONNECT_TIMEOUT = 15000
     val QUERY_URL = "http://ifdb.tads.org/viewgame?ifiction&id="
@@ -30,7 +31,9 @@ class IFDBLookup constructor(val ifID: String) {
 
   val urlString = QUERY_URL + ifID
 
-  fun <T> processXml(processor: (InputStream) -> T): T {
+  fun lookup(): Story = processStream { stream-> IFDBXmlParser.parse(stream) }
+
+  fun <T> processStream(processor: (InputStream) -> T): T {
     val httpURLConnection = (URL(urlString).openConnection() as HttpURLConnection).apply {
       readTimeout = READ_TIMEOUT
       connectTimeout = CONNECT_TIMEOUT

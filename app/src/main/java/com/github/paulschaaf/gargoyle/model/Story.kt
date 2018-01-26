@@ -35,8 +35,11 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
   val exists: Boolean
     get() = file?.exists() == true
 
-  val file: File?
+  var file: File?
     get() = if (path == null) null else File(path)
+    set(value) {
+      path = value?.path
+    }
 
   val versionNumber: Int
     get() = RandomAccessFile(path, "r").use { it.readInt() }
