@@ -18,14 +18,14 @@
 package com.github.paulschaaf.gargoyle
 
 import android.support.test.runner.AndroidJUnit4
-import com.github.paulschaaf.gargoyle.ifdb.IFDBLookup
+import com.github.paulschaaf.gargoyle.ifdb.IFDBService
 import com.github.paulschaaf.gargoyle.microtests.TestStoryXml
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IFDBLookupTest {
+class IFDBServiceTest {
   @Test
   fun testBronze() = testStory(TestStoryXml.Bronze)
 
@@ -43,13 +43,13 @@ class IFDBLookupTest {
 
   private fun testStory(testStoryXmlBuilder: TestStoryXml) {
     val tuid = testStoryXmlBuilder["tuid"]!!
-    val ifIDLookup = IFDBLookup(tuid)
+    val ifIDLookup = IFDBService(tuid)
     val expected = testStoryXmlBuilder.xmlString
       .replace(Regex(">\\s*", RegexOption.DOT_MATCHES_ALL), ">")
       .removeRatingRegion()
-    val actual = ifIDLookup.processXml { it.reader().readText().removeRatingRegion() }
+    val actual = ifIDLookup.processStream { stream-> stream.reader().readText().removeRatingRegion() }
     assertThat(actual)
-      .describedAs("Looked up story #$tuid at " + ifIDLookup.urlString)
+      .describedAs("Looked up story #$tuid")
       .isEqualTo(expected)
   }
 

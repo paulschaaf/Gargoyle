@@ -90,8 +90,9 @@ class StoryListActivity: AppCompatActivity() {
         val item = v.tag as Story
         if (mTwoPane) {
           val fragment = StoryDetailFragment().apply {
-            arguments = Bundle()
-            arguments.putString(StoryDetailFragment.ARG_ITEM_ID, item.id)
+            val bundle = Bundle()
+            bundle.putString(StoryDetailFragment.ARG_ITEM_ID, item.id)
+            arguments = bundle
           }
           mParentActivity.supportFragmentManager
             .beginTransaction()

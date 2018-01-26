@@ -24,8 +24,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.github.paulschaaf.gargoyle.database.SqlTable
 import com.github.paulschaaf.gargoyle.database.StoryFileLoader
 import com.github.paulschaaf.gargoyle.database.StoryTable
-import com.github.paulschaaf.gargoyle.ifdb.IFDBLookup
-import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
+import com.github.paulschaaf.gargoyle.ifdb.IFDBService
 import com.github.paulschaaf.gargoyle.model.Story
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import org.jetbrains.anko.db.MapRowParser
@@ -66,24 +65,23 @@ class DatabaseHelper(context: Context):
   }
 
   fun populateTables() {
-    // 1. Scan the disk to create a Map<IFID, File>
-    val storyFiles = StoryFileLoader.readStoryFiles().toMutableMap()
+    // 1. Scan the disk to create a Map<IFID, File> of the files
+    val unregisteredFiles = StoryFileLoader.readStoryFiles().toMutableMap()
 
-    // 2. Read the DB to create a Map<IFID, PK>
+    // 2. Read the DB to create a Map<IFID, PK> of the database records
     val storyRows = readableDatabase
       .select(StoryTable.tableName, StoryTable.ifId.name, StoryTable.id.name)
       .parseList(stringPairParser)
 
-    // 3. Ignore keys that are common to both maps
-    val deleteKeys = storyRows.filter { (ifId, _)-> (storyFiles.remove(ifId) == null) }
+    storyRows.forEach { (ifId, publicKey)->
+      if (unregisteredFiles.containsKey(ifId)) unregisteredFiles.remove(ifId)
+      else deleteStory(publicKey)  // 3. Delete any db records that have no corresponding filename
+    }
 
-    // 4. If an IFID has no corresponding File, DELETE the PK
-    // todo pschaaf 01/21/18 21:01 then notify the user
-
-    // 5. Conversely, if a File has no corresponding PK, look it up in IFDB, then INSERT a new row
-    storyFiles.map { (ifId, file)->
-      val story = IFDBLookup(ifId).processXml { IFDBXmlParser.parse(it) }
-      story.path = file.absolutePath  // todo pschaaf 01/21/18 21:01: change this to the appropriate relative path
+    // 4. Process the new unregistered files by looking them up in IFDB and then INSERTing a new row.
+    unregisteredFiles.forEach { (ifId, file)->
+      val story = IFDBService(ifId).lookup()
+      story.file = file
       insertStory(story)
     }
   }
@@ -103,23 +101,18 @@ class DatabaseHelper(context: Context):
     return rowID
   }
 
-  fun rebuildDatabase() {
-    writableDatabase.use { it.dropTable(StoryTable.tableName, true) }
+  fun rebuildDatabase() = writableDatabase.use { it.dropTable(StoryTable.tableName, true) }
+
+  fun deleteStory(vararg storyID: String): Boolean {
+    return writableDatabase.use {
+      it.delete(StoryTable.tableName, StoryTable.id.name + "=?", storyID)
+      true
+    }
+    // todo pschaaf 01/24/18 15:01: remove cover file
+    // todo pschaaf 01/21/18 21:01 then notify the user
   }
 
-  fun deleteStory(story: Story): Int {
-//    var success = true
-//    val storyFile = story.file
-//    if (storyFile != null && storyFile!!.exists()) success = success and storyFile!!.delete()
-//
-//    val coverFile = story.cover
-//    if (coverFile != null && coverFile!!.exists()) success = success and coverFile!!.delete()
-//
-//    val storyId = story.id
-    return writableDatabase.use {
-      it.delete(StoryTable.tableName, StoryTable.id.name + "=?", arrayOf(story.id))
-    }
-  }
+  fun deleteStory(story: Story): Boolean = deleteStory(story.id)
 
   fun updateStory(story: Story) = writableDatabase.update(
       StoryTable.tableName,

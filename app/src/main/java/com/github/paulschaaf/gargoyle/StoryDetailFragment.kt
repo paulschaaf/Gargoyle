@@ -43,13 +43,14 @@ class StoryDetailFragment: Fragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    if (arguments.containsKey(ARG_ITEM_ID)) {
+    val id = arguments?.getString(ARG_ITEM_ID)
+    if (id != null) {
       // Load the dummy content specified by the fragment
       // arguments. In a real-world scenario, use a Loader
       // to load content from a content provider.
-      mStory = StoryListContent.ITEM_MAP[arguments.getString(ARG_ITEM_ID)]
+      mStory = StoryListContent.ITEM_MAP[id]
       mStory?.let {
-        activity.toolbar_layout?.title = it.title
+        activity?.toolbar_layout?.title = it.title
       }
     }
   }
