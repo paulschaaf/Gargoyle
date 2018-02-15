@@ -23,21 +23,22 @@ buildscript {
     ext.kotlin_version = '1.2.21'
     ext.mockito_version = '2.10.0'
     repositories {
-        mavenCentral()
+        google()
+        jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
-//        // NOTE: Do not place your application dependencies here; they belong
-//        // in the individual module build.gradle files
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
 }
 
