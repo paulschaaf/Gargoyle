@@ -25,15 +25,16 @@ import java.io.InvalidObjectException
 abstract class MockContentValuesTestBase {
   abstract val properties: Map<String, Any>
 
-  val contentValues = mock(ContentValues::class.java).apply {
-    properties.forEach { (columnName, value)->
-      when (value) {
-        is Double -> `when`(getAsDouble(columnName)).thenReturn(value)
-        is Int    -> `when`(getAsInteger(columnName)).thenReturn(value)
-        is Long   -> `when`(getAsLong(columnName)).thenReturn(value)
-        is String -> `when`(getAsString(columnName)).thenReturn(value.toString())
-        else      -> InvalidObjectException("Test setup does not handle columns of type " + value.javaClass.name + ".")
+  val contentValues: ContentValues
+    get() = mock(ContentValues::class.java).apply {
+      properties.forEach { (columnName, value)->
+        when (value) {
+          is Double -> `when`(getAsDouble(columnName)).thenReturn(value)
+          is Int    -> `when`(getAsInteger(columnName)).thenReturn(value)
+          is Long   -> `when`(getAsLong(columnName)).thenReturn(value)
+          is String -> `when`(getAsString(columnName)).thenReturn(value.toString())
+          else      -> InvalidObjectException("Test setup does not handle columns of type " + value.javaClass.name + ".")
+        }
       }
     }
-  }
 }
