@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package com.github.paulschaaf.gargoyle.microtests
 import android.os.Environment
 import android.support.test.runner.AndroidJUnit4
 import org.andglk.babel.Babel
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -28,7 +29,7 @@ import java.io.File
 class StoryFileLoaderTest {
   val storyDirName = (Environment.getExternalStorageDirectory().absolutePath // == /storage/emulated/0
       + File.separator + "Interactive Fiction")
-//  val rootDir = File(storyDirName)
+  val rootDir = File(storyDirName)
 
 //  @Test
 //  fun verifyStoryFileFoundInAssets() {
@@ -38,18 +39,18 @@ class StoryFileLoaderTest {
 //    assertThat(lostPig).isNotNull
 //  }
 
-//  @Test
-//  fun verifyStoryFileFoundThroughClassloader() {
-//    val lostPig = javaClass.classLoader.getResourceAsStream("LostPig.z8").readBytes().toString()
-//    val result = Babel.examine(lostPig)
-//    assertThat(lostPig).isNotNull
-//  }
-
   @Test
-  fun verifyStoryFilesFoundByName() {
-    val enchanterSpec = storyDirName + File.separator + "Enchanter.dat"
-    val result = Babel.examine(enchanterSpec)
-    // todo pschaaf 10/18/17 16:10: make this do something
-//    assertThat(result).isNotEmpty
+  fun verifyStoryFileFoundThroughClassloader() {
+    val lostPig = javaClass.classLoader.getResourceAsStream("LostPig.z8").readBytes().toString()
+    val result = Babel.examine(lostPig)
+    assertThat(lostPig).isNotNull
   }
+
+//  @Test
+//  fun verifyStoryFilesFoundByName() {
+//    val enchanterSpec = storyDirName + File.separator + "Enchanter.dat"
+//    val result = Babel.examine(enchanterSpec)
+//    // todo pschaaf 10/18/17 16:10: make this do something
+//    assertThat(result).isNotEmpty
+//  }
 }

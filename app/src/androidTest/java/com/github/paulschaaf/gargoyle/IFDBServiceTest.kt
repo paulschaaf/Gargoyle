@@ -19,7 +19,6 @@ package com.github.paulschaaf.gargoyle
 
 import android.support.test.runner.AndroidJUnit4
 import com.github.paulschaaf.gargoyle.ifdb.IFDBService
-import com.github.paulschaaf.gargoyle.microtests.TestStoryXml
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,21 +26,21 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class IFDBServiceTest {
   @Test
-  fun testBronze() = testStory(TestStoryXml.Bronze)
+  fun testBronze() = testStory(StoryXMLTest.Bronze)
 
   @Test
-  fun testLostPig() = testStory(TestStoryXml.LostPig)
+  fun testLostPig() = testStory(StoryXMLTest.LostPig)
 
   @Test
-  fun testSpellBreaker() = testStory(TestStoryXml.SpellBreaker)
+  fun testSpellBreaker() = testStory(StoryXMLTest.SpellBreaker)
 
   @Test
-  fun testViolet() = testStory(TestStoryXml.Violet)
+  fun testViolet() = testStory(StoryXMLTest.Violet)
 
   @Test
-  fun testZorkI() = testStory(TestStoryXml.ZorkI)
+  fun testZorkI() = testStory(StoryXMLTest.ZorkI)
 
-  private fun testStory(testStoryXmlBuilder: TestStoryXml) {
+  private fun testStory(testStoryXmlBuilder: StoryXMLTest) {
     val tuid = testStoryXmlBuilder["tuid"]!!
     val ifIDLookup = IFDBService(tuid)
     val expected = testStoryXmlBuilder.xmlString

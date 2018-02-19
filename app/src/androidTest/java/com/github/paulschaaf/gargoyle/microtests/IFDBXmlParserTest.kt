@@ -18,58 +18,60 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
+import com.github.paulschaaf.gargoyle.StoryXMLTest
 import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
+import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class IFDBXmlParserTest {
-//  @Test
-//  fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
-//    val storyXML = TestStoryXml.Bronze
-//
-//    assertThat(storyXML["author"]).isNotNull
-//    assertThat(storyXML["averageRating"]).isNotNull
-//    assertThat(storyXML["contact"]).isNotNull
-//    assertThat(storyXML["coverArtURL"]).isNotNull
-//    assertThat(storyXML["description"]).isNotNull
-//    assertThat(storyXML["genre"]).isNotNull
-//    assertThat(storyXML["ifId"]).isNotNull
-//    assertThat(storyXML["language"]).isNotNull
-//    assertThat(storyXML["link"]).isNotNull
-//    assertThat(storyXML["ratingCountAvg"]).isNotNull
-//    assertThat(storyXML["ratingCountTotal"]).isNotNull
-//    assertThat(storyXML["series"]).isNotNull
-//    assertThat(storyXML["starRating"]).isNotNull
-//    assertThat(storyXML["title"]).isNotNull
-//    assertThat(storyXML["tuid"]).isNotNull
-//    assertThat(storyXML["url"]).isNotNull
-//  }
-//
-//  @Test
-//  fun testBronze() = testStory(TestStoryXml.Bronze)
+  @Test
+  fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
+    val storyXML = StoryXMLTest.Bronze
+
+    assertThat(storyXML["author"]).isNotNull
+    assertThat(storyXML["averageRating"]).isNotNull
+    assertThat(storyXML["contact"]).isNotNull
+    assertThat(storyXML["coverArtURL"]).isNotNull
+    assertThat(storyXML["description"]).isNotNull
+    assertThat(storyXML["genre"]).isNotNull
+    assertThat(storyXML["ifId"]).isNotNull
+    assertThat(storyXML["language"]).isNotNull
+    assertThat(storyXML["link"]).isNotNull
+    assertThat(storyXML["ratingCountAvg"]).isNotNull
+    assertThat(storyXML["ratingCountTotal"]).isNotNull
+    assertThat(storyXML["series"]).isNotNull
+    assertThat(storyXML["starRating"]).isNotNull
+    assertThat(storyXML["title"]).isNotNull
+    assertThat(storyXML["tuid"]).isNotNull
+    assertThat(storyXML["url"]).isNotNull
+  }
 
   @Test
-  fun testLostPig() = testStory(TestStoryXml.LostPig)
+  fun testBronze() = testStory(StoryXMLTest.Bronze)
 
   @Test
-  fun testSpellBreaker() = testStory(TestStoryXml.SpellBreaker)
+  fun testLostPig() = testStory(StoryXMLTest.LostPig)
 
   @Test
-  fun testViolet() = testStory(TestStoryXml.Violet)
+  fun testSpellBreaker() = testStory(StoryXMLTest.SpellBreaker)
 
   @Test
-  fun testZorkI() = testStory(TestStoryXml.ZorkI)
+  fun testViolet() = testStory(StoryXMLTest.Violet)
 
-//  @Test
-//  fun testNullFields() = testStory(TestStoryXml.Zork_nullFields)
-//
-//  @Test
-//  fun testSpecialChars() = testStory(TestStoryXml.ZorkI_specialChars)
+  @Test
+  fun testZorkI() = testStory(StoryXMLTest.ZorkI)
 
-  private fun testStory(testStoryXml: TestStoryXml) {
-    val story = IFDBXmlParser.parse(testStoryXml.xmlString.byteInputStream())
+  @Test
+  fun testNullFields() = testStory(StoryXMLTest.Zork_nullFields)
+
+  @Test
+  fun testSpecialChars() = testStory(StoryXMLTest.ZorkI_specialChars)
+
+  private fun testStory(testStoryXml: StoryXMLTest) {
+    val story = IFDBXmlParser().parse(testStoryXml.xmlString.byteInputStream())
     assertThat(story).isDescribedBy(testStoryXml)
   }
 }

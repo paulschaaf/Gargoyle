@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.paulschaaf.gargoyle.microtests
+package com.github.paulschaaf.gargoyle
 
-import com.github.paulschaaf.gargoyle.IFDBStoryAssert
-import com.github.paulschaaf.gargoyle.model.IFDBStory
-import org.fest.assertions.api.Assertions
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.memberProperties
 
-enum class TestStoryXml(val url: String, val xmlString: String) {
+enum class StoryXMLTest(val url: String, val xmlString: String) {
   Bronze("http://ifdb.tads.org/viewgame?ifiction&id=9p8kh3im2j9h2881",
          """<?xml version="1.0" encoding="UTF-8"?>
 <ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
@@ -344,7 +340,7 @@ enum class TestStoryXml(val url: String, val xmlString: String) {
     acc.replace(escapedCode, code)
   }
 
-  operator fun getValue(testStoryXml: TestStoryXml, property: KProperty<*>) = this.get(property.name)
+  operator fun getValue(testStoryXml: StoryXMLTest, property: KProperty<*>) = this.get(property.name)
 
   operator fun get(name: String): String? {
     var prefix = ""
@@ -375,40 +371,5 @@ enum class TestStoryXml(val url: String, val xmlString: String) {
     val match = regex.matchEntire(xmlString)
     val value = match?.groups?.get(1)?.value?.trim()
     return if (value.isNullOrEmpty()) null else value!!.unescape()
-  }
-}
-
-fun IFDBStoryAssert.isDescribedBy(expected: TestStoryXml) {
-  val failures = StringBuilder()
-  IFDBStory::class.memberProperties.forEach { prop->
-    try {
-      val actualValue = prop(actualStory)
-      val expectedValue = expected.get(prop.name)
-
-      val success = actualValue == (when (actualValue) {
-        is Double -> expectedValue?.toDouble()
-        is Int    -> expectedValue?.toInt()
-        else      -> expectedValue
-      })
-
-      if (!success) {
-        failures.append("\n#")
-          .append(prop.name).append('\n')
-          .append(".  expected: >").append(expectedValue).append("<\n")
-          .append(".   but was: >").append(actualValue).append('<')
-      }
-    }
-    catch (ex: Exception) {
-      failures.append("\n#")
-        .append(prop.name).append("\n   ")
-        .append(ex.cause)
-      ex.stackTrace.forEach { frame->
-        failures.append('\n').append(frame.toString())
-      }
-    }
-  }
-  if (failures.isNotEmpty()) {
-    failures.insert(0, "${expected["title"]} ${expected["link"]}")
-    Assertions.fail(failures.toString())
   }
 }
