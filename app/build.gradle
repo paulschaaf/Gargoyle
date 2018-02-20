@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
-//    buildToolsVersion '26.0.3'
-
     defaultConfig {
         applicationId "com.github.paulschaaf.gargoyle"
         minSdkVersion 19
@@ -64,25 +62,24 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-
+    implementation 'com.android.support:support-v4:26.1.0'
     implementation "org.jetbrains.anko:anko:0.10.1"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'com.android.support:design:26.1.0'
-
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.10.0'
-    testImplementation 'org.easytesting:fest-assert-core:2.0M10'
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-//    implementation 'com.android.support:recyclerview-v7:26.1.0'
-//    implementation 'com.android.support:support-annotations:26.1.0'
-//    implementation 'com.android.support:support-v4:26.1.0'
-//    implementation 'com.android.support:support-v13:26.1.0'
-//    implementation 'maven:maven:20030211.132709'
-//    implementation 'org.w3c:dom:2.3.0-jaxb-1.0.6'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    implementation 'com.android.support:design:26.1.0'
+    implementation "org.jetbrains.anko:anko:$anko_version"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
+    testImplementation 'org.easytesting:fest-assert-core:2.0M10'
+    androidTestImplementation 'org.easytesting:fest-assert-core:2.0M10'
+
+    implementation 'org.w3c:dom:2.3.0-jaxb-1.0.6'
+//    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    implementation 'com.android.support:support-annotations:27.0.2'
+//    implementation 'com.android.support:support-v13:27.0.2'
+    implementation 'maven:maven:20030211.132709'
 }

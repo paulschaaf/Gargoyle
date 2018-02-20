@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
+import com.github.paulschaaf.gargoyle.StoryXMLTest
 import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
 import org.fest.assertions.api.Assertions.assertThat
@@ -28,7 +29,7 @@ import org.junit.runner.RunWith
 class IFDBXmlParserTest {
   @Test
   fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
-    val storyXML = TestStoryXml.Bronze
+    val storyXML = StoryXMLTest.Bronze
 
     assertThat(storyXML["author"]).isNotNull
     assertThat(storyXML["averageRating"]).isNotNull
@@ -49,28 +50,28 @@ class IFDBXmlParserTest {
   }
 
   @Test
-  fun testBronze() = testStory(TestStoryXml.Bronze)
+  fun testBronze() = testStory(StoryXMLTest.Bronze)
 
   @Test
-  fun testLostPig() = testStory(TestStoryXml.LostPig)
+  fun testLostPig() = testStory(StoryXMLTest.LostPig)
 
   @Test
-  fun testSpellBreaker() = testStory(TestStoryXml.SpellBreaker)
+  fun testSpellBreaker() = testStory(StoryXMLTest.SpellBreaker)
 
   @Test
-  fun testViolet() = testStory(TestStoryXml.Violet)
+  fun testViolet() = testStory(StoryXMLTest.Violet)
 
   @Test
-  fun testZorkI() = testStory(TestStoryXml.ZorkI)
+  fun testZorkI() = testStory(StoryXMLTest.ZorkI)
 
   @Test
-  fun testNullFields() = testStory(TestStoryXml.Zork_nullFields)
+  fun testNullFields() = testStory(StoryXMLTest.Zork_nullFields)
 
   @Test
-  fun testSpecialChars() = testStory(TestStoryXml.ZorkI_specialChars)
+  fun testSpecialChars() = testStory(StoryXMLTest.ZorkI_specialChars)
 
-  private fun testStory(testStoryXml: TestStoryXml) {
-    val story = IFDBXmlParser.parse(testStoryXml.xmlString.byteInputStream())
+  private fun testStory(testStoryXml: StoryXMLTest) {
+    val story = IFDBXmlParser().parse(testStoryXml.xmlString.byteInputStream())
     assertThat(story).isDescribedBy(testStoryXml)
   }
 }
