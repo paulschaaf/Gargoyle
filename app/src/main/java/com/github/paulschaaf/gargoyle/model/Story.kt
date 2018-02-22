@@ -20,10 +20,12 @@ package com.github.paulschaaf.gargoyle.model
 import android.content.ContentValues
 import com.github.paulschaaf.gargoyle.database.IColumn
 import com.github.paulschaaf.gargoyle.database.StoryTable
+import set
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.*
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.memberProperties
 
 class Story constructor(val contentValues: ContentValues): IFDBStory {
   constructor(): this(ContentValues()) {
@@ -50,6 +52,14 @@ class Story constructor(val contentValues: ContentValues): IFDBStory {
       70   -> "unknown (blorbed)"
       else -> versionNumber.toString()
     }
+
+  fun toContentValues(): ContentValues {
+    val cv = ContentValues()
+    IFDBStory::class.memberProperties.forEach { prop->
+      cv.set(prop.name, prop.get(this))
+    }
+    return cv
+  }
 
   var id by StoryTable.id
   override var author by StoryTable.author
