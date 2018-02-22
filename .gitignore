@@ -16,3 +16,5 @@ captures/
 .DS_Store
 build
 .externalNativeBuild
+int-fic
+/gradle/wrapper/gradle-wrapper.jar

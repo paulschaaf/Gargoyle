@@ -373,38 +373,3 @@ enum class StoryXMLTest(val url: String, val xmlString: String) {
     return if (value.isNullOrEmpty()) null else value!!.unescape()
   }
 }
-
-fun IFDBStoryAssert.isDescribedBy(expected: TestStoryXml) {
-  val failures = StringBuilder()
-  IFDBStory::class.memberProperties.forEach { prop->
-    try {
-      val actualValue = prop(actualStory)
-      val expectedValue = expected.get(prop.name)
-
-      val success = actualValue == (when (actualValue) {
-        is Double -> expectedValue?.toDouble()
-        is Int    -> expectedValue?.toInt()
-        else      -> expectedValue
-      })
-
-      if (!success) {
-        failures.append("\n#")
-          .append(prop.name).append('\n')
-          .append(".  expected: >").append(expectedValue).append("<\n")
-          .append(".   but was: >").append(actualValue).append('<')
-      }
-    }
-    catch (ex: Exception) {
-      failures.append("\n#")
-        .append(prop.name).append("\n   ")
-        .append(ex.cause)
-      ex.stackTrace.forEach { frame->
-        failures.append('\n').append(frame.toString())
-      }
-    }
-  }
-  if (failures.isNotEmpty()) {
-    failures.insert(0, "${expected["title"]} ${expected["link"]}")
-    Assertions.fail(failures.toString())
-  }
-}
