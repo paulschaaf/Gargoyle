@@ -17,12 +17,12 @@
 
 package com.github.paulschaaf.gargoyle.microtests
 
-import com.github.paulschaaf.gargoyle.StoryXMLTest
+import com.github.paulschaaf.gargoyle.SampleStoryXML
 import org.junit.Test
 
 class StoryToDatabaseMapper {
   @Test
   fun printMappingTest() {
-    val story = StoryXMLTest.SpellBreaker
+    val story = SampleStoryXML.SpellBreaker
   }
 }

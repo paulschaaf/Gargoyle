@@ -31,7 +31,7 @@ class IFDBService constructor(val ifID: String) {
 
   val urlString = QUERY_URL + ifID
 
-  fun lookup(): Story = processStream { stream-> IFDBXmlParser().parse(stream) }
+  fun lookup(): Story = processStream { stream-> IFDBXmlParser.parse(stream) }
 
   fun <T> processStream(processor: (InputStream) -> T): T {
     val httpURLConnection = (URL(urlString).openConnection() as HttpURLConnection).apply {

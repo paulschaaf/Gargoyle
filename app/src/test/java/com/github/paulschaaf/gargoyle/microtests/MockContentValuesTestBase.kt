@@ -23,16 +23,28 @@ import org.mockito.Mockito.mock
 import java.io.InvalidObjectException
 
 abstract class MockContentValuesTestBase {
-  abstract val properties: Map<String, Any>
+  abstract val properties: MutableMap<String, Any>
 
   val contentValues: ContentValues
     get() = mock(ContentValues::class.java).apply {
       properties.forEach { (columnName, value)->
         when (value) {
-          is Double -> `when`(getAsDouble(columnName)).thenReturn(value)
-          is Int    -> `when`(getAsInteger(columnName)).thenReturn(value)
-          is Long   -> `when`(getAsLong(columnName)).thenReturn(value)
-          is String -> `when`(getAsString(columnName)).thenReturn(value.toString())
+          is Double -> {
+            `when`(getAsDouble(columnName)).thenReturn(value)
+            `when`(put(columnName, value)).then { properties.put(columnName, value) }
+          }
+          is Int    -> {
+            `when`(getAsInteger(columnName)).thenReturn(value)
+            `when`(put(columnName, value)).then { properties.put(columnName, value) }
+          }
+          is Long   -> {
+            `when`(getAsLong(columnName)).thenReturn(value)
+            `when`(put(columnName, value)).then { properties.put(columnName, value) }
+          }
+          is String -> {
+            `when`(getAsString(columnName)).thenReturn(value.toString())
+            `when`(put(columnName, value)).then { properties.put(columnName, value) }
+          }
           else      -> InvalidObjectException("Test setup does not handle columns of type " + value.javaClass.name + ".")
         }
       }

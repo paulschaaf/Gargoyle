@@ -19,7 +19,7 @@ package com.github.paulschaaf.gargoyle
 
 import kotlin.reflect.KProperty
 
-enum class StoryXMLTest(val url: String, val xmlString: String) {
+enum class SampleStoryXML(val url: String, val xmlString: String) {
   Bronze("http://ifdb.tads.org/viewgame?ifiction&id=9p8kh3im2j9h2881",
          """<?xml version="1.0" encoding="UTF-8"?>
 <ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
@@ -340,7 +340,9 @@ enum class StoryXMLTest(val url: String, val xmlString: String) {
     acc.replace(escapedCode, code)
   }
 
-  operator fun getValue(testStoryXml: StoryXMLTest, property: KProperty<*>) = this.get(property.name)
+  operator fun getValue(testSampleStoryXml: SampleStoryXML, property: KProperty<*>) = this.get(
+      property.name
+  )
 
   operator fun get(name: String): String? {
     var prefix = ""
@@ -374,37 +376,37 @@ enum class StoryXMLTest(val url: String, val xmlString: String) {
   }
 }
 
-fun IFDBStoryAssert.isDescribedBy(expected: TestStoryXml) {
-  val failures = StringBuilder()
-  IFDBStory::class.memberProperties.forEach { prop->
-    try {
-      val actualValue = prop(actualStory)
-      val expectedValue = expected.get(prop.name)
-
-      val success = actualValue == (when (actualValue) {
-        is Double -> expectedValue?.toDouble()
-        is Int    -> expectedValue?.toInt()
-        else      -> expectedValue
-      })
-
-      if (!success) {
-        failures.append("\n#")
-          .append(prop.name).append('\n')
-          .append(".  expected: >").append(expectedValue).append("<\n")
-          .append(".   but was: >").append(actualValue).append('<')
-      }
-    }
-    catch (ex: Exception) {
-      failures.append("\n#")
-        .append(prop.name).append("\n   ")
-        .append(ex.cause)
-      ex.stackTrace.forEach { frame->
-        failures.append('\n').append(frame.toString())
-      }
-    }
-  }
-  if (failures.isNotEmpty()) {
-    failures.insert(0, "${expected["title"]} ${expected["link"]}")
-    Assertions.fail(failures.toString())
-  }
-}
+//fun IFDBStoryAssert.isDescribedBy(expected: TestStoryXml) {
+//  val failures = StringBuilder()
+//  IFDBStory::class.memberProperties.forEach { prop->
+//    try {
+//      val actualValue = prop(actualStory)
+//      val expectedValue = expected.get(prop.name)
+//
+//      val success = actualValue == (when (actualValue) {
+//        is Double -> expectedValue?.toDouble()
+//        is Int    -> expectedValue?.toInt()
+//        else      -> expectedValue
+//      })
+//
+//      if (!success) {
+//        failures.append("\n#")
+//          .append(prop.name).append('\n')
+//          .append(".  expected: >").append(expectedValue).append("<\n")
+//          .append(".   but was: >").append(actualValue).append('<')
+//      }
+//    }
+//    catch (ex: Exception) {
+//      failures.append("\n#")
+//        .append(prop.name).append("\n   ")
+//        .append(ex.cause)
+//      ex.stackTrace.forEach { frame->
+//        failures.append('\n').append(frame.toString())
+//      }
+//    }
+//  }
+//  if (failures.isNotEmpty()) {
+//    failures.insert(0, "${expected["title"]} ${expected["link"]}")
+//    Assertions.fail(failures.toString())
+//  }
+//}

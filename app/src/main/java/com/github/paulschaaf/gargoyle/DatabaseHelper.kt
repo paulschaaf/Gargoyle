@@ -19,7 +19,6 @@ package com.github.paulschaaf.gargoyle
 
 import android.content.Context
 import android.database.Cursor
-import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import com.github.paulschaaf.gargoyle.database.SqlTable
 import com.github.paulschaaf.gargoyle.database.StoryFileLoader
@@ -81,7 +80,7 @@ class DatabaseHelper(context: Context):
     // 4. Process the new unregistered files by looking them up in IFDB and then INSERTing a new row.
     unregisteredFiles.forEach { (ifId, file)->
       val story = IFDBService(ifId).lookup()
-      story.file = file
+//      story.file = file
       insertStory(story)
     }
   }
@@ -96,7 +95,12 @@ class DatabaseHelper(context: Context):
   }
 
   fun insertStory(story: Story): Long {
-    val rowID = writableDatabase.use { it.insert(StoryTable.tableName, null, story.contentValues) }
+    val rowID = writableDatabase.use {
+      it.insert(StoryTable.tableName,
+                null,
+                story.toContentValues()
+      )
+    }
 //    if (rowID == -1L) Log.e(TAG, "The insert failed!")
     return rowID
   }
@@ -116,7 +120,7 @@ class DatabaseHelper(context: Context):
 
   fun updateStory(story: Story) = writableDatabase.update(
       StoryTable.tableName,
-      story.contentValues,
+      story.toContentValues(),
       "${StoryTable.id} = ${story.id}",
       null
   )
@@ -142,9 +146,9 @@ class DatabaseHelper(context: Context):
       newCursor.use { cursor->
         if (cursor.moveToFirst()) {
           do {
-            val newStory = Story()
-            DatabaseUtils.cursorRowToContentValues(cursor, newStory.contentValues)
-            stories.add(newStory)
+//            val newStory = Story()
+//            DatabaseUtils.cursorRowToContentValues(cursor, newStory.toContentValues())
+//            stories.add(newStory)
           }
           while (cursor.moveToNext())
         }

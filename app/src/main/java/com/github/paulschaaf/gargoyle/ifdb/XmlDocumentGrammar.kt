@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 P.G. Schaaf <paul.schaaf@gmail.com>
+ * Copyright © 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  * This file is part of Gargoyle.
  * Gargoyle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 import kotlin.reflect.KMutableProperty
 
-class XmlDocument(val name: String, val structure: XmlParentElement.() -> Unit) {
+class XmlDocumentGrammar(val name: String, val structure: XmlParentElement.() -> Unit) {
   fun parse(inputStream: InputStream) {
     val parser = Xml.newPullParser().apply {
       setInput(inputStream, null)

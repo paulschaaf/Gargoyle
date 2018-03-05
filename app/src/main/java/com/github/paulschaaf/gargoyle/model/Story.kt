@@ -17,130 +17,124 @@
 
 package com.github.paulschaaf.gargoyle.model
 
+import android.content.ContentValues
+import set
 import java.io.File
 import java.io.RandomAccessFile
+import kotlin.reflect.full.memberProperties
 
-data class Story(
-    val id: String,
-    val lookedUp: String,
-    override val author: String?,
-    override val averageRating: Double?,
-    override val contact: String?,
-    override val coverArtURL: String?,
-    override val description: String?,
-    override val firstPublished: String?,
-    override val forgiveness: String?,
-    override val genre: String?,
-    override val ifId: String,
-    override val language: String?,
-    override val link: String?,
-    override val path: String?,
-    override val ratingCountAvg: Int?,
-    override val ratingCountTotal: Int?,
-    override val series: String?,
-    override val seriesNumber: Int?,
-    override val starRating: Double?,
-    override val title: String,
-    override val tuid: String
-): IFDBStory {
-//  constructor(val contentValues: ContentValues) {}
+interface IFDBStorySnapshot: IFDBStory {
+  val id: String
+  val lookedUp: String
+}
+
+abstract class Story: IFDBStorySnapshot {
+  override val id: String = ""
+  override val lookedUp: String = ""
 
   companion object {
-    class StoryBuilder {
-      var withId: String = ""
-      var withLookedUp: String = ""
-      var withAuthor: String? = null
-      var withAverageRating: Double? = null
-      var withContact: String? = null
-      var withCoverArtURL: String? = null
-      var withDescription: String? = null
-      var withFirstPublished: String? = null
-      var withForgiveness: String? = null
-      var withGenre: String? = null
-      var withIfId: String = ""
-      var withLanguage: String? = null
-      var withLink: String? = null
-      var withPath: String? = null
-      var withRatingCountAvg: Int? = 0
-      var withRatingCountTotal: Int? = null
-      var withSeries: String? = ""
-      var withSeriesNumber: Int? = null
-      var withStarRating: Double? = null
-      var withTitle: String = ""
-      var withTuid: String = ""
-      fun build(): Story {
-        return Story(
-            id = this.withId,
-            lookedUp = withLookedUp,
-            author = withAuthor,
-            averageRating = withAverageRating,
-            contact = withContact,
-            coverArtURL = withCoverArtURL,
-            description = withDescription,
-            firstPublished = withFirstPublished,
-            forgiveness = withForgiveness,
-            genre = withGenre,
-            ifId = withIfId,
-            language = withLanguage,
-            link = withLink,
-            path = withPath,
-            ratingCountAvg = withRatingCountAvg,
-            ratingCountTotal = withRatingCountTotal,
-            series = withSeries,
-            seriesNumber = withSeriesNumber,
-            starRating = withStarRating,
-            title = withTitle,
-            tuid = withTuid
-        )
-      }
+    fun create(block: EditableStory.() -> Unit): Story {
+      val newStory = EditableStory()
+      block(newStory)
+      return newStory
     }
   }
-}
-//    constructor(): this(ContentValues()) {
-//      lookedUp = Date().toString()
-//    }
 
   override fun toString() = title + " #" + ifId
 
-val file = if (path == null) null else File(path)
+  val file
+    get() = if (path == null) null else File(path)
 
-val exists = file?.exists() == true
+  val exists
+    get() = file?.exists() == true
 
-val versionNumber = RandomAccessFile(path, "r").use { it.readInt() }
+  val versionNumber
+    get() = RandomAccessFile(path, "r").use { it.readInt() }
 
-val zCodeVersion = when (versionNumber) {
+  val zCodeVersion
+    get() = when (versionNumber) {
       0    -> "0 (unknown)"
       70   -> "unknown (blorbed)"
       else -> versionNumber.toString()
     }
 
-//    var id by StoryTable.id
-//    override var author by StoryTable.author
-//    override var averageRating by StoryTable.averageRating
-//    override var contact by StoryTable.contact
-//    override var coverArtURL by StoryTable.coverArtURL
-//    override var description by StoryTable.description
-//    override var firstPublished by StoryTable.firstPublished
-//    override var forgiveness by StoryTable.forgiveness
-//    override var genre by StoryTable.genre
-//    override var ifId by StoryTable.ifId
-//    override var language by StoryTable.language
-//    override var link by StoryTable.link
-//    var lookedUp by StoryTable.lookedUp
-//    override var path by StoryTable.path
-//    override var ratingCountAvg by StoryTable.ratingCountAvg
-//    override var ratingCountTotal by StoryTable.ratingCountTotal
-//    override var series by StoryTable.series
-//    override var seriesNumber by StoryTable.seriesNumber
-//    override var starRating by StoryTable.starRating
-//    override var title by StoryTable.title
-//    override var tuid by StoryTable.tuid
+  fun toContentValues(): ContentValues {
+    val cv = ContentValues()
+    IFDBStorySnapshot::class.memberProperties.forEach { prop->
+      cv.set(prop.name, prop.get(this))
+    }
+    return cv
+  }
+
+  class EditableStory: Story() {
+    override var id: String = "-error-"
+    override var lookedUp: String = ""
+    override var author: String? = null
+    override var contact: String? = null
+    override var coverArtURL: String? = null
+    override var description: String? = null
+    override var firstPublished: String? = null
+    override var forgiveness: String? = null
+    override var genre: String? = null
+    override var ifId: String = "-error-"
+    override var language: String? = null
+    override var link: String? = null
+    override var path: String? = null
+    override var series: String? = null
+    override var title: String = "-Unknown-"
+    override var tuid: String = ""
+
+    override var averageRating: Double? = null
+    var averageRatingString
+      get() = averageRating.toString()
+      set(value) {
+        averageRating = value.toDouble()
+      }
+
+    override var starRating: Double? = null
+    var starRatingString
+      get() = starRating.toString()
+      set(value) {
+        starRating = value.toDoubleOrNull()
+      }
+
+    override var ratingCountAvg: Int? = null
+    var ratingCountAvgString
+      get() = ratingCountAvg.toString()
+      set(value) {
+        ratingCountAvg = value.toIntOrNull()
+      }
+
+    override var ratingCountTotal: Int? = null
+    var ratingCountTotalString
+      get() = ratingCountTotal.toString()
+      set(value) {
+        ratingCountTotal = value.toIntOrNull()
+      }
+
+    override var seriesNumber: Int? = null
+    var seriesNumberString
+      get() = seriesNumber.toString()
+      set(value) {
+        seriesNumber = value.toIntOrNull()
+      }
+
+//    private operator fun getValue(editableStory: Story.EditableStory, property: KProperty<*>): String =
+//        when (property) {
+//          EditableStory::averageRatingStr  -> averageRating.toString()
+//          EditableStory::starRatingStr     -> starRating.toString()
+//          EditableStory::ratingCountAvgStr -> ratingCountAvg.toString()
+//          else                             -> ""
+//        }
+//
+//    private operator fun setValue(editableStory: Story.EditableStory, property: KProperty<*>, s: String) {
+//      when (property) {
+//        EditableStory::averageRatingStr  -> averageRating = s.toDoubleOrNull()
+//        EditableStory::starRatingStr     -> starRating.toString()
+//        EditableStory::ratingCountAvgStr -> ratingCountAvg.toString()
+//        else                             -> ""
+//      }
+//    }
+  }
 }
 
-//// Allows an IColumn wrapping my contentValues to be a delegate for my IFDBStory properties
-//operator fun <T> IColumn<T>.getValue(story: Story, property: KProperty<*>): T
-//    = get(story.contentValues)
-//
-//operator fun <T> IColumn<T>.setValue(story: Story, property: KProperty<*>, value: T)
-//    = set(story.contentValues, value)
-//

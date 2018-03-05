@@ -22,32 +22,31 @@ import com.github.paulschaaf.gargoyle.model.Story
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class StoryTest: MockContentValuesTestBase() {
-  override val properties = mapOf(
-      "author" to "P.G. Schaaf",
-      "averageRating" to 4.5,
-      "description" to "Your greatest adventure lies ahead! (Then left, down the stairs, and through the second door on the right.)",
-      "firstPublished" to "5/6/2017",
-      "forgiveness" to "hard",
-      "genre" to "Adventure",
-      "id" to "31415",
-      "ifId" to "ifid_zork_pi",
-      "language" to "EN/US",
-      "link" to "http://paulschaaf.com/",
-      "lookedUp" to "9/2/2017",
-      "path" to "/var/data/IntFic.dat",
-      "ratingCountAvg" to 17,
-      "ratingCountTotal" to 137,
-      "series" to "Zork",
-      "seriesNumber" to 5,
-      "starRating" to 5.0,
-      "title" to "Zork 3.14"
-  )
-
-  var story = Story(contentValues)
+class StoryTest {
+  var story = Story.create {
+    author = "P.G. Schaaf"
+    averageRating = 4.5
+    description = "Your greatest adventure lies ahead! (Then left, down the stairs, and through the secon door on the right.)"
+    firstPublished = "5/6/2017"
+    forgiveness = "hard"
+    genre = "Adventure"
+    id = "31415"
+    ifId = "ifid_zork_pi"
+    language = "EN/US"
+    link = "http://paulschaaf.com/"
+    lookedUp = "9/2/2017"
+    path = "/var/data/IntFic.dat"
+    ratingCountAvg = 17
+    ratingCountTotal = 137
+    series = "Zork"
+    seriesNumber = 5
+    starRating = 5.0
+    title = "Zork 3.14"
+  }
 
   @Test
   fun readPropertiesFromStory() = with(StoryTable) {
+    val properties = story.toContentValues()
     assertEquals(properties["author"], story.author)
     assertEquals(properties["averageRating"], story.averageRating)
     assertEquals(properties["description"], story.description)
@@ -67,16 +66,4 @@ class StoryTest: MockContentValuesTestBase() {
     assertEquals(properties["starRating"], story.starRating)
     assertEquals(properties["title"], story.title)
   }
-
-//  @Test   // todo pschaaf 02/48/18 19:02: Would this test--were it to pass--prove anything?
-//  fun testUpdateProperties() {
-//    assertThat(story::author)
-//      .isEqualTo(properties["author"] as String)
-//
-//    val newAuthor = "P.G. Schaaf, Jr., et. al."
-//    `when`(contentValues.getAsString("author")).thenReturn(newAuthor)
-//
-//    assertThat(story::author)
-//      .isEqualTo(newAuthor)
-//  }
 }

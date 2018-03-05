@@ -48,7 +48,7 @@ fun assertThat(story: IFDBStory) = IFDBStoryAssert(story)
 
 class IFDBStoryAssert internal constructor(actual: IFDBStory):
     AbstractAssert<IFDBStoryAssert, IFDBStory>(actual, IFDBStoryAssert::class.java) {
-  fun isDescribedBy(expected: StoryXMLTest) {
+  fun isDescribedBy(expected: SampleStoryXML) {
     val failures = StringBuilder()
     IFDBStory::class.memberProperties.forEach { prop->
       try {

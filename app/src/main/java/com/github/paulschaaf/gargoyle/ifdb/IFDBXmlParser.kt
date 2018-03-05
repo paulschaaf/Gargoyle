@@ -20,23 +20,27 @@ package com.github.paulschaaf.gargoyle.ifdb
 import com.github.paulschaaf.gargoyle.model.Story
 import java.io.InputStream
 
-object IFDBXmlParser {
-  val story = Story()
+class IFDBXmlParser private constructor(story: Story.EditableStory) {
+  companion object {
+    fun parse(inputStream: InputStream) = Story.create {
+      IFDBXmlParser(this).storyXmlDocumentGrammar.parse(inputStream)
+    }
+  }
 
-  val storyXmlDocumentGrammar = XmlDocument("ifindex") {
+  val storyXmlDocumentGrammar = XmlDocumentGrammar("ifindex") {
     "story" {
       "identification" {
-        "ifid" to story::ifId default "-error-"
+        "ifid" to story::ifId
       }
       "bibliographic" {
-        "title" to story::title default "-Unknown-"
+        "title" to story::title
         "author" to story::author
         "language" to story::language
         "firstpublished" to story::firstPublished
         "genre" to story::genre
         "description" to story::description
         "series" to story::series
-        "seriesnumber" to story::seriesNumber via { it.toInt() }
+        "seriesnumber" to story::seriesNumberString
         "forgiveness" to story::forgiveness
       }
       "contact" {
@@ -48,16 +52,11 @@ object IFDBXmlParser {
         "coverart" {
           "url" to story::coverArtURL
         }
-        "averageRating" to story::averageRating via { it.toDouble() }
-        "starRating" to story::starRating via { it.toDouble() }
-        "ratingCountAvg" to story::ratingCountAvg via { it.toInt() }
-        "ratingCountTot" to story::ratingCountTotal via { it.toInt() }
+        "averageRating" to story::averageRatingString
+        "starRating" to story::starRatingString
+        "ratingCountAvg" to story::ratingCountAvgString
+        "ratingCountTot" to story::ratingCountTotalString
       }
     }
-  }
-
-  fun parse(inputStream: InputStream): Story {
-    storyXmlDocumentGrammar.parse(inputStream)
-    return story
   }
 }

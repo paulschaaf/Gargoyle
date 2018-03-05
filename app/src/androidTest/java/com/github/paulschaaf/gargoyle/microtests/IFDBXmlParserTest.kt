@@ -18,7 +18,7 @@
 package com.github.paulschaaf.gargoyle.microtests
 
 import android.support.test.runner.AndroidJUnit4
-import com.github.paulschaaf.gargoyle.StoryXMLTest
+import com.github.paulschaaf.gargoyle.SampleStoryXML
 import com.github.paulschaaf.gargoyle.assertThat
 import com.github.paulschaaf.gargoyle.ifdb.IFDBXmlParser
 import org.fest.assertions.api.Assertions.assertThat
@@ -29,7 +29,7 @@ import org.junit.runner.RunWith
 class IFDBXmlParserTest {
   @Test
   fun sanityCheckEnsureExampleStoryFieldsAreNotEmpty() {
-    val storyXML = StoryXMLTest.Bronze
+    val storyXML = SampleStoryXML.Bronze
 
     assertThat(storyXML["author"]).isNotNull
     assertThat(storyXML["averageRating"]).isNotNull
@@ -50,28 +50,28 @@ class IFDBXmlParserTest {
   }
 
   @Test
-  fun testBronze() = testStory(StoryXMLTest.Bronze)
+  fun testBronze() = testStory(SampleStoryXML.Bronze)
 
   @Test
-  fun testLostPig() = testStory(StoryXMLTest.LostPig)
+  fun testLostPig() = testStory(SampleStoryXML.LostPig)
 
   @Test
-  fun testSpellBreaker() = testStory(StoryXMLTest.SpellBreaker)
+  fun testSpellBreaker() = testStory(SampleStoryXML.SpellBreaker)
 
   @Test
-  fun testViolet() = testStory(StoryXMLTest.Violet)
+  fun testViolet() = testStory(SampleStoryXML.Violet)
 
   @Test
-  fun testZorkI() = testStory(StoryXMLTest.ZorkI)
+  fun testZorkI() = testStory(SampleStoryXML.ZorkI)
 
   @Test
-  fun testNullFields() = testStory(StoryXMLTest.Zork_nullFields)
+  fun testNullFields() = testStory(SampleStoryXML.Zork_nullFields)
 
   @Test
-  fun testSpecialChars() = testStory(StoryXMLTest.ZorkI_specialChars)
+  fun testSpecialChars() = testStory(SampleStoryXML.ZorkI_specialChars)
 
-  private fun testStory(testStoryXml: StoryXMLTest) {
-    val story = IFDBXmlParser().parse(testStoryXml.xmlString.byteInputStream())
-    assertThat(story).isDescribedBy(testStoryXml)
+  private fun testStory(testSampleStoryXml: SampleStoryXML) {
+    val story = IFDBXmlParser.parse(testSampleStoryXml.xmlString.byteInputStream())
+    assertThat(story).isDescribedBy(testSampleStoryXml)
   }
 }
